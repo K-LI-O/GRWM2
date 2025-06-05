@@ -1,0 +1,39 @@
+package GRWM.backend.entity;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+
+
+@Entity
+@Getter
+public class Member {
+
+    @Id
+    @Column(name = "USER_ID")
+    private String id;
+
+    @Column
+    private String username;
+
+    // 로그인 및 회원가입
+
+    @Column
+    private String login_id;
+
+    @Column
+    private String password;
+
+    @Column
+    private String email;
+
+    // 개인 플래너
+
+    // 단체 플래너
+
+    // 채팅방
+
+    private String chatName;
+
+    // 커뮤니티
+
+}
