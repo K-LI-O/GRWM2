@@ -2,17 +2,19 @@ package GRWM.backend.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 public class PersonalPlanner {
 
     @Id
     @Column(name = "PERSONAL_PLANNER_ID")
-    private String id;
+    private Long id;
 
     @Column
     private String name;
@@ -32,4 +34,13 @@ public class PersonalPlanner {
 
     // 플래너의 카테고리(일대다)
     // 단방향 매핑 처리로 삭제
+    public PersonalPlanner(String name, String explanation, String profileImage, Member creator){
+        this.name = name;
+        this.explanation = explanation;
+        this.profileImage = profileImage;
+        this.creator = creator;
+    }
+
+
+
 }

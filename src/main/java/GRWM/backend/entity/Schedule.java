@@ -11,7 +11,7 @@ public class Schedule {
 
     @Id
     @Column(name = "SCHEDULE_ID)")
-    private String id;
+    private Long id;
 
     @Column
     private String title;

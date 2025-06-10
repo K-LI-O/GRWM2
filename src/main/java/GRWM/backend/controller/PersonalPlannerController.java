@@ -1,17 +1,28 @@
 package GRWM.backend.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import GRWM.backend.dto.PersonalPlannerCreateRequestDto;
+import GRWM.backend.entity.PersonalPlanner;
+import GRWM.backend.service.PersonalPlannerService;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/menu/personal-planner")
+@RequestMapping("api/personal-planner")
 public class PersonalPlannerController {
 
+    private PersonalPlannerService ppService;
+
     @GetMapping
-    public String demoController(){
+    public String createPlannerDemo(){
         return "ok";
     }
+
+    @PostMapping("create")
+    public String createPlanner(@RequestBody PersonalPlannerCreateRequestDto dto){
+
+        ppService.createPersonalPlanner(dto);
+        return "created!";
+    }
+
 
 
 }

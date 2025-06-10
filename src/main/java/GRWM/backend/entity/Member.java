@@ -9,8 +9,9 @@ import lombok.Getter;
 public class Member {
 
     @Id
+    @GeneratedValue
     @Column(name = "USER_ID")
-    private String id;
+    private Long id;
 
     @Column
     private String username;

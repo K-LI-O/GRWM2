@@ -8,7 +8,7 @@ import lombok.Getter;
 public class PlannerCategory {
     @Id
     @Column(name = "categoryId")
-    private String id;
+    private Long id;
 
     @Column(name = "categoryName")
     private String name;
