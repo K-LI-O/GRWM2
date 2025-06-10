@@ -37,4 +37,15 @@ public class Member {
 
     // 커뮤니티
 
+    // 생성자
+
+    public Member(String username, String login_id, String password, String email){
+
+        this.username = username;
+        this.login_id = login_id;
+        this.password = password;
+        this.email = email;
+
+    }
+
 }
