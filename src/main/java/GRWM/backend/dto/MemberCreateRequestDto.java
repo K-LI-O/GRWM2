@@ -9,7 +9,7 @@ public class MemberCreateRequestDto {
 
     private String username;
 
-    private String login_id;
+    private String loginId;
 
     private String password;
 
@@ -24,10 +24,10 @@ public class MemberCreateRequestDto {
     매개변수 : String, String, String, String
     리턴값 : 없음
      */
-    public MemberCreateRequestDto(String username, String login_id, String password, String email) {
+    public MemberCreateRequestDto(String username, String loginId, String password, String email) {
 
         this.username = username;
-        this.login_id = login_id;
+        this.loginId = loginId;
         this.password = password;
         this.email = email;
     }

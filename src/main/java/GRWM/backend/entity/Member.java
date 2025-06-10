@@ -19,7 +19,7 @@ public class Member {
     // 로그인 및 회원가입
 
     @Column
-    private String login_id;
+    private String loginId;
 
     @Column
     private String password;
@@ -39,10 +39,10 @@ public class Member {
 
     // 생성자
 
-    public Member(String username, String login_id, String password, String email){
+    public Member(String username, String loginId, String password, String email){
 
         this.username = username;
-        this.login_id = login_id;
+        this.loginId = loginId;
         this.password = password;
         this.email = email;
 

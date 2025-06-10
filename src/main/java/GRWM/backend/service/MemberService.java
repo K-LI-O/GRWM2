@@ -12,8 +12,15 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
 
+
+    public boolean findDuplicateLoginId(String login_id){
+        return memberRepository.existsByLoginId(login_id);
+    }
+
+
+
     public void createMember(MemberCreateRequestDto dto){
-        Member member = new Member(dto.getUsername(), dto.getLogin_id(), dto.getPassword(), dto.getEmail());
+        Member member = new Member(dto.getUsername(), dto.getLoginId(), dto.getPassword(), dto.getEmail());
 
         memberRepository.save(member);
     }
