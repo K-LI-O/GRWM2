@@ -19,7 +19,7 @@ public class MemberController {
 
     /*
     함수명 : isDuplicateValidation
-    기능 : 200 ok와 함께 isDuplicate의 bool 값을 전달한다. true 라면 같은 아이디의 회원이 존재한다.
+    기능 : 200 ok와 함께 isDuplicate 의 bool 값을 전달한다. 반환값이 true 라면 같은 아이디의 회원이 존재한다.
     매개변수 : String
     반환값 : ResponseEntity<Boolean>
 
