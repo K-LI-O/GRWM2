@@ -47,5 +47,14 @@ public class PersonalPlannerController {
     }
 
 
+    @GetMapping("list/{plannerId}/edit")
+    public PersonalPlannerListResponseDto editPlanner(@PathVariable Long plannerId){
+        PersonalPlannerListResponseDto dto = ppService.editPersonalPlanner(plannerId);
+
+        return dto;
+    }
+
+
+
 
 }

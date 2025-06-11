@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +39,15 @@ public class PersonalPlannerService {
         return savedPlanner.getId();
     }
 
+
+
+    /*
+    함수명 : findPersonalPlannerList
+    기능 : memberId로 생성한 플래너 리스트를 조회한다.
+    매개변수 : Long memberId
+    반환값 : List<PersonalPlannerListResponseDto> 플래너 dto list 반환
+     */
+
     public List<PersonalPlannerListResponseDto> findPersonalPlannerList(Long memberId){
 
         Member searchMember = memberRepository.getReferenceById(memberId);
@@ -54,6 +64,24 @@ public class PersonalPlannerService {
         }
 
         return dtoList;
+    }
+
+
+    public PersonalPlannerListResponseDto editPersonalPlanner(Long plannerId){
+        Optional<PersonalPlanner> optionalPlanner =  ppRepository.findById(plannerId);
+
+        if (optionalPlanner.isPresent()) {
+
+            PersonalPlanner planner = optionalPlanner.get(); // 플래너 객체 가져오기
+
+            return new PersonalPlannerListResponseDto(
+                    planner.getCreator().getId(), planner.getName(), planner.getExplanation(), planner.getProfileImage()
+            );
+
+        } else {
+            // 플래너를 찾지 못했을 때의 로직
+            throw new IllegalArgumentException("Planner not found with ID: " + plannerId);
+        }
     }
 
 
