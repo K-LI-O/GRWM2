@@ -85,10 +85,46 @@ public class PersonalPlannerService {
         }
     }
 
-//    public PersonalPlannerListResponseDto upDatePersonalPlanner(PersonalPlannerListResponseDto dto){
-//
-//
-//    }
+    public PersonalPlannerDto upDatePersonalPlanner(PersonalPlannerDto dto){
+
+        Optional<PersonalPlanner> optionalPlanner = ppRepository.findById(dto.getPlannerId());
+        PersonalPlanner planner;
+
+        if(optionalPlanner.isPresent()){
+            planner = optionalPlanner.get();
+            planner.setName(dto.getTitle());
+            planner.setExplanation(dto.getExplanation());
+            planner.setProfileImage(dto.getProfileImageLink());
+        }
+        else {
+            // 플래너를 찾지 못했을 때의 로직
+            throw new IllegalArgumentException("Planner not found with ID: " + dto.getPlannerId());
+        }
+        PersonalPlanner savedPlanner = ppRepository.save(planner);
+
+        PersonalPlannerDto savedDto = new PersonalPlannerDto(
+                savedPlanner.getId(), savedPlanner.getName(), savedPlanner.getExplanation(), savedPlanner.getProfileImage());
+
+        return savedDto;
+    }
+
+
+    public void deletePersonalPlanner(Long plannerId){
+
+        Optional<PersonalPlanner> optionalPlanner = ppRepository.findById(plannerId);
+        PersonalPlanner planner;
+
+        if(optionalPlanner.isPresent()){
+            planner = optionalPlanner.get();
+            ppRepository.delete(planner);
+        }
+        else {
+            // 플래너를 찾지 못했을 때의 로직
+            throw new IllegalArgumentException("Planner not found with ID: " + plannerId);
+        }
+
+
+    }
 
 
 

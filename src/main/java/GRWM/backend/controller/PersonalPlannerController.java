@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 @RestController
@@ -52,7 +53,7 @@ public class PersonalPlannerController {
     함수명 : editPlanner
     기능 : plannerId로 생성한 플래너의 elements를 불러온다
     매개변수 : Long plannerId
-    반환값 : Long userId, String title, String explanation, String profileImageLink
+    반환값 : Long plannerId, String title, String explanation, String profileImageLink
      */
 
     @GetMapping("list/{plannerId}/edit")
@@ -62,10 +63,35 @@ public class PersonalPlannerController {
         return dto;
     }
 
-//    @PutMapping("list/{plannerId}/edit")
-//    public PersonalPlannerListResponseDto updatePlanner(@RequestBody PersonalPlannerListResponseDto dto){
-//
-//    }
+            /*
+    함수명 : updatePlanner
+    기능 : 플래너의 elements 를 업데이트한다.
+    매개변수 : Long plannerId, String title, String explanation, String profileImageLink
+    반환값 : Long plannerId, String title, String explanation, String profileImageLink
+     */
+
+    @PutMapping("list/{plannerId}/edit")
+    public PersonalPlannerDto updatePlanner(@RequestBody PersonalPlannerDto dto){
+
+        return ppService.upDatePersonalPlanner(dto);
+    }
+
+
+    @DeleteMapping("/list/{plannerId}/delete")
+    public ResponseEntity<Void> updatePlanner(@PathVariable Long plannerId){
+
+        try {
+            ppService.deletePersonalPlanner(plannerId);
+            return ResponseEntity.noContent().build();
+        } catch (IllegalArgumentException e) {
+        // 자원을 찾을 수 없을 경우 404 Not Found 반환
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+        // 기타 서버 오류 발생 시 500 Internal Server Error 반환
+            return ResponseEntity.internalServerError().build();
+    }
+
+    }
 
 
 
