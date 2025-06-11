@@ -1,6 +1,7 @@
 package GRWM.backend.service;
 
 import GRWM.backend.dto.PersonalPlannerCreateRequestDto;
+import GRWM.backend.dto.PersonalPlannerListResponseDto;
 import GRWM.backend.entity.Member;
 import GRWM.backend.entity.PersonalPlanner;
 import GRWM.backend.repository.MemberRepository;
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -36,8 +38,22 @@ public class PersonalPlannerService {
         return savedPlanner.getId();
     }
 
-    public List<PersonalPlanner> findPersonalPlannerList(User user){
-        return ppRepository.findAll();
+    public List<PersonalPlannerListResponseDto> findPersonalPlannerList(Long memberId){
+
+        Member searchMember = memberRepository.getReferenceById(memberId);
+        List<PersonalPlanner> plannerList = ppRepository.findByCreator(searchMember);
+
+        List<PersonalPlannerListResponseDto> dtoList = new ArrayList<>();
+
+        for(PersonalPlanner planner : plannerList){
+            PersonalPlannerListResponseDto dto = new PersonalPlannerListResponseDto(
+                    planner.getCreator().getId(), planner.getName(), planner.getExplanation(), planner.getProfileImage()
+            );
+
+            dtoList.add(dto);
+        }
+
+        return dtoList;
     }
 
 

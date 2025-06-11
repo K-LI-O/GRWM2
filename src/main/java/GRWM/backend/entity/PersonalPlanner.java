@@ -28,6 +28,7 @@ public class PersonalPlanner {
 
     // 사용자와의 단방향 다대일 관계
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "creator_id")
     private Member creator;
 
     // 플래너의 스케줄(일대다)

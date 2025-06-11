@@ -1,11 +1,13 @@
 package GRWM.backend.controller;
 
 import GRWM.backend.dto.PersonalPlannerCreateRequestDto;
-import GRWM.backend.entity.PersonalPlanner;
+import GRWM.backend.dto.PersonalPlannerListResponseDto;
 import GRWM.backend.service.PersonalPlannerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,6 +29,21 @@ public class PersonalPlannerController {
 
         Long savedPlannerId = ppService.createPersonalPlanner(dto);
         return ResponseEntity.ok(savedPlannerId);
+    }
+
+
+    /*
+    함수명 : showPlannerList
+    기능 : userId로 생성한 플래너 리스트를 조회한다.
+    매개변수 : Long userId
+    반환값 : List<PersonalPlannerListResponseDto> 플래너 dto list 반환
+     */
+
+    @GetMapping("list/{userId}")
+    public List<PersonalPlannerListResponseDto> showPlannerList(@PathVariable Long userId){ // userId
+        List<PersonalPlannerListResponseDto> dto = ppService.findPersonalPlannerList(userId);
+
+        return dto;
     }
 
 
