@@ -4,10 +4,7 @@ import GRWM.backend.dto.MemberCreateRequestDto;
 import GRWM.backend.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,13 +16,13 @@ public class MemberController {
 
     /*
     함수명 : isDuplicateValidation
-    기능 : 200 ok와 함께 isDuplicate 의 bool 값을 전달한다. 반환값이 true 라면 같은 아이디의 회원이 존재한다.
-    매개변수 : String
+    기능 : 200 ok와 함께 isDuplicate 의 bool 값을 전달한다. 반환값이 true 라면 같은 로그인 아이디의 회원이 존재한다.
+    매개변수 : String userId(로그인 아이디입니다)
     반환값 : ResponseEntity<Boolean>
 
      */
-    @GetMapping("/create/check-id")
-    public ResponseEntity<Boolean> idDuplicateValidation(String userId){
+    @GetMapping("/create/check-id/{userId}")
+    public ResponseEntity<Boolean> idDuplicateValidation(@PathVariable String userId){
         boolean isDuplicate = memberService.findDuplicateLoginId(userId);
         if(isDuplicate){
             return ResponseEntity.ok(true);
@@ -33,9 +30,18 @@ public class MemberController {
         return ResponseEntity.ok(false);
     }
 
+
+    /*
+    함수명 : createMember
+    기능 : 멤버 정보를 받아 저장하고, 생성 후 회원 아이디를 반환;
+    매개변수 : String username, String loginId, String password, String email
+    반환값 : ResponseEntity<Long>; 200 ok와 사용자 ID(DB 테이블 Id, 로그인 아이디 아님)를 반환한다
+
+     */
     @PostMapping("/create")
-    public void createMember(MemberCreateRequestDto dto) {
-        memberService.createMember(dto);
+    public ResponseEntity<Long> createMember(@RequestBody MemberCreateRequestDto dto) {
+        Long savedMemberId = memberService.createMember(dto);
+        return ResponseEntity.ok(savedMemberId);
     }
 
 

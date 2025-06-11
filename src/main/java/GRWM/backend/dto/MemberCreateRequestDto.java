@@ -1,10 +1,12 @@
 package GRWM.backend.dto;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class MemberCreateRequestDto {
 
     private String username;
@@ -14,8 +16,6 @@ public class MemberCreateRequestDto {
     private String password;
 
     private String email;
-
-    public MemberCreateRequestDto() {}
 
 
     /*

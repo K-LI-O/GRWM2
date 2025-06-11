@@ -19,10 +19,12 @@ public class MemberService {
 
 
 
-    public void createMember(MemberCreateRequestDto dto){
+    public Long createMember(MemberCreateRequestDto dto){
         Member member = new Member(dto.getUsername(), dto.getLoginId(), dto.getPassword(), dto.getEmail());
 
-        memberRepository.save(member);
+        Member savedMember = memberRepository.save(member);
+
+        return savedMember.getId();
     }
 
 }
