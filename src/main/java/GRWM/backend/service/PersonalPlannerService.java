@@ -1,6 +1,7 @@
 package GRWM.backend.service;
 
 import GRWM.backend.dto.PersonalPlannerCreateRequestDto;
+import GRWM.backend.dto.PersonalPlannerDto;
 import GRWM.backend.dto.PersonalPlannerListResponseDto;
 import GRWM.backend.entity.Member;
 import GRWM.backend.entity.PersonalPlanner;
@@ -48,16 +49,16 @@ public class PersonalPlannerService {
     반환값 : List<PersonalPlannerListResponseDto> 플래너 dto list 반환
      */
 
-    public List<PersonalPlannerListResponseDto> findPersonalPlannerList(Long memberId){
+    public List<PersonalPlannerDto> findPersonalPlannerList(Long memberId){
 
         Member searchMember = memberRepository.getReferenceById(memberId);
         List<PersonalPlanner> plannerList = ppRepository.findByCreator(searchMember);
 
-        List<PersonalPlannerListResponseDto> dtoList = new ArrayList<>();
+        List<PersonalPlannerDto> dtoList = new ArrayList<>();
 
         for(PersonalPlanner planner : plannerList){
-            PersonalPlannerListResponseDto dto = new PersonalPlannerListResponseDto(
-                    planner.getCreator().getId(), planner.getName(), planner.getExplanation(), planner.getProfileImage()
+            PersonalPlannerDto dto = new PersonalPlannerDto(
+                    planner.getId(), planner.getName(), planner.getExplanation(), planner.getProfileImage()
             );
 
             dtoList.add(dto);
@@ -83,6 +84,11 @@ public class PersonalPlannerService {
             throw new IllegalArgumentException("Planner not found with ID: " + plannerId);
         }
     }
+
+//    public PersonalPlannerListResponseDto upDatePersonalPlanner(PersonalPlannerListResponseDto dto){
+//
+//
+//    }
 
 
 

@@ -1,6 +1,7 @@
 package GRWM.backend.controller;
 
 import GRWM.backend.dto.PersonalPlannerCreateRequestDto;
+import GRWM.backend.dto.PersonalPlannerDto;
 import GRWM.backend.dto.PersonalPlannerListResponseDto;
 import GRWM.backend.service.PersonalPlannerService;
 import lombok.RequiredArgsConstructor;
@@ -40,12 +41,19 @@ public class PersonalPlannerController {
      */
 
     @GetMapping("list/{userId}")
-    public List<PersonalPlannerListResponseDto> showPlannerList(@PathVariable Long userId){ // userId
-        List<PersonalPlannerListResponseDto> dto = ppService.findPersonalPlannerList(userId);
+    public List<PersonalPlannerDto> showPlannerList(@PathVariable Long userId){ // userId
+        List<PersonalPlannerDto> dto = ppService.findPersonalPlannerList(userId);
 
         return dto;
     }
 
+
+        /*
+    함수명 : editPlanner
+    기능 : plannerId로 생성한 플래너의 elements를 불러온다
+    매개변수 : Long plannerId
+    반환값 : Long userId, String title, String explanation, String profileImageLink
+     */
 
     @GetMapping("list/{plannerId}/edit")
     public PersonalPlannerListResponseDto editPlanner(@PathVariable Long plannerId){
@@ -53,6 +61,11 @@ public class PersonalPlannerController {
 
         return dto;
     }
+
+//    @PutMapping("list/{plannerId}/edit")
+//    public PersonalPlannerListResponseDto updatePlanner(@RequestBody PersonalPlannerListResponseDto dto){
+//
+//    }
 
 
 
