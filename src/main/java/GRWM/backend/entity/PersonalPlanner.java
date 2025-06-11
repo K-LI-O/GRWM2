@@ -13,6 +13,7 @@ import lombok.Setter;
 public class PersonalPlanner {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "PERSONAL_PLANNER_ID")
     private Long id;
 
@@ -34,7 +35,7 @@ public class PersonalPlanner {
 
     // 플래너의 카테고리(일대다)
     // 단방향 매핑 처리로 삭제
-    public PersonalPlanner(String name, String explanation, String profileImage, Member creator){
+    public PersonalPlanner(Member creator, String name, String explanation, String profileImage){
         this.name = name;
         this.explanation = explanation;
         this.profileImage = profileImage;

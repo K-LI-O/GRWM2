@@ -9,7 +9,7 @@ import org.antlr.v4.runtime.misc.NotNull;
 @Setter
 public class PersonalPlannerCreateRequestDto {
 
-    private String creatorId;
+    private Long creatorId;
 
     private String title;
 
@@ -20,7 +20,7 @@ public class PersonalPlannerCreateRequestDto {
 
     public PersonalPlannerCreateRequestDto() {}
 
-    public PersonalPlannerCreateRequestDto(String creatorId, String title, String explanation, String profileImageLink) {
+    public PersonalPlannerCreateRequestDto(Long creatorId, String title, String explanation, String profileImageLink) {
         this.creatorId = creatorId;
         this.title = title;
         this.explanation = explanation;
