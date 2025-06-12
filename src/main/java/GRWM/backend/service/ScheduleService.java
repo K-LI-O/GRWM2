@@ -2,6 +2,7 @@ package GRWM.backend.service;
 
 import GRWM.backend.dto.CategoryInfoDto;
 import GRWM.backend.dto.PersonalScheduleCreateRequestDto;
+import GRWM.backend.dto.PersonalScheduleDateTimeDto;
 import GRWM.backend.dto.PersonalScheduleDto;
 import GRWM.backend.entity.Member;
 import GRWM.backend.entity.PersonalPlanner;
@@ -124,8 +125,9 @@ public class ScheduleService {
     함수명 : updateSchedule
     기능 : 플래너의 스케줄을 업데이트한다.
     매개변수 : Long scheduleId
-    반환값 : dto ;
+    반환값 : void ;
      */
+
 
     @Transactional
     public void updateSchedule(Long scheduleId, PersonalScheduleDto dto){
@@ -155,6 +157,34 @@ public class ScheduleService {
         schedule.setFinishDateTime(dto.getFinishDateTime());
         schedule.setLocation(dto.getLocation());
         schedule.setMemo(dto.getMemo());
+    }
+
+
+
+
+    // 시간 업데이트
+    /*
+    함수명 : updateScheduleDateTime
+    기능 : 플래너의 스케줄 시간만 업데이트한다.
+    매개변수 : Long scheduleId, PersonalScheduleDateTimeDto dto
+    반환값 : void ;
+     */
+
+    @Transactional
+    public void updateScheduleDateTime(Long scheduleId, PersonalScheduleDateTimeDto dto){
+
+        Optional<Schedule> optionalSchedule = scheduleRepository.findById(scheduleId);
+        Schedule schedule;
+
+        if(optionalSchedule.isPresent()){
+            schedule = optionalSchedule.get();
+        } else {
+            // 스케줄을 찾지 못했을 때의 로직
+            throw new IllegalArgumentException("schedule not found with ID: " + scheduleId);
+        }
+
+        schedule.setStartDateTime(dto.getStartDateTime());
+        schedule.setFinishDateTime(dto.getFinishDateTime());
     }
 
 

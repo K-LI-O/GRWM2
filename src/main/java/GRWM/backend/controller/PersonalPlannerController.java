@@ -96,7 +96,7 @@ public class PersonalPlannerController {
         } catch (Exception e) {
         // 기타 서버 오류 발생 시 500 Internal Server Error 반환
             return ResponseEntity.internalServerError().build();
-    }
+        }
 
     }
 

@@ -2,6 +2,7 @@ package GRWM.backend.controller;
 
 
 import GRWM.backend.dto.PersonalScheduleCreateRequestDto;
+import GRWM.backend.dto.PersonalScheduleDateTimeDto;
 import GRWM.backend.dto.PersonalScheduleDto;
 import GRWM.backend.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
@@ -87,6 +88,20 @@ public class PersonalScheduleController {
             return ResponseEntity.internalServerError().build();
         }
 
+    }
+
+
+    /*
+    함수명 : editScheduleDateTime
+    기능 : 플래너의 스케줄의 날짜와 시간을 수정한다
+    매개변수 : Long scheduleId, PersonalScheduleDto dto
+    반환값 : planner
+     */
+
+    @PatchMapping("{plannerId}/{scheduleId}/move")
+    public void editDateTime(@PathVariable Long plannerId, @PathVariable Long scheduleId, @RequestBody PersonalScheduleDateTimeDto dto){
+
+        scheduleService.updateScheduleDateTime(scheduleId, dto);
     }
 
 
