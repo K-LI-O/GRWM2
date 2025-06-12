@@ -1,6 +1,7 @@
 package GRWM.backend.entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,6 +16,7 @@ public class PersonalPlanner {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "PERSONAL_PLANNER_ID")
+    @Setter(AccessLevel.NONE)
     private Long id;
 
     @Column
