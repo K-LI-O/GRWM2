@@ -82,14 +82,14 @@ public class ScheduleService {
             throw new IllegalArgumentException("schedule not found with ID: " + scheduleId);
         }
 
-        Long categoryId;
+        String categoryName;
         if(schedule.getPlannerCategory() == null){
-            categoryId = 0L; // 카테고리를 선택하지 않을 시 0 반환;
+            categoryName = null; // 카테고리를 선택하지 않을 시 0 반환;
         } else{
-            categoryId = schedule.getPlannerCategory().getId();
+            categoryName = schedule.getPlannerCategory().getName();
         }
 
-        PersonalScheduleDto dto = new PersonalScheduleDto(schedule.getId(), categoryId, schedule.getTitle(),
+        PersonalScheduleDto dto = new PersonalScheduleDto(schedule.getId(), schedule.getTitle(), categoryName,
                 schedule.getStartDateTime(), schedule.getFinishDateTime(), schedule.getLocation(), schedule.getMemo());
 
         return dto;

@@ -16,10 +16,10 @@ public class PersonalScheduleDto {
 
     private Long scheduleId;
 
-    private Long categoryId;
-
 
     private String title;
+
+    private String category;
 
     private LocalDateTime startDateTime;
 
