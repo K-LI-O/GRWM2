@@ -1,5 +1,6 @@
 package GRWM.backend.dto;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,14 +10,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PersonalPlannerDto {
+public class CategoryInfoDto {
 
-    private Long plannerId;
+    private Long categoryId;
 
-    private String title;
+    private String categoryName;
 
-    private String explanation;
-
-    private String profileImageLink;
-
+    private String color;
 }

@@ -16,10 +16,9 @@ public class PersonalScheduleDto {
 
     private Long scheduleId;
 
-
     private String title;
 
-    private String category;
+    private CategoryInfoDto category; //카테고리명 반환
 
     private LocalDateTime startDateTime;
 
@@ -30,3 +29,5 @@ public class PersonalScheduleDto {
     private String memo;
 
 }
+
+

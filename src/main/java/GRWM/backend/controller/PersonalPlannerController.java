@@ -71,7 +71,7 @@ public class PersonalPlannerController {
      */
 
     @PutMapping("list/{plannerId}/edit")
-    public PersonalPlannerDto updatePlanner(@RequestBody PersonalPlannerDto dto){
+    public PersonalPlannerDto updatePlanner(@PathVariable Long plannerId, @RequestBody PersonalPlannerDto dto){
 
         return ppService.upDatePersonalPlanner(dto);
     }
