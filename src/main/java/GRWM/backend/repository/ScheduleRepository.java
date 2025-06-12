@@ -1,9 +1,9 @@
 package GRWM.backend.repository;
 
-import org.springframework.stereotype.Repository;
+import GRWM.backend.entity.Schedule;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-@Repository
-public class ScheduleRepository {
+public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 
 
 
