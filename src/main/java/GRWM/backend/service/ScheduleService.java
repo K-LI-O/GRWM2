@@ -1,10 +1,6 @@
 package GRWM.backend.service;
 
-import GRWM.backend.dto.CategoryInfoDto;
-import GRWM.backend.dto.PersonalScheduleCreateRequestDto;
-import GRWM.backend.dto.PersonalScheduleDateTimeDto;
-import GRWM.backend.dto.PersonalScheduleDto;
-import GRWM.backend.entity.Member;
+import GRWM.backend.dto.personalPlanner.*;
 import GRWM.backend.entity.PersonalPlanner;
 import GRWM.backend.entity.PlannerCategory;
 import GRWM.backend.entity.Schedule;
@@ -17,9 +13,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.YearMonth;
+import java.time.temporal.TemporalAdjusters;
+import java.time.temporal.WeekFields;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
-
-import static java.util.Optional.ofNullable;
 
 @Service
 @RequiredArgsConstructor
@@ -186,6 +187,169 @@ public class ScheduleService {
         schedule.setStartDateTime(dto.getStartDateTime());
         schedule.setFinishDateTime(dto.getFinishDateTime());
     }
+
+
+
+    // 먼슬리
+    /* GET
+    함수 이름 : showScheduleListMonthly
+    기능 : 각 달마다의 일정 리스트를 보여준다.
+    매개변수 : Long plannerId, int year, int month
+    반환값 : List<dto>
+     */
+
+    public List<PersonalScheduleSimpleDto> showScheduleListMonthly(Long plannerId,
+                                                                   int year,
+                                                                   int month){
+        // 날짜 형식으로 변환
+        YearMonth yearMonth = YearMonth.of(year, month);
+        LocalDate startDate = yearMonth.atDay(1); // 해당 월의 첫째 날 (예: 2025-06-01)
+        LocalDate finishDate = yearMonth.atEndOfMonth();    // 해당 월의 마지막 날 (예: 2025-06-30)
+
+
+        // 시작할 DateTime 구하기
+        // 끝낼 DateTime 구하기
+        LocalDateTime startDateTime = startDate.atStartOfDay(); // 2025-06-01T00:00:00
+        LocalDateTime finishDateTime = finishDate.atTime(23, 59, 59, 999999999); // 2025-06-30T23:59:59.999999999
+
+        // 스케줄 객체 리스트 가져오기, 빈 dtoList 생성
+        List<Schedule> monthlySchedule = scheduleRepository.findByPersonalPlannerIdAndStartDateTimeBetweenOrderByStartDateTimeAsc(plannerId, startDateTime, finishDateTime);
+        List<PersonalScheduleSimpleDto> dtoList = new ArrayList<>();
+
+
+        // dtoList 채우기
+        for(Schedule schedule : monthlySchedule) {
+
+            PersonalScheduleSimpleDto dto;
+            if(schedule.getPlannerCategory() == null){
+                dto = new PersonalScheduleSimpleDto(schedule.getId(), schedule.getTitle(),
+                        null, null,
+                        schedule.getStartDateTime(), schedule.getFinishDateTime()
+                );
+
+            } else{
+
+                dto = new PersonalScheduleSimpleDto(schedule.getId(), schedule.getTitle(),
+                        schedule.getPlannerCategory().getName(), schedule.getPlannerCategory().getColor(),
+                        schedule.getStartDateTime(), schedule.getFinishDateTime()
+                );
+            }
+
+            dtoList.add(dto);
+        }
+
+        return dtoList;
+    }
+
+    // 위클리
+    /*
+    함수 이름 : showScheduleListsWeekly
+    기능 : 각 주마다의 일정 리스트를 보여준다.
+    매개변수 : Long plannerId, int year, int weekNumber
+    반환값 : List<dto>
+     */
+
+    public List<PersonalScheduleSimpleDto> showScheduleListWeekly(Long plannerId,
+                                                                  int year, int weekOfYear) {
+
+        // ISO 8601 WeekFields 인스턴스 생성 (월요일이 한 주의 시작, 최소 일수는 4일)
+        WeekFields weekFields = WeekFields.ISO;
+
+        // 특정 년도의 1월 1일로 시작
+        LocalDate date = LocalDate.of(year, 1, 1);
+
+        // 해당 주의 첫날(월요일) 찾기
+        LocalDate firstDayOfTargetWeek = date.with(weekFields.weekOfYear(), weekOfYear)
+                .with(TemporalAdjusters.previousOrSame(weekFields.getFirstDayOfWeek()));
+
+
+        // 해당 주의 마지막날(일요일) 찾기
+        LocalDate lastDayOfTargetWeek = firstDayOfTargetWeek.with(TemporalAdjusters.nextOrSame(weekFields.getFirstDayOfWeek().plus(6)));
+
+        // LocalDateTime 으로 변환 (날짜 범위 시작은 자정, 종료는 그 날의 마지막 밀리초)
+        LocalDateTime startDateTime = firstDayOfTargetWeek.atStartOfDay(); // 해당 주의 월요일 00:00:00
+        LocalDateTime finishDateTime = lastDayOfTargetWeek.atTime(23, 59, 59, 999999999); // 해당 주의 일요일 23:59:59.999999999
+
+        List<Schedule> weeklySchedule = scheduleRepository.findByPersonalPlannerIdAndStartDateTimeBetweenOrderByStartDateTimeAsc(plannerId,
+                startDateTime, finishDateTime);
+
+
+        List<PersonalScheduleSimpleDto> dtoList = new ArrayList<>();
+
+
+        // dtoList 채우기
+        for(Schedule schedule : weeklySchedule) {
+
+            PersonalScheduleSimpleDto dto;
+            if(schedule.getPlannerCategory() == null){
+                dto = new PersonalScheduleSimpleDto(schedule.getId(), schedule.getTitle(),
+                        null, null,
+                        schedule.getStartDateTime(), schedule.getFinishDateTime()
+                );
+
+            } else{
+
+                dto = new PersonalScheduleSimpleDto(schedule.getId(), schedule.getTitle(),
+                        schedule.getPlannerCategory().getName(), schedule.getPlannerCategory().getColor(),
+                        schedule.getStartDateTime(), schedule.getFinishDateTime()
+                );
+            }
+
+            dtoList.add(dto);
+        }
+
+        return dtoList;
+    }
+
+
+    // 데일리
+    /* GET
+    함수 이름 : showScheduleListDaily
+    기능 : 각 하루마다의 일정 리스트를 보여준다.
+    매개변수 : pathVariable int year, int month, int day
+    반환값 : List<dto>
+     */
+
+    public List<PersonalScheduleSimpleDto> showScheduleListDaily(Long plannerId,
+                                                                 int year, int month, int day){
+        // 날짜 형식으로 변환
+        YearMonth yearMonth = YearMonth.of(year, month);
+        LocalDate startDate = yearMonth.atDay(day);
+
+        LocalDateTime startDateTime = startDate.atStartOfDay(); // 2025-06-01T00:00:00
+        LocalDateTime finishDateTime = startDate.atTime(23, 59, 59, 999999999); // 2025-06-30T23:59:59.999999999
+
+
+        // 스케줄 객체 리스트 가져오기, 빈 dtoList 생성
+        List<Schedule> monthlySchedule = scheduleRepository.findByPersonalPlannerIdAndStartDateTimeBetweenOrderByStartDateTimeAsc(plannerId, startDateTime,finishDateTime);
+        List<PersonalScheduleSimpleDto> dtoList = new ArrayList<>();
+
+
+        // dtoList 채우기
+        for(Schedule schedule : monthlySchedule) {
+
+            PersonalScheduleSimpleDto dto;
+            if(schedule.getPlannerCategory() == null){
+                dto = new PersonalScheduleSimpleDto(schedule.getId(), schedule.getTitle(),
+                        null, null,
+                        schedule.getStartDateTime(), schedule.getFinishDateTime()
+                );
+
+            } else{
+
+                dto = new PersonalScheduleSimpleDto(schedule.getId(), schedule.getTitle(),
+                        schedule.getPlannerCategory().getName(), schedule.getPlannerCategory().getColor(),
+                        schedule.getStartDateTime(), schedule.getFinishDateTime()
+                );
+            }
+
+            dtoList.add(dto);
+        }
+
+        return dtoList;
+
+    }
+
 
 
 

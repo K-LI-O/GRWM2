@@ -1,6 +1,5 @@
-package GRWM.backend.dto;
+package GRWM.backend.dto.personalPlanner;
 
-import GRWM.backend.service.PlannerCategoryService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

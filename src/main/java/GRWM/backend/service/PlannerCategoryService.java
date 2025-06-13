@@ -1,7 +1,7 @@
 package GRWM.backend.service;
 
-import GRWM.backend.dto.CategoryInfoDto;
-import GRWM.backend.dto.PlannerCategoryCreateRequestDto;
+import GRWM.backend.dto.personalPlanner.CategoryInfoDto;
+import GRWM.backend.dto.personalPlanner.PlannerCategoryCreateRequestDto;
 import GRWM.backend.entity.PersonalPlanner;
 import GRWM.backend.entity.PlannerCategory;
 import GRWM.backend.repository.PersonalPlannerRepository;

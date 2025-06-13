@@ -1,8 +1,8 @@
 package GRWM.backend.controller;
 
 
-import GRWM.backend.dto.CategoryInfoDto;
-import GRWM.backend.dto.PlannerCategoryCreateRequestDto;
+import GRWM.backend.dto.personalPlanner.CategoryInfoDto;
+import GRWM.backend.dto.personalPlanner.PlannerCategoryCreateRequestDto;
 import GRWM.backend.service.PlannerCategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
