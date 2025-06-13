@@ -1,9 +1,9 @@
 package GRWM.backend.controller;
 
 
-import GRWM.backend.dto.PersonalScheduleCreateRequestDto;
-import GRWM.backend.dto.PersonalScheduleDateTimeDto;
-import GRWM.backend.dto.PersonalScheduleDto;
+import GRWM.backend.dto.personalPlanner.PersonalScheduleCreateRequestDto;
+import GRWM.backend.dto.personalPlanner.PersonalScheduleDateTimeDto;
+import GRWM.backend.dto.personalPlanner.PersonalScheduleDto;
 import GRWM.backend.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

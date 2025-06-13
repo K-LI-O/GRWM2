@@ -1,6 +1,6 @@
 package GRWM.backend.controller;
 
-import GRWM.backend.dto.MemberCreateRequestDto;
+import GRWM.backend.dto.personalPlanner.MemberCreateRequestDto;
 import GRWM.backend.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

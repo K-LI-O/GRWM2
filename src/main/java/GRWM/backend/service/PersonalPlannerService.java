@@ -1,14 +1,13 @@
 package GRWM.backend.service;
 
-import GRWM.backend.dto.PersonalPlannerCreateRequestDto;
-import GRWM.backend.dto.PersonalPlannerDto;
-import GRWM.backend.dto.PersonalPlannerListResponseDto;
+import GRWM.backend.dto.personalPlanner.PersonalPlannerCreateRequestDto;
+import GRWM.backend.dto.personalPlanner.PersonalPlannerDto;
+import GRWM.backend.dto.personalPlanner.PersonalPlannerListResponseDto;
 import GRWM.backend.entity.Member;
 import GRWM.backend.entity.PersonalPlanner;
 import GRWM.backend.repository.MemberRepository;
 import GRWM.backend.repository.PersonalPlannerRepository;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

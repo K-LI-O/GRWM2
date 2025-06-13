@@ -1,4 +1,4 @@
-package GRWM.backend.dto;
+package GRWM.backend.dto.personalPlanner;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

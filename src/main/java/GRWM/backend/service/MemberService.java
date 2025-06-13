@@ -1,6 +1,6 @@
 package GRWM.backend.service;
 
-import GRWM.backend.dto.MemberCreateRequestDto;
+import GRWM.backend.dto.personalPlanner.MemberCreateRequestDto;
 import GRWM.backend.entity.Member;
 import GRWM.backend.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;

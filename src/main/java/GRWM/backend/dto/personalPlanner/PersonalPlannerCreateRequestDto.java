@@ -1,9 +1,7 @@
-package GRWM.backend.dto;
+package GRWM.backend.dto.personalPlanner;
 
-import GRWM.backend.entity.Member;
 import lombok.Getter;
 import lombok.Setter;
-import org.antlr.v4.runtime.misc.NotNull;
 
 @Getter
 @Setter

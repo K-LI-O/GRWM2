@@ -1,8 +1,8 @@
 package GRWM.backend.controller;
 
-import GRWM.backend.dto.PersonalPlannerCreateRequestDto;
-import GRWM.backend.dto.PersonalPlannerDto;
-import GRWM.backend.dto.PersonalPlannerListResponseDto;
+import GRWM.backend.dto.personalPlanner.PersonalPlannerCreateRequestDto;
+import GRWM.backend.dto.personalPlanner.PersonalPlannerDto;
+import GRWM.backend.dto.personalPlanner.PersonalPlannerListResponseDto;
 import GRWM.backend.service.PersonalPlannerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
