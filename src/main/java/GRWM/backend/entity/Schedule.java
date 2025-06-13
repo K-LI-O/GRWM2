@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 
@@ -16,7 +18,7 @@ public class Schedule {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "SCHEDULE_ID)")
+    @Column(name = "schedule_id")
     private Long id;
 
     @Column
@@ -38,11 +40,13 @@ public class Schedule {
 
     // 플래너와의 단방향 다대일 관계
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "planner_id")
     private PersonalPlanner personalPlanner;
 
     // 카테고리와의 단방향 다대일 관계
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = true)
+    @JoinColumn(name = "category_id", nullable = true)
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     private PlannerCategory plannerCategory;
 
 
