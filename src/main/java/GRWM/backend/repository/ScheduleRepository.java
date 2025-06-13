@@ -10,4 +10,5 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 
     List<Schedule> findByPersonalPlannerIdAndStartDateTimeBetweenOrderByStartDateTimeAsc(Long plannerId, LocalDateTime startDateTime, LocalDateTime endDateTime);
 
+    List<Schedule> findByPersonalPlannerIdAndTitleContainingOrLocationContainingOrMemoContaining(Long plannerId, String titleKeyword, String locationKeyword, String memoKeyword);
 }

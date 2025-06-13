@@ -73,4 +73,21 @@ public class PersonalPlannerScheduleListController {
     }
 
 
+
+        /*
+    함수명 : searchScheduleByKeyword
+    기능 : 플래너 제목의 키워드로 플래너의 스케줄을 검색한다
+    매개변수 : Long plannerId, String keyword
+    반환값 : List<plannerScheduleSimpleDto>
+     */
+
+    @GetMapping("/search/{keyword}")
+    public List<PersonalScheduleSimpleDto> searchScheduleByKeyword(@PathVariable Long plannerId,
+                                                                   @PathVariable String keyword) {
+
+        return scheduleService.searchScheduleByKeyword(plannerId, keyword);
+
+    }
+
+
 }

@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Entity
 @Getter
@@ -18,18 +21,18 @@ public class Member {
     @Setter(AccessLevel.NONE)
     private Long id;
 
-    @Column
+    @Column(nullable = false)
     private String username;
 
     // 로그인 및 회원가입
 
-    @Column
+    @Column(nullable = false)
     private String loginId;
 
-    @Column
+    @Column(nullable = false)
     private String password;
 
-    @Column
+    @Column(nullable = false)
     private String email;
 
     // 개인 플래너
@@ -38,7 +41,9 @@ public class Member {
 
     // 채팅방
 
-    private String chatName;
+    @OneToMany(mappedBy = "member")
+    private List<ChatRoomMember> chatRoomMembers = new ArrayList<>();
+
 
     // 커뮤니티
 

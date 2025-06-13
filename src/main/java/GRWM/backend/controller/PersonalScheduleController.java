@@ -4,10 +4,13 @@ package GRWM.backend.controller;
 import GRWM.backend.dto.personalPlanner.PersonalScheduleCreateRequestDto;
 import GRWM.backend.dto.personalPlanner.PersonalScheduleDateTimeDto;
 import GRWM.backend.dto.personalPlanner.PersonalScheduleDto;
+
 import GRWM.backend.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -112,6 +115,7 @@ public class PersonalScheduleController {
             return ResponseEntity.internalServerError().build();
         }
     }
+
 
 
 

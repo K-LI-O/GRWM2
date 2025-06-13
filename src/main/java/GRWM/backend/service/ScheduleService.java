@@ -351,6 +351,47 @@ public class ScheduleService {
     }
 
 
+    /*
+    함수명 : searchScheduleByKeyword
+    기능 : 플래너 제목의 키워드로 플래너의 스케줄을 검색한다
+    매개변수 : Long plannerId, String keyword
+    반환값 : List<plannerScheduleSimpleDto>
+     */
+
+    public List<PersonalScheduleSimpleDto> searchScheduleByKeyword(Long plannerId, String keyword){
+
+        // 해당하는 객체 리스트 가져오기
+        List<Schedule> schedules = scheduleRepository.findByPersonalPlannerIdAndTitleContainingOrLocationContainingOrMemoContaining(
+                plannerId, keyword, keyword, keyword);
+        List<PersonalScheduleSimpleDto> dtoList = new ArrayList<>();
+
+        // dto 리스트 채우기
+        for(Schedule schedule : schedules) {
+
+            PersonalScheduleSimpleDto dto;
+            if(schedule.getPlannerCategory() == null){
+                dto = new PersonalScheduleSimpleDto(schedule.getId(), schedule.getTitle(),
+                        null, null,
+                        schedule.getStartDateTime(), schedule.getFinishDateTime()
+                );
+
+            } else{
+
+                dto = new PersonalScheduleSimpleDto(schedule.getId(), schedule.getTitle(),
+                        schedule.getPlannerCategory().getName(), schedule.getPlannerCategory().getColor(),
+                        schedule.getStartDateTime(), schedule.getFinishDateTime()
+                );
+            }
+
+            dtoList.add(dto);
+        }
+
+        return dtoList;
+
+
+
+    }
+
 
 
 
