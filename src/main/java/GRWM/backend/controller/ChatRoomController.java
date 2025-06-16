@@ -3,8 +3,11 @@ package GRWM.backend.controller;
 
 import GRWM.backend.dto.ChatRoomCreateRequestDto;
 import GRWM.backend.dto.ChatRoomEditDto;
+import GRWM.backend.dto.ChatRoomPasswordDto;
+import GRWM.backend.dto.personalPlanner.ChatRoomJoinDto;
 import GRWM.backend.service.ChatRoomService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +27,6 @@ public class ChatRoomController {
 
     @PostMapping("/create")
     public Long createChatRoom(@RequestBody ChatRoomCreateRequestDto dto){
-
         return chatRoomService.createChatRoom(dto);
     }
 
@@ -82,6 +84,54 @@ public class ChatRoomController {
         }
 
     }
+
+
+    /* POST
+    함수명 : verifyChatRoomPassword
+    기능 : 멤버의 채팅방 입장 이전 비밀번호가 있는 경우 검증 로직
+    매개 변수 : requestBody String password
+    반환값 : ResponseEntity<Void> 200 / 403
+     */
+
+    @PostMapping("/{chatRoomId}/verify")
+    public ResponseEntity<Void> verifyChatRoomPassword(@PathVariable Long chatRoomId, @RequestBody ChatRoomPasswordDto dto){
+        boolean isRight = chatRoomService.verifyChatRoomPassword(chatRoomId, dto.getPassword());
+
+        if(isRight) {
+            return ResponseEntity.ok().build();
+        } else{
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        // if-else로 구현하였으나 추후 try-catch 문으로 수정할 것;
+
+    }
+
+
+
+
+    /* POST
+    함수명 : JoinChatRoom
+    기능 : 멤버가 채팅방에 입장
+    매개 변수 : path variable userId, path variable chatRoomId, String chatName(단일 스트링)
+    반환값 : ResponseEntity<Void>
+     */
+
+    @PostMapping("/{chatRoomId}/join")
+    public ResponseEntity<Void> joinChatRoom(@PathVariable Long chatRoomId,
+                                             @RequestBody ChatRoomJoinDto dto){
+
+        try{
+            chatRoomService.joinChatRoom(dto.getUserId(), chatRoomId, dto.getChatName());
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+    }
+
+
+
+
+
 
 
 
