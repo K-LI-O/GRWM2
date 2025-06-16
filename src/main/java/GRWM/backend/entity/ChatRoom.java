@@ -13,10 +13,11 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+
 public class ChatRoom {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "chatroom_id")
     @Setter(AccessLevel.NONE)
     private Long id;
@@ -43,5 +44,16 @@ public class ChatRoom {
 
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ChatRoomMember> chatRoomMembers = new ArrayList<>();
+
+
+    // 생성자
+
+    public ChatRoom(String name, String description, boolean isPrivate, String password, int maxMembers, Member owner){
+        this.name = name;
+        this.description = description;
+        this.isPrivate = isPrivate;
+        this.password = password;
+        this.maxMembers = maxMembers;
+    }
 
 }
