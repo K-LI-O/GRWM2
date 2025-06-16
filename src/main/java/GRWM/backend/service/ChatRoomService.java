@@ -3,6 +3,8 @@ package GRWM.backend.service;
 
 import GRWM.backend.dto.ChatRoomCreateRequestDto;
 import GRWM.backend.dto.ChatRoomEditDto;
+import GRWM.backend.dto.ChatRoomShowDto;
+import GRWM.backend.dto.personalPlanner.CategoryInfoDto;
 import GRWM.backend.entity.ChatRoom;
 import GRWM.backend.entity.ChatRoomMember;
 import GRWM.backend.entity.Member;
@@ -15,8 +17,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
-
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -181,6 +185,8 @@ public class ChatRoomService {
         ChatRoom chatRoom;
         try{
             chatRoom = chatRoomRepository.getReferenceById(chatRoomId);
+            int currentNumber = chatRoom.getCurrentMembers();
+            chatRoom.setCurrentMembers(currentNumber + 1);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -192,6 +198,65 @@ public class ChatRoomService {
         chatRoomMemberRepository.save(joinInfo);
 
        // 끗.
+    }
+
+
+    /*
+    함수명 : showChatRoomInfo
+    기능 : 특정 채팅방 하나의 정보를 전달한다
+    매개변수 : path variable chatRoomId
+    반환값 : Dto; 채팅방명, description, isPrivate, 현재 입장한 사람들;
+     */
+
+    public ChatRoomShowDto showChatRoomInfo(Long chatRoomId){
+
+        // 채팅방 객체 가져오기
+        Optional<ChatRoom> optionalChatRoom = chatRoomRepository.findById(chatRoomId);
+        ChatRoom chatRoom;
+
+        if(optionalChatRoom.isPresent()){
+            chatRoom = optionalChatRoom.get();
+        } else {
+            // 플래너를 찾지 못했을 때의 로직
+            throw new IllegalArgumentException("Planner not found with ID: " + chatRoomId);
+        }
+
+        // dto에 정보 싣기
+        ChatRoomShowDto dto = new ChatRoomShowDto(chatRoom.getName(), chatRoom.getDescription(), chatRoom.isPrivate(), chatRoom.getMaxMembers(), chatRoom.getCurrentMembers());
+
+        return dto;
+    }
+
+
+    /*
+    함수명 : showJoinedChatRoomListInfo
+    기능 : 사용자가 입장해 있는 채팅방들의 정보를 전달한다
+    매개변수 : path var Long userId
+    반환값 : Dto list; 채팅방명, description, isPrivate, 최대 인원, 현재 입장한 사람들;
+     */
+
+    public List<ChatRoomShowDto> showJoinedChatRoomListDto(Long userId){
+
+        // 유저 아이디로 채팅방과 멤버의 중간 테이블 리스트 찾아오기
+        List<ChatRoomMember> joinedChatRoomMemberList = chatRoomMemberRepository.findByMember_Id(userId);
+
+        // 채팅방 객체 찾아오기
+        List<ChatRoom> joinedChatRoomList = joinedChatRoomMemberList.stream()
+                .map(ChatRoomMember::getChatRoom) // getChatRoom()을 통해 연관된 ChatRoom 객체 로드
+                .collect(Collectors.toList());
+
+        // 채팅방 객체 dto로 변환
+
+        List<ChatRoomShowDto> dtoList = new ArrayList<>();
+        for(ChatRoom chatRoom : joinedChatRoomList){
+            ChatRoomShowDto dto = new ChatRoomShowDto(chatRoom.getName(), chatRoom.getDescription(),
+                    chatRoom.isPrivate(), chatRoom.getMaxMembers(), chatRoom.getCurrentMembers());
+
+            dtoList.add(dto);
+        }
+
+        // 반환
+        return dtoList;
     }
 
 

@@ -20,4 +20,8 @@ public class ChatRoomTag {
 
     @Column(nullable = false)
     private String content;
+
+//    @ManyToMany
+//    private ChatRoom chatRoom;
+
 }

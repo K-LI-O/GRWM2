@@ -46,6 +46,11 @@ public class ChatRoom {
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ChatRoomMember> chatRoomMembers = new ArrayList<>();
 
+//    @ManyToMany
+//    private List<ChatRoomTag> chatRoomTags = new ArrayList<>();
+
+    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL)
+    private List<ChatRoomAnnouncement> announcements = new ArrayList<>();
 
     // 생성자
 

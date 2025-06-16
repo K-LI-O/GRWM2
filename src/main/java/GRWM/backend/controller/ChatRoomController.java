@@ -4,12 +4,16 @@ package GRWM.backend.controller;
 import GRWM.backend.dto.ChatRoomCreateRequestDto;
 import GRWM.backend.dto.ChatRoomEditDto;
 import GRWM.backend.dto.ChatRoomPasswordDto;
+import GRWM.backend.dto.ChatRoomShowDto;
 import GRWM.backend.dto.personalPlanner.ChatRoomJoinDto;
 import GRWM.backend.service.ChatRoomService;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/chat-room")
@@ -129,7 +133,49 @@ public class ChatRoomController {
     }
 
 
+    /*
+    함수명 : showChatRoomInfo
+    기능 : 특정 채팅방 하나의 정보를 전달한다
+    매개변수 : path variable chatRoomId
+    반환값 : Dto; 채팅방명, description, isPrivate, 현재 입장한 사람들;
+     */
 
+    @GetMapping("/show/{chatRoomId}")
+    public ChatRoomShowDto showChatRoomInfo(@PathVariable Long chatRoomId){
+        return chatRoomService.showChatRoomInfo(chatRoomId);
+    }
+
+
+
+    /*
+    함수명 : showJoinedChatRoomListInfo
+    기능 : 사용자가 입장해 있는 채팅방들의 정보를 전달한다
+    매개변수 : path var Long userId
+    반환값 : Dto; 채팅방명, description, isPrivate, 최대 인원, 현재 입장한 사람들;
+     */
+
+    @GetMapping("/show/{userId}/joinlist")
+    public List<ChatRoomShowDto> showJoinedChatRoomListInfo(@PathVariable Long userId){
+        return chatRoomService.showJoinedChatRoomListDto(userId);
+
+    }
+
+
+
+    /*
+    함수명 : 채팅방 검색
+    기능 : 키워드로 채팅방을 검색한다.
+    매개변수 : path variable 키워드
+    반환값 : Dto; 채팅방명, description, isPrivate, 최대 인원 현재 입장한 사람들;
+     */
+
+
+    /*
+    함수명 : 채팅방 공지 띄우기
+    기능 : 채팅방 공지 저장하고 바로 내용 리턴.
+    매개변수 : path variable chatRoomId, path variable userId, requestBody dto
+    반환값 : Dto; 채팅방명, description, isPrivate, 최대 인원 현재 입장한 사람들;
+     */
 
 
 

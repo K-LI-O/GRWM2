@@ -23,6 +23,12 @@ public class ChatRoomAnnouncement {
 
     private boolean isMain;
 
+    // 채팅방과 공지는 일대다 관계
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "chatroom_id")
+    private ChatRoom chatRoom;
+
 
     public ChatRoomAnnouncement(String content, boolean isMain){
         this.content = content;
