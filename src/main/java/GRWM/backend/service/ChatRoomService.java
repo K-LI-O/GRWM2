@@ -1,13 +1,13 @@
 package GRWM.backend.service;
 
 
-import GRWM.backend.dto.ChatRoomCreateRequestDto;
-import GRWM.backend.dto.ChatRoomEditDto;
-import GRWM.backend.dto.ChatRoomShowDto;
+import GRWM.backend.dto.*;
 import GRWM.backend.dto.personalPlanner.CategoryInfoDto;
 import GRWM.backend.entity.ChatRoom;
+import GRWM.backend.entity.ChatRoomAnnouncement;
 import GRWM.backend.entity.ChatRoomMember;
 import GRWM.backend.entity.Member;
+import GRWM.backend.repository.ChatRoomAnnouncementRepository;
 import GRWM.backend.repository.ChatRoomMemberRepository;
 import GRWM.backend.repository.ChatRoomRepository;
 import GRWM.backend.repository.MemberRepository;
@@ -29,6 +29,7 @@ public class ChatRoomService {
     private final ChatRoomRepository chatRoomRepository;
     private final MemberRepository memberRepository;
     private final ChatRoomMemberRepository chatRoomMemberRepository;
+    private final ChatRoomAnnouncementRepository announcementRepository;
 
     /* POST
     함수명 : createChatRoom
@@ -258,6 +259,83 @@ public class ChatRoomService {
         // 반환
         return dtoList;
     }
+
+
+
+    /*
+    함수명 : searchChatRoomListByTag
+    기능 : 키워드로 채팅방을 검색한다.
+    매개변수 : path variable String tag
+    반환값 : Dto; String chatRoomName, String description, Bool isPrivate, int maxMembers int currentMembers;
+     */
+
+//    public List<ChatRoomAnnouncementDto> searchChatRoomListByTag(String tag){
+//
+//        //
+//    }
+
+
+        /*
+    함수명 : createAnnouncement
+    기능 : 채팅방 공지 저장하고 바로 내용 리턴.
+    매개변수 :
+    path variable chatRoomId,
+    requestBody 공지 dto : Long userId(작성자), String content, Bool isMain();
+
+    반환값 : Dto - Long id, String content, Bool isMain, LocalDateTime createdAt, String writerChatName;
+     */
+
+
+    @Transactional
+    public Long createAnnouncement(Long chatRoomId,
+                                   ChatRoomAnnouncementCreateDto dto){
+
+        // 채팅방 객체 가져오기
+        ChatRoom chatRoom = chatRoomRepository.getReferenceById(chatRoomId);
+
+        // 채팅방 아이디와 사용자 아이디로 채팅방-멤버 객체 가져오기, 기반으로 멤버 객체 가져오기
+        ChatRoomMember joinedMember = chatRoomMemberRepository.findByMember_IdAndChatRoom_Id(dto.getUserId(), chatRoomId);
+        String chatName = joinedMember.getChatName();
+
+
+        // 새로운 announcement 객체 생성
+        ChatRoomAnnouncement announcement = new ChatRoomAnnouncement(dto.getContent(), chatRoom, chatName);
+
+        ChatRoomAnnouncement savedAnnouncement = announcementRepository.save(announcement);
+
+        return savedAnnouncement.getId();
+    }
+
+
+
+
+
+    /*
+    함수명 : showMainAnnouncement
+    기능 : 채팅방에서 가장 최근에 생성한 공지 반환
+    매개변수 :
+    path variable Long chatRoomId,
+
+    반환값 : Dto - Long id, String content, LocalDateTime createdAt, String writerChatName;
+     */
+
+    @Transactional(readOnly = true)
+    public ChatRoomAnnouncementDto showMainAnnouncement(Long chatRoomId){
+
+        // 특정 채팅방에서 가장 최근에 올라간 공지 불러오기
+        ChatRoomAnnouncement mainAnnouncement = announcementRepository.findFirstByChatRoom_IdOrderByCreatedAtDesc(chatRoomId);
+
+        // dto에 담기
+        ChatRoomAnnouncementDto dto = new ChatRoomAnnouncementDto(
+                mainAnnouncement.getId(),
+                mainAnnouncement.getContent(),
+                mainAnnouncement.getCreatedAt(),
+                mainAnnouncement.getWriterChatName());
+
+        return dto;
+
+    }
+
 
 
 

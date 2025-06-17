@@ -1,13 +1,8 @@
 package GRWM.backend.controller;
 
 
-import GRWM.backend.dto.ChatRoomCreateRequestDto;
-import GRWM.backend.dto.ChatRoomEditDto;
-import GRWM.backend.dto.ChatRoomPasswordDto;
-import GRWM.backend.dto.ChatRoomShowDto;
-import GRWM.backend.dto.personalPlanner.ChatRoomJoinDto;
+import GRWM.backend.dto.*;
 import GRWM.backend.service.ChatRoomService;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -165,17 +160,50 @@ public class ChatRoomController {
     /*
     함수명 : 채팅방 검색
     기능 : 키워드로 채팅방을 검색한다.
-    매개변수 : path variable 키워드
-    반환값 : Dto; 채팅방명, description, isPrivate, 최대 인원 현재 입장한 사람들;
-     */
+    매개변수 : path variable String tag
+    반환값 : Dto; String chatRoomName, String description, Bool isPrivate, int maxMembers int currentMembers;
+//     */
+//
+//    @GetMapping("search/{tag}")
+//    public List<ChatRoomShowDto> searchChatRoomListByTag(@PathVariable String tag){
+//
+//    }
 
 
     /*
-    함수명 : 채팅방 공지 띄우기
-    기능 : 채팅방 공지 저장하고 바로 내용 리턴.
-    매개변수 : path variable chatRoomId, path variable userId, requestBody dto
-    반환값 : Dto; 채팅방명, description, isPrivate, 최대 인원 현재 입장한 사람들;
+    함수명 : createAnnouncement
+    기능 : 채팅방 공지 저장하고 공지사항의 아이디 리턴
+    매개변수 :
+    path variable chatRoomId,
+    requestBody 공지 dto : Long userId(작성자), String content, Bool isMain();
+
+    반환값 : Dto - Long id, String content, LocalDateTime createdAt, String writerChatName;
      */
+
+    @PostMapping("/{chatRoomId}/announcement/create")
+    public Long createAnnouncement(@PathVariable Long chatRoomId,
+                                                      @RequestBody ChatRoomAnnouncementCreateDto dto){
+
+        return chatRoomService.createAnnouncement(chatRoomId, dto);
+    }
+
+    /*
+    함수명 : createAnnouncement
+    기능 : 채팅방 메인 공지 반환
+    매개변수 :
+    path variable chatRoomId,
+    requestBody 공지 dto : Long userId(작성자), String content, Bool isMain();
+
+    반환값 : Dto - Long id, String content, Bool isMain, LocalDateTime createdAt, String writerChatName;
+     */
+
+
+    @GetMapping("/{chatRoomId}/announcement/show/main")
+    public ChatRoomAnnouncementDto showMainAnnouncement(@PathVariable Long chatRoomId){
+
+        return chatRoomService.showMainAnnouncement(chatRoomId);
+
+    }
 
 
 

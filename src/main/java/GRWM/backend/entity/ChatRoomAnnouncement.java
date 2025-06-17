@@ -5,11 +5,16 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class ChatRoomAnnouncement {
 
     @Id
@@ -21,7 +26,10 @@ public class ChatRoomAnnouncement {
     @Column(nullable = false)
     private String content;
 
-    private boolean isMain;
+
+    // 공지 생성일
+    @CreatedDate
+    private LocalDateTime createdAt;
 
     // 채팅방과 공지는 일대다 관계
 
@@ -29,9 +37,14 @@ public class ChatRoomAnnouncement {
     @JoinColumn(name = "chatroom_id")
     private ChatRoom chatRoom;
 
+    private String writerChatName;
 
-    public ChatRoomAnnouncement(String content, boolean isMain){
+    // 작성자와 공지는 일대다 관계
+
+
+    public ChatRoomAnnouncement(String content, ChatRoom chatroom, String writerChatName){
         this.content = content;
-        this.isMain = isMain;
+        this.chatRoom = chatroom;
+        this.writerChatName = writerChatName;
     }
 }
