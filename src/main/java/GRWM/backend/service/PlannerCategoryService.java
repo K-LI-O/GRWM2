@@ -6,9 +6,9 @@ import GRWM.backend.entity.PersonalPlanner;
 import GRWM.backend.entity.PlannerCategory;
 import GRWM.backend.repository.PersonalPlannerRepository;
 import GRWM.backend.repository.PlannerCategoryRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +16,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class PlannerCategoryService {
 
     private final PersonalPlannerRepository ppRepository;
@@ -50,6 +51,7 @@ public class PlannerCategoryService {
     반환값 : List<CategoryInfoDto>
      */
 
+    @Transactional(readOnly = true)
     public List<CategoryInfoDto> showCategoryList(Long plannerId){
 
         // 플래너 찾기
@@ -76,7 +78,7 @@ public class PlannerCategoryService {
     반환값 : void
      */
 
-    @Transactional
+
     public void editCategory(Long categoryId, PlannerCategoryCreateRequestDto dto){
 
         // 카테고리 객체 가져오기

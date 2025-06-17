@@ -9,6 +9,7 @@ import GRWM.backend.repository.MemberRepository;
 import GRWM.backend.repository.PersonalPlannerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class PersonalPlannerService {
 
     private final PersonalPlannerRepository ppRepository;
@@ -48,6 +50,7 @@ public class PersonalPlannerService {
     반환값 : List<PersonalPlannerListResponseDto> 플래너 dto list 반환
      */
 
+    @Transactional(readOnly = true)
     public List<PersonalPlannerDto> findPersonalPlannerList(Long memberId){
 
         Member searchMember = memberRepository.getReferenceById(memberId);
@@ -67,6 +70,7 @@ public class PersonalPlannerService {
     }
 
 
+    @Transactional(readOnly = true)
     public PersonalPlannerListResponseDto editPersonalPlanner(Long plannerId){
         Optional<PersonalPlanner> optionalPlanner =  ppRepository.findById(plannerId);
 

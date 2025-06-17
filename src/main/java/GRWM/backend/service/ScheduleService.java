@@ -8,9 +8,9 @@ import GRWM.backend.repository.MemberRepository;
 import GRWM.backend.repository.PersonalPlannerRepository;
 import GRWM.backend.repository.PlannerCategoryRepository;
 import GRWM.backend.repository.ScheduleRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import java.time.LocalDate;
@@ -24,10 +24,10 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
-    private final MemberRepository memberRepository;
     private final PersonalPlannerRepository ppRepository;
     private final PlannerCategoryRepository categoryRepository;
 
@@ -75,6 +75,7 @@ public class ScheduleService {
     반환값 : dto
      */
 
+    @Transactional(readOnly = true)
     public PersonalScheduleDto showScheduleDetail(Long scheduleId){
 
         Optional<Schedule> optionalSchedule = scheduleRepository.findById(scheduleId);
@@ -130,7 +131,6 @@ public class ScheduleService {
      */
 
 
-    @Transactional
     public void updateSchedule(Long scheduleId, PersonalScheduleDto dto){
 
         Optional<Schedule> optionalSchedule = scheduleRepository.findById(scheduleId);
@@ -171,7 +171,6 @@ public class ScheduleService {
     반환값 : void ;
      */
 
-    @Transactional
     public void updateScheduleDateTime(Long scheduleId, PersonalScheduleDateTimeDto dto){
 
         Optional<Schedule> optionalSchedule = scheduleRepository.findById(scheduleId);
@@ -198,6 +197,7 @@ public class ScheduleService {
     반환값 : List<dto>
      */
 
+    @Transactional(readOnly = true)
     public List<PersonalScheduleSimpleDto> showScheduleListMonthly(Long plannerId,
                                                                    int year,
                                                                    int month){
@@ -249,6 +249,7 @@ public class ScheduleService {
     반환값 : List<dto>
      */
 
+    @Transactional(readOnly = true)
     public List<PersonalScheduleSimpleDto> showScheduleListWeekly(Long plannerId,
                                                                   int year, int weekOfYear) {
 
@@ -310,6 +311,7 @@ public class ScheduleService {
     반환값 : List<dto>
      */
 
+    @Transactional(readOnly = true)
     public List<PersonalScheduleSimpleDto> showScheduleListDaily(Long plannerId,
                                                                  int year, int month, int day){
         // 날짜 형식으로 변환
@@ -358,6 +360,7 @@ public class ScheduleService {
     반환값 : List<plannerScheduleSimpleDto>
      */
 
+    @Transactional(readOnly = true)
     public List<PersonalScheduleSimpleDto> searchScheduleByKeyword(Long plannerId, String keyword){
 
         // 해당하는 객체 리스트 가져오기

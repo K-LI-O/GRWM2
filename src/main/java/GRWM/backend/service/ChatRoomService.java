@@ -1,8 +1,7 @@
 package GRWM.backend.service;
 
 
-import GRWM.backend.dto.*;
-import GRWM.backend.dto.personalPlanner.CategoryInfoDto;
+import GRWM.backend.dto.chatRoom.*;
 import GRWM.backend.entity.ChatRoom;
 import GRWM.backend.entity.ChatRoomAnnouncement;
 import GRWM.backend.entity.ChatRoomMember;

@@ -1,17 +1,18 @@
-package GRWM.backend.dto;
+package GRWM.backend.dto.chatRoom;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Setter
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChatRoomJoinDto {
+public class ChatRoomEditDto {
 
-    private Long userId;
+    private String roomName;
 
-    private String chatName;
+    private String description;
 }

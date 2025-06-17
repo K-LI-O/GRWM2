@@ -8,7 +8,9 @@ import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -46,8 +48,15 @@ public class ChatRoom {
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ChatRoomMember> chatRoomMembers = new ArrayList<>();
 
-//    @ManyToMany
-//    private List<ChatRoomTag> chatRoomTags = new ArrayList<>();
+
+    // 채팅방의 태그 목록
+    @ManyToMany
+    @JoinTable(
+            name = "chatroom_hashtag", // 조인 테이블 이름
+            joinColumns = @JoinColumn(name = "chatroom_id"), // ChatRoom의 FK
+            inverseJoinColumns = @JoinColumn(name = "tag_id") // ChatRoomTag의 FK
+    )
+    private Set<ChatRoomTag> chatRoomTags = new HashSet<>();
 
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL)
     private List<ChatRoomAnnouncement> announcements = new ArrayList<>();

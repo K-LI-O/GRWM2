@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Getter
 @Setter
@@ -21,7 +24,7 @@ public class ChatRoomTag {
     @Column(nullable = false)
     private String content;
 
-//    @ManyToMany
-//    private ChatRoom chatRoom;
+    @ManyToMany(mappedBy = "chatRoomTags") // ChatRoom 엔티티의 "chatRoomTags" 필드에 의해 매핑됨
+    private Set<ChatRoom> chatRooms = new HashSet<>();
 
 }

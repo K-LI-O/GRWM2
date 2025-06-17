@@ -1,7 +1,6 @@
-package GRWM.backend.dto;
+package GRWM.backend.dto.chatRoom;
 
 
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
