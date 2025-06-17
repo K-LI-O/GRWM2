@@ -61,6 +61,18 @@ public class ChatRoom {
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL)
     private List<ChatRoomAnnouncement> announcements = new ArrayList<>();
 
+    // 채팅방의 메시지. 채팅방과 메시지의 관계는 일대다이다.
+    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL)
+    private List<ChatMessage> messages = new ArrayList<>();
+
+
+
+
+
+
+
+
+
     // 생성자
 
     public ChatRoom(String name, String description, boolean isPrivate, String password, int maxMembers, Member owner){

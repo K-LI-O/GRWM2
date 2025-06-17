@@ -1,7 +1,8 @@
 package GRWM.backend.controller;
 
 
-import GRWM.backend.dto.*;
+import GRWM.backend.dto.ReturnLongTypeDto;
+import GRWM.backend.dto.chatRoom.*;
 import GRWM.backend.service.ChatRoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,7 +26,8 @@ public class ChatRoomController {
      */
 
     @PostMapping("/create")
-    public Long createChatRoom(@RequestBody ChatRoomCreateRequestDto dto){
+    public ReturnLongTypeDto createChatRoom(@RequestBody ChatRoomCreateRequestDto dto){
+
         return chatRoomService.createChatRoom(dto);
     }
 

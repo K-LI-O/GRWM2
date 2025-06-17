@@ -1,6 +1,7 @@
 package GRWM.backend.service;
 
 
+import GRWM.backend.dto.ReturnLongTypeDto;
 import GRWM.backend.dto.chatRoom.*;
 import GRWM.backend.entity.ChatRoom;
 import GRWM.backend.entity.ChatRoomAnnouncement;
@@ -38,7 +39,7 @@ public class ChatRoomService {
      */
 
     @Transactional
-    public Long createChatRoom(ChatRoomCreateRequestDto dto){
+    public ReturnLongTypeDto createChatRoom(ChatRoomCreateRequestDto dto){
 
         Member member = memberRepository.getReferenceById(dto.getUserId());
 
@@ -54,7 +55,9 @@ public class ChatRoomService {
         ChatRoom chatRoom = new ChatRoom(dto.getRoomName(), dto.getDescription(), actualIsPrivate, dto.getPassword(), dto.getMaxMembers(), member);
         ChatRoom savedChatRoom = chatRoomRepository.save(chatRoom);
 
-        return savedChatRoom.getId();
+        // dto 생성;
+        ReturnLongTypeDto returnDto = new ReturnLongTypeDto(savedChatRoom.getId());
+        return returnDto;
     }
 
 
@@ -334,6 +337,11 @@ public class ChatRoomService {
         return dto;
 
     }
+
+
+
+
+
 
 
 
