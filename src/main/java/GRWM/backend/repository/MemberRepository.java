@@ -3,6 +3,8 @@ package GRWM.backend.repository;
 import GRWM.backend.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
+
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
     /*
@@ -12,5 +14,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     반환값 : boolean
      */
     boolean existsByLoginId(String loginId);
+
+    Optional<Member> findByLoginId(String loginId);
 
 }

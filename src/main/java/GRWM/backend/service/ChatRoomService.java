@@ -55,6 +55,10 @@ public class ChatRoomService {
         ChatRoom chatRoom = new ChatRoom(dto.getRoomName(), dto.getDescription(), actualIsPrivate, dto.getPassword(), dto.getMaxMembers(), member);
         ChatRoom savedChatRoom = chatRoomRepository.save(chatRoom);
 
+
+        // 방장의 채팅방 입장 // 하드코딩
+        joinChatRoom(dto.getUserId(), savedChatRoom.getId(), "농담곰러버");
+
         // dto 생성;
         ReturnLongTypeDto returnDto = new ReturnLongTypeDto(savedChatRoom.getId());
         return returnDto;
