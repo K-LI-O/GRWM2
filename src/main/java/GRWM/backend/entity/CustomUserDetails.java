@@ -9,11 +9,21 @@ import java.util.Collection;
 import java.util.List;
 
 
+
 @Getter
-@RequiredArgsConstructor
+
 public class CustomUserDetails implements UserDetails {
 
-    private final Member member;
+    private final String username;
+    private final String password;
+    private final Collection<? extends GrantedAuthority> authorities;
+
+    private boolean enabled;
+    private boolean accountNonExpired;
+    private boolean accountNonLocked;
+    private boolean credentialsNonExpired;
+
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -29,7 +39,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getPassword() {
-        return member.getPassword();
+        return this.password;
     }
 
 
@@ -42,7 +52,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return member.getLoginId();
+        return this.username;
     }
 
 
@@ -96,4 +106,26 @@ public class CustomUserDetails implements UserDetails {
     public boolean isEnabled() {
         return true; // 실제 로직 구현
     }
+
+
+    public CustomUserDetails(String username, String password, Collection<? extends GrantedAuthority> authorities) {
+
+        this.username = username;
+        this.password = password;
+        this.authorities = authorities;
+        // 계정 상태는 기본적으로 true로 설정하거나, 필요시 토큰 클레임에 추가하여 사용
+        // 혹은 실제 DB에서 가져온 사용자 정보를 기반으로 설정
+    }
+
+    public CustomUserDetails(String username, Collection<? extends GrantedAuthority> authorities) {
+
+        this.username = username;
+        this.password = "";
+        this.authorities = authorities;
+        // 계정 상태는 기본적으로 true로 설정하거나, 필요시 토큰 클레임에 추가하여 사용
+        // 혹은 실제 DB에서 가져온 사용자 정보를 기반으로 설정
+    }
+
+
+
 }

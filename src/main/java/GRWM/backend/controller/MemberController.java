@@ -31,19 +31,6 @@ public class MemberController {
     }
 
 
-    /*
-    함수명 : createMember
-    기능 : 멤버 정보를 받아 저장하고, 생성 후 회원 아이디를 반환;
-    매개변수 : String username, String loginId, String password, String email
-    반환값 : ResponseEntity<Long>; 200 ok와 사용자 ID(DB 테이블 Id, 로그인 아이디 아님)를 반환한다
-
-     */
-    @PostMapping("/create")
-    public ResponseEntity<Long> createMember(@RequestBody MemberCreateRequestDto dto) {
-        Long savedMemberId = memberService.createMember(dto);
-        return ResponseEntity.ok(savedMemberId);
-    }
-
 
 
 }

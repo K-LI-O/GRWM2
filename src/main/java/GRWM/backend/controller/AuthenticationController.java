@@ -1,0 +1,65 @@
+package GRWM.backend.controller;
+
+
+import GRWM.backend.dto.auth.LoginRequestDto;
+import GRWM.backend.dto.auth.LoginTokenResponse;
+import GRWM.backend.dto.personalPlanner.MemberCreateRequestDto;
+import GRWM.backend.jwt.JwtTokenProvider;
+import GRWM.backend.service.MemberService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/auth")
+@RequiredArgsConstructor
+public class AuthenticationController {
+
+
+    private final AuthenticationManager authenticationManager;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final MemberService memberService;
+
+
+        /*
+    함수명 : createMember
+    기능 : 멤버 정보를 받아 저장하고, 생성 후 회원 아이디를 반환;
+    매개변수 : String username, String loginId, String password, String email
+    반환값 : ResponseEntity<Long>; 200 ok와 사용자 ID(DB 테이블 Id, 로그인 아이디 아님)를 반환한다
+
+     */
+
+    @PostMapping("/signup")
+    public ResponseEntity<Long> createMember(@RequestBody MemberCreateRequestDto dto) {
+        Long savedMemberId = memberService.createMember(dto);
+        return ResponseEntity.ok(savedMemberId);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginTokenResponse> login(@RequestBody LoginRequestDto dto){
+
+        // 1. 인증 객체 생성: 사용자가 입력한 아이디와 비밀번호를 담은 Authentication 객체 (아직 인증되지 않음)
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(dto.getLoginId(), dto.getPassword());
+
+        // 2. 인증 시도: AuthenticationManager를 통해 실제 인증 수행
+        // UserDetailsService와 PasswordEncoder가 여기서 활용됨
+        Authentication authentication = authenticationManager.authenticate(authenticationToken);
+
+        // 3. SecurityContextHolder에 인증 정보 저장 (선택 사항이지만 일반적)
+        // 이후 요청에서 @AuthenticationPrincipal 등으로 인증된 사용자 정보를 사용할 수 있게 됨
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // 4. JWT 토큰 생성
+        String jwt = jwtTokenProvider.generateToken(authentication);
+
+        // 5. 클라이언트에게 토큰 반환
+        return ResponseEntity.ok(new LoginTokenResponse(jwt, "Bearer"));
+
+    }
+
+}

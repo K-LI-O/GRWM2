@@ -4,9 +4,14 @@ import GRWM.backend.entity.CustomUserDetails;
 import GRWM.backend.entity.Member;
 import GRWM.backend.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.util.Collection;
+import java.util.Collections;
 
 @Service
 @RequiredArgsConstructor
@@ -30,8 +35,12 @@ public class CustomUserDetailsService implements UserDetailsService {
         Member member = memberRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + loginId));
 
+
+        Collection<? extends GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+
+
         // 2. 조회된 Member 객체를 기반으로 UserDetails 구현체 (MemberDetails)를 생성하여 반환합니다.
         // MemberDetails는 Member 객체의 정보를 스프링 시큐리티가 요구하는 UserDetails 형태로 변환합니다.
-        return new CustomUserDetails(member);
+        return new CustomUserDetails(member.getLoginId(), member.getPassword(),authorities);
     }
 }
