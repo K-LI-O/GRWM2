@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 public class ChatMessageDto {
 
     private Long messageId;
+    private int type; //(0 chat, 1 join, 2 leave)
     private String content;
     private LocalDateTime createdAt;
     private String writerChatName;

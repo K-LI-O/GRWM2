@@ -11,6 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ChatMessageCreateDto {
 
+    private Long chatRoomId;
     private String content;
     private String writerChatName;
 }

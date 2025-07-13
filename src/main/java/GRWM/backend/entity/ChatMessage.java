@@ -17,27 +17,53 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 public class ChatMessage {
 
+    public enum MessageType {
+        CHAT,
+        JOIN,
+        LEAVE
+    }
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "chatroom_id")
-    private Long id;
+    protected Long id;
 
-    private String content;
+    protected MessageType type;
+
+    protected String content;
 
     @CreatedDate
-    private LocalDateTime createdAt;
+    protected LocalDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    private ChatRoom chatRoom;
+    protected ChatRoom chatRoom;
 
-    private String writerChatName;
+    protected String writerChatName;
 
 
-    public ChatMessage(String content, ChatRoom chatRoom, String writerChatName){
+    public ChatMessage(String content, int type, ChatRoom chatRoom, String writerChatName){
         this.content = content;
+        this.type = castingIntToEnum(type);
         this.chatRoom = chatRoom;
         this.writerChatName = writerChatName;
+    }
+
+    /**
+     * name : castingIntToEnum
+     * functionality : cast an int variable to enum
+     * param : int code
+     * return : MessageType
+     */
+    private MessageType castingIntToEnum(int code) {
+        for (MessageType type : MessageType.values()) {
+
+            if (type.ordinal() == code) {
+                return type;
+            }
+        }
+        // Handle invalid code:
+        throw new IllegalArgumentException("Invalid status code: " + code);
     }
 
 

@@ -33,8 +33,10 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // JWT를 사용하므로 CSRF 보호 비활성화
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 사용 안함
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/ws/chatroom/**").permitAll() // Ensure this matches your STOMP endpoint
                         .requestMatchers("/api/auth/**").permitAll() // 로그인, 회원가입 경로는 허용
                         .anyRequest().authenticated() // 나머지 요청은 JWT 인증 필요
+
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class); // JWT 필터 추가
 
