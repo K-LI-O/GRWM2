@@ -129,7 +129,7 @@ public class ChatMessageService {
                 savedMessage.getCreatedAt(),
                 savedMessage.getWriterChatName()
         );
-
+        System.out.println("save the message");
         return newDto;
     }
 

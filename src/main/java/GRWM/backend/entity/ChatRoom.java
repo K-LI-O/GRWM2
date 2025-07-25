@@ -75,7 +75,7 @@ public class ChatRoom {
 
     // 생성자
 
-    public ChatRoom(String name, String description, boolean isPrivate, String password, int maxMembers, Member owner){
+    public ChatRoom(String name, String description, List<Long> tags, boolean isPrivate, String password, int maxMembers, Member owner){
         this.name = name;
         this.description = description;
         this.isPrivate = isPrivate;

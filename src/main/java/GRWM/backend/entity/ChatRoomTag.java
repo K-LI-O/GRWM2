@@ -27,4 +27,9 @@ public class ChatRoomTag {
     @ManyToMany(mappedBy = "chatRoomTags") // ChatRoom 엔티티의 "chatRoomTags" 필드에 의해 매핑됨
     private Set<ChatRoom> chatRooms = new HashSet<>();
 
+
+    public ChatRoomTag(String content){
+        this.content = content;
+    }
+
 }

@@ -50,12 +50,24 @@ public class ChatRoomMessageController {
 
     @MessageMapping("/chat/{chatRoomId}/sendMessage") // Client sends to /app/chat/{roomId}/sendMessage
     @SendTo("/topic/chat/{chatRoomId}")              // Server broadcasts to /topic/chat/{roomId}
-    @PreAuthorize("isAuthenticated()")
+    // @PreAuthorize("isAuthenticated()")
     public ChatMessageDto sendMessage(@DestinationVariable Long chatRoomId, @Payload ChatMessageCreateDto dto) {
         // 메시지 처리 로직 (DB 저장 등)
         return chatMessageService.saveMessage(chatRoomId, dto);
 
     }
+
+
+
+    /**
+     * function name : deleteMessage
+     * functionality : 사용자의 메시지에 답장을 보낸다.
+     * param :
+     * return value :
+     */
+
+
+
 
 
 

@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -16,6 +18,8 @@ public class ChatRoomCreateRequestDto {
     private String roomName;
 
     private String description;
+
+    private List<Long> category;
 
     private Boolean isPrivate; // 공개(false) / 비공개방(true) = 비밀번호 유무와 동일
 
