@@ -12,4 +12,7 @@ public interface ChatRoomMemberRepository extends JpaRepository<ChatRoomMember, 
 
     ChatRoomMember findByMember_IdAndChatRoom_Id (Long memberId, Long chatRoomId);
 
+
+    ChatRoomMember findByChatName(String chatName);
+
 }

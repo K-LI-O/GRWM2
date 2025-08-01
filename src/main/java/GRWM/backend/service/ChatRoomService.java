@@ -3,7 +3,7 @@ package GRWM.backend.service;
 
 import GRWM.backend.dto.ChatMessageCreateDto;
 import GRWM.backend.dto.ChatMessageDto;
-import GRWM.backend.dto.ReturnLongTypeDto;
+
 import GRWM.backend.dto.chatRoom.*;
 import GRWM.backend.entity.*;
 import GRWM.backend.repository.*;
@@ -26,7 +26,7 @@ public class ChatRoomService {
     private final MemberRepository memberRepository;
     private final ChatRoomMemberRepository chatRoomMemberRepository;
     private final ChatRoomAnnouncementRepository announcementRepository;
-    private final ChatMessageRepository messageRepository;
+    private final ChatRoomTagRepository chatRoomTagRepository;
 
     /* POST
     함수명 : createChatRoom
@@ -48,9 +48,21 @@ public class ChatRoomService {
         // Boolean wrapper 풀기
         boolean actualIsPrivate = dto.getIsPrivate() != null ? dto.getIsPrivate() : false;
 
+        // 채팅방 카테고리 객체 불러오기
+
+        List<ChatRoomTag> tagList = new ArrayList<>();
+
+
+        for (Long l : dto.getCategory()) {
+            ChatRoomTag tag = chatRoomTagRepository.getReferenceById(l);
+            tagList.add(tag);
+        }
+
+
+
         // 채팅방 객체 생성
         ChatRoom chatRoom = new ChatRoom(
-                dto.getRoomName(), dto.getDescription(), dto.getCategory(), actualIsPrivate, dto.getPassword(), dto.getMaxMembers(), member);
+                dto.getRoomName(), dto.getDescription(), tagList, actualIsPrivate, dto.getPassword(), dto.getMaxMembers(), member);
         ChatRoom savedChatRoom = chatRoomRepository.save(chatRoom);
 
 
@@ -245,8 +257,18 @@ public class ChatRoomService {
             throw new IllegalArgumentException("Planner not found with ID: " + chatRoomId);
         }
 
+        // 카테고리 객체를 아이디로 바꾸기.
+        List<Long> catIdList = new ArrayList<>();
+        for(ChatRoomTag t : chatRoom.getChatRoomTags()){
+            catIdList.add(t.getId());
+        }
+
         // dto에 정보 싣기
-        ChatRoomShowDto dto = new ChatRoomShowDto(chatRoom.getName(), chatRoom.getDescription(), chatRoom.isPrivate(), chatRoom.getMaxMembers(), chatRoom.getCurrentMembers());
+        ChatRoomShowDto dto = new ChatRoomShowDto(
+                chatRoom.getName(),
+                chatRoom.getDescription(),
+                catIdList, chatRoom.isPrivate(),
+                chatRoom.getMaxMembers(), chatRoom.getCurrentMembers());
 
         return dto;
     }
@@ -273,8 +295,14 @@ public class ChatRoomService {
 
         List<ChatRoomShowDto> dtoList = new ArrayList<>();
         for(ChatRoom chatRoom : joinedChatRoomList){
-            ChatRoomShowDto dto = new ChatRoomShowDto(chatRoom.getName(), chatRoom.getDescription(),
-                    chatRoom.isPrivate(), chatRoom.getMaxMembers(), chatRoom.getCurrentMembers());
+            List<Long> tagList = new ArrayList<>();
+            for(ChatRoomTag t : chatRoom.getChatRoomTags()){
+                tagList.add(t.getId());
+            }
+            ChatRoomShowDto dto = new ChatRoomShowDto(
+                    chatRoom.getName(), chatRoom.getDescription(),
+                    tagList, chatRoom.isPrivate(), chatRoom.getMaxMembers(),
+                    chatRoom.getCurrentMembers());
 
             dtoList.add(dto);
         }

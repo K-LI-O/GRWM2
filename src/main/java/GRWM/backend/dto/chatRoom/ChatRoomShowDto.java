@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -15,6 +17,8 @@ public class ChatRoomShowDto {
     private String chatRoomName;
 
     private String description;
+
+    private List<Long> category;
 
     private boolean isPrivate; // 공개(false) / 비공개방(true) = 비밀번호 유무와 동일
 

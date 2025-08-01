@@ -26,77 +26,6 @@ public class ChatMessageService {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatRoomMemberRepository chatRoomMemberRepository;
 
-    /**
-     * name : save
-     * functionality : 사용자 입장 메시지를 저장한다.
-     * param :
-     * return :
-     */
-
-    public ChatMessageDto saveJoinMessage(Long chatRoomId, ChatRoomJoinDto dto){
-
-        // 채팅방 가져오기
-        ChatRoom chatRoom = chatRoomRepository.getReferenceById(chatRoomId);
-
-        // 메시지 객체 생성
-        ChatMessage message = new ChatMessage(
-                dto.getChatName()+ "님이 입장하셨습니다.",
-                ChatMessage.MessageType.JOIN.ordinal(),
-                chatRoom,
-                dto.getChatName()
-        );
-        ChatMessage savedMessage = messageRepository.save(message);
-
-        ChatMessageDto newDto = new ChatMessageDto(
-                savedMessage.getId(),
-                savedMessage.getType().ordinal(),
-                savedMessage.getContent(),
-                savedMessage.getCreatedAt(),
-                savedMessage.getWriterChatName()
-        );
-
-        return newDto;
-
-    }
-
-
-
-    /**
-     * name :
-     * functionality : 사용자 퇴장 메시지를 저장한다.
-     * @param chatRoomId
-     * @param userId
-     */
-
-    public ChatMessageDto saveLeaveMessage(Long userId, Long chatRoomId){
-
-        // 채팅방 가져오기
-        ChatRoom chatRoom = chatRoomRepository.getReferenceById(chatRoomId);
-
-        // 채팅방 사용자 가져오기
-
-        ChatRoomMember chatRoomMember = chatRoomMemberRepository.findByMember_IdAndChatRoom_Id(userId, chatRoomId);
-
-        // 메시지 객체 생성
-        ChatMessage message = new ChatMessage(
-                 chatRoomMember.getChatName()+ "님께서 퇴장하셨습니다. ",
-                ChatMessage.MessageType.LEAVE.ordinal(),
-                chatRoom,
-                chatRoomMember.getChatName()
-        );
-        ChatMessage savedMessage = messageRepository.save(message);
-
-        ChatMessageDto newDto = new ChatMessageDto(
-                savedMessage.getId(),
-                savedMessage.getType().ordinal(),
-                savedMessage.getContent(),
-                savedMessage.getCreatedAt(),
-                savedMessage.getWriterChatName()
-        );
-
-        return newDto;
-
-    }
 
     /*
     함수명 : saveMessage
@@ -108,12 +37,18 @@ public class ChatMessageService {
      */
 
     public ChatMessageDto saveMessage(Long chatRoomId, ChatMessageCreateDto dto){
-
+        System.out.println("come in\n");
         // 채팅방 가져오기
         ChatRoom chatRoom = chatRoomRepository.getReferenceById(chatRoomId);
+        System.out.println("get the chatroom obj\n");
+        // 멤버 아이디 가져오기
+        String chatName = dto.getWriterChatName();
+        Long memberId = chatRoomMemberRepository.findByChatName(chatName).getMember().getId();
+        System.out.println("get the member ID\n");
 
         // 메시지 객체 생성
         ChatMessage message = new ChatMessage(
+                memberId,
                 dto.getContent(),
                 ChatMessage.MessageType.CHAT.ordinal(),
                 chatRoom,
@@ -136,7 +71,7 @@ public class ChatMessageService {
 
     /*
     함수명 : showMessageList
-    기능 : 메시지 리스트를 DB 에 저장하고 리턴한다.
+    기능 : DB 에 저장된 메시지 리스트를 조회하여 반환한다.
     매개변수 : Long chatRoomId,
     반환값 : chatMessageDTO
 
@@ -162,7 +97,13 @@ public class ChatMessageService {
         return dtoList;
     }
 
+    // DeleteMessage
 
+    public void deleteMessage(Long messageId, Long memberId){
+        // 원하는 메시지 불러오기
+
+        // 메시지 삭제하기
+    }
 
 
 

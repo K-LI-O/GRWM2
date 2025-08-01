@@ -28,6 +28,7 @@ public class ChatMessage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "chatroom_id")
     protected Long id;
+    protected Long memberId;
 
     protected MessageType type;
 
@@ -42,7 +43,8 @@ public class ChatMessage {
     protected String writerChatName;
 
 
-    public ChatMessage(String content, int type, ChatRoom chatRoom, String writerChatName){
+    public ChatMessage(Long memberId, String content, int type, ChatRoom chatRoom, String writerChatName){
+        this.memberId = memberId;
         this.content = content;
         this.type = castingIntToEnum(type);
         this.chatRoom = chatRoom;

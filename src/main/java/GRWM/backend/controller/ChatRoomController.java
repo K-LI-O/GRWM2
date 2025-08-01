@@ -141,9 +141,8 @@ public class ChatRoomController {
     @PostMapping("/{chatRoomId}/{userId}/leave")
     public ResponseEntity<Void> joinChatRoom(@PathVariable Long chatRoomId,
                                              @PathVariable Long userId){
-
-
-        return ResponseEntity.ok().build();
+        chatRoomService.leaveChatRoom(userId, chatRoomId);
+        return ResponseEntity.noContent().build();
     }
 
 
