@@ -24,7 +24,7 @@ public class ChatRoomTag {
     @Column(nullable = false)
     private String content;
 
-    @ManyToMany(mappedBy = "chatRoomTags") // ChatRoom 엔티티의 "chatRoomTags" 필드에 의해 매핑됨
+    @OneToMany(mappedBy = "chatRoomTag", cascade = CascadeType.ALL) // ChatRoom 엔티티의 "chatRoomTags" 필드에 의해 매핑됨
     private Set<ChatRoom> chatRooms = new HashSet<>();
 
 

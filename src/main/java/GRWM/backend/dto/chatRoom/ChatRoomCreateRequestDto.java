@@ -19,7 +19,7 @@ public class ChatRoomCreateRequestDto {
 
     private String description;
 
-    private List<Long> category;
+    private String category;
 
     private Boolean isPrivate; // 공개(false) / 비공개방(true) = 비밀번호 유무와 동일
 

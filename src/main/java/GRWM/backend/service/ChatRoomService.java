@@ -49,20 +49,14 @@ public class ChatRoomService {
         boolean actualIsPrivate = dto.getIsPrivate() != null ? dto.getIsPrivate() : false;
 
         // 채팅방 카테고리 객체 불러오기
+        ChatRoomTag tag = chatRoomTagRepository.findByContent(dto.getCategory());
 
-        List<ChatRoomTag> tagList = new ArrayList<>();
-
-
-        for (Long l : dto.getCategory()) {
-            ChatRoomTag tag = chatRoomTagRepository.getReferenceById(l);
-            tagList.add(tag);
-        }
 
 
 
         // 채팅방 객체 생성
         ChatRoom chatRoom = new ChatRoom(
-                dto.getRoomName(), dto.getDescription(), tagList, actualIsPrivate, dto.getPassword(), dto.getMaxMembers(), member);
+                dto.getRoomName(), dto.getDescription(), tag, actualIsPrivate, dto.getPassword(), dto.getMaxMembers(), member);
         ChatRoom savedChatRoom = chatRoomRepository.save(chatRoom);
 
 
@@ -258,16 +252,13 @@ public class ChatRoomService {
         }
 
         // 카테고리 객체를 아이디로 바꾸기.
-        List<Long> catIdList = new ArrayList<>();
-        for(ChatRoomTag t : chatRoom.getChatRoomTags()){
-            catIdList.add(t.getId());
-        }
+        String tagContent = chatRoom.getChatRoomTag().getContent();
 
         // dto에 정보 싣기
         ChatRoomShowDto dto = new ChatRoomShowDto(
                 chatRoom.getName(),
                 chatRoom.getDescription(),
-                catIdList, chatRoom.isPrivate(),
+                tagContent, chatRoom.isPrivate(),
                 chatRoom.getMaxMembers(), chatRoom.getCurrentMembers());
 
         return dto;
@@ -295,13 +286,10 @@ public class ChatRoomService {
 
         List<ChatRoomShowDto> dtoList = new ArrayList<>();
         for(ChatRoom chatRoom : joinedChatRoomList){
-            List<Long> tagList = new ArrayList<>();
-            for(ChatRoomTag t : chatRoom.getChatRoomTags()){
-                tagList.add(t.getId());
-            }
+
             ChatRoomShowDto dto = new ChatRoomShowDto(
                     chatRoom.getName(), chatRoom.getDescription(),
-                    tagList, chatRoom.isPrivate(), chatRoom.getMaxMembers(),
+                    chatRoom.getChatRoomTag().getContent(), chatRoom.isPrivate(), chatRoom.getMaxMembers(),
                     chatRoom.getCurrentMembers());
 
             dtoList.add(dto);

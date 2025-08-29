@@ -34,6 +34,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 사용 안함
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/ws/chatroom/**").permitAll() // Ensure this matches your STOMP endpoint
+                        .requestMatchers("/api/chat-room/create").permitAll() // 임시 테스트용
                         .requestMatchers("/api/auth/**").permitAll() // 로그인, 회원가입 경로는 허용
                         .anyRequest().authenticated() // 나머지 요청은 JWT 인증 필요
 

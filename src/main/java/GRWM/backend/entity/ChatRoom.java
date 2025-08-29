@@ -49,15 +49,9 @@ public class ChatRoom {
     private List<ChatRoomMember> chatRoomMembers = new ArrayList<>();
 
 
-    // 채팅방의 태그 목록
-    @ManyToMany
-    @JoinTable(
-            name = "chatroom_cat", // 조인 테이블 이름
-            joinColumns = @JoinColumn(name = "chatroom_id"), // ChatRoom의 FK
-            inverseJoinColumns = @JoinColumn(name = "tag_id") // ChatRoomTag의 FK
-    )
-    @Column(nullable = true)
-    private List<ChatRoomTag> chatRoomTags = new ArrayList<>();
+    // 채팅방의 태그 한 개
+    @ManyToOne
+    private ChatRoomTag chatRoomTag = new ChatRoomTag();
 
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL)
     private List<ChatRoomAnnouncement> announcements = new ArrayList<>();
@@ -76,10 +70,10 @@ public class ChatRoom {
 
     // 생성자
 
-    public ChatRoom(String name, String description, List<ChatRoomTag> tags, boolean isPrivate, String password, int maxMembers, Member owner){
+    public ChatRoom(String name, String description, ChatRoomTag tag, boolean isPrivate, String password, int maxMembers, Member owner){
         this.name = name;
         this.description = description;
-        this.chatRoomTags = tags;
+        this.chatRoomTag = tag;
         this.isPrivate = isPrivate;
         this.password = password;
         this.maxMembers = maxMembers;
