@@ -58,7 +58,10 @@ public class AuthenticationController {
         String jwt = jwtTokenProvider.generateToken(authentication);
 
         // 5. 클라이언트에게 토큰 반환
-        return ResponseEntity.ok(new LoginTokenResponse(jwt, "Bearer"));
+        return ResponseEntity.ok(new LoginTokenResponse(
+                jwt,
+                "Bearer",
+                memberService.findUsernameByLoginId(dto.getLoginId())));
 
     }
 
