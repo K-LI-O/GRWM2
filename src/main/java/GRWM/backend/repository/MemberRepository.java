@@ -2,6 +2,8 @@ package GRWM.backend.repository;
 
 import GRWM.backend.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
@@ -17,6 +19,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     Optional<Member> findByLoginId(String loginId);
 
-    Optional<String> findUsernameByLoginId(String loginId);
+    @Query("SELECT m.username FROM Member m WHERE m.loginId = :loginId")
+    Optional<String> findUsernameByLoginId(@Param("loginId") String loginId);
 
 }

@@ -45,15 +45,8 @@ public class MemberService {
 
     public String findUsernameByLoginId(String loginId){
 
-        Optional<String> optionalUsername = memberRepository.findUsernameByLoginId(loginId);
-
-        String username = null;
-        try{
-            if(optionalUsername.isPresent()) username = optionalUsername.get();
-        } catch (Exception e) {
-            throw new RuntimeException("해당 사용자가 존재하지 않습니다.");
-        }
-        return username;
+        return memberRepository.findUsernameByLoginId(loginId)
+                .orElseThrow(() -> new RuntimeException("해당 사용자가 존재하지 않습니다."));
     }
 
 }
