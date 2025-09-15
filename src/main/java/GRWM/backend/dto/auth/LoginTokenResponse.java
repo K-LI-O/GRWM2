@@ -15,4 +15,5 @@ public class LoginTokenResponse {
     private String accessToken;
     private String tokenType; // "Bearer"
     private String username; // 사용자 이름 반환
+    private Long userId;
 }

@@ -49,4 +49,18 @@ public class MemberService {
                 .orElseThrow(() -> new RuntimeException("해당 사용자가 존재하지 않습니다."));
     }
 
+    /*
+    함수명 : findUsernameByLoginId
+    기능 : 로그인 아이디로 사용자 이름 반환
+    파라미터 : String loginId
+    반환값 : String username
+     */
+
+    public Long findUserIdByLoginId(String loginId){
+
+        return memberRepository.findIdByLoginId(loginId)
+                .orElseThrow(() -> new RuntimeException("해당 사용자가 존재하지 않습니다."));
+    }
+
+
 }

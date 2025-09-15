@@ -61,7 +61,9 @@ public class AuthenticationController {
         return ResponseEntity.ok(new LoginTokenResponse(
                 jwt,
                 "Bearer",
-                memberService.findUsernameByLoginId(dto.getLoginId())));
+                memberService.findUsernameByLoginId(dto.getLoginId()),
+                memberService.findUserIdByLoginId(dto.getLoginId())
+                ));
 
     }
 
