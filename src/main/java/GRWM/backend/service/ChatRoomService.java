@@ -49,8 +49,16 @@ public class ChatRoomService {
         boolean actualIsPrivate = dto.getIsPrivate() != null ? dto.getIsPrivate() : false;
 
         // 채팅방 카테고리 객체 불러오기
-        ChatRoomTag tag = chatRoomTagRepository.findByContent(dto.getCategory());
+        Optional<ChatRoomTag> optionalTag = chatRoomTagRepository.findById(dto.getCategory());
+        ChatRoomTag tag = null;
 
+        try {
+            if (optionalTag.isPresent()) {
+                tag = optionalTag.get();
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
 
 
