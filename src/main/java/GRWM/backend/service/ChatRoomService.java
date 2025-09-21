@@ -69,8 +69,7 @@ public class ChatRoomService {
         ChatRoom savedChatRoom = chatRoomRepository.save(chatRoom);
 
 
-        // 방장의 채팅방 입장 // 하드코딩
-        joinChatRoom(dto.getUserId(), savedChatRoom.getId(), "농담곰러버");
+        // 방장의 채팅방 입장 // 하드코딩이 있던 자리.
 
         // dto 생성;
         return savedChatRoom.getId();
