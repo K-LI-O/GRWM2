@@ -1,11 +1,12 @@
 package GRWM.backend.service;
 
 
-import GRWM.backend.dto.ChatMessageCreateDto;
-import GRWM.backend.dto.ChatMessageDto;
-
 import GRWM.backend.dto.chatRoom.*;
 import GRWM.backend.entity.*;
+import GRWM.backend.entity.chatroom.ChatRoom;
+import GRWM.backend.entity.chatroom.ChatRoomAnnouncement;
+import GRWM.backend.entity.chatroom.ChatRoomMember;
+import GRWM.backend.entity.chatroom.ChatRoomTag;
 import GRWM.backend.repository.*;
 import lombok.RequiredArgsConstructor;
 
@@ -264,6 +265,7 @@ public class ChatRoomService {
 
         // dto에 정보 싣기
         ChatRoomShowDto dto = new ChatRoomShowDto(
+                chatRoom.getId(),
                 chatRoom.getName(),
                 chatRoom.getDescription(),
                 tagContent, chatRoom.isPrivate(),
@@ -296,6 +298,7 @@ public class ChatRoomService {
         for(ChatRoom chatRoom : joinedChatRoomList){
 
             ChatRoomShowDto dto = new ChatRoomShowDto(
+                    chatRoom.getId(),
                     chatRoom.getName(), chatRoom.getDescription(),
                     chatRoom.getChatRoomTag().getContent(), chatRoom.isPrivate(), chatRoom.getMaxMembers(),
                     chatRoom.getCurrentMembers());

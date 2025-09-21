@@ -14,6 +14,8 @@ import java.util.List;
 @AllArgsConstructor
 public class ChatRoomShowDto {
 
+    private Long chatRoomId;
+
     private String chatRoomName;
 
     private String description;

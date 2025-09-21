@@ -1,7 +1,7 @@
-package GRWM.backend.controller;
+package GRWM.backend.controller.chatroom;
 
 
-import GRWM.backend.dto.ReturnLongTypeDto;
+import GRWM.backend.config.ChatRoomManager;
 import GRWM.backend.dto.chatRoom.*;
 import GRWM.backend.service.ChatRoomService;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +17,7 @@ import java.util.List;
 public class ChatRoomController {
 
     private final ChatRoomService chatRoomService;
+    private final ChatRoomManager chatRoomManager;
 
     /* POST
     함수명 : createChatRoom
@@ -28,7 +29,10 @@ public class ChatRoomController {
     @PostMapping("/create")
     public Long createChatRoom(@RequestBody ChatRoomCreateRequestDto dto){
 
-        return chatRoomService.createChatRoom(dto);
+        Long chatRoomId = chatRoomService.createChatRoom(dto);
+        chatRoomManager.createSetting(chatRoomId);
+
+        return chatRoomId;
     }
 
 
