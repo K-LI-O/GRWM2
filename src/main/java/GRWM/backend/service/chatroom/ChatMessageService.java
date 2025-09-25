@@ -1,4 +1,4 @@
-package GRWM.backend.service;
+package GRWM.backend.service.chatroom;
 
 import GRWM.backend.dto.ChatMessageCreateDto;
 import GRWM.backend.dto.ChatMessageDto;
@@ -61,6 +61,7 @@ public class ChatMessageService {
                 savedMessage.getContent(),
                 savedMessage.getCreatedAt(),
                 savedMessage.getWriterChatName()
+
         );
         System.out.println("save the message");
         return newDto;

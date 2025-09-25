@@ -1,5 +1,6 @@
 package GRWM.backend.entity.community;
 
+import GRWM.backend.entity.user.CommunityUser;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -19,8 +20,10 @@ public class UserBadge {
 
 
     @ManyToOne
+    @JoinColumn
     private Badge badge;
 
     @ManyToOne
+    @JoinColumn
     private CommunityUser user;
 }

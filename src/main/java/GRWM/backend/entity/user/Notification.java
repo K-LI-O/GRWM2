@@ -1,10 +1,7 @@
-package GRWM.backend.entity;
+package GRWM.backend.entity.user;
 
-import GRWM.backend.entity.community.CommunityUser;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,7 +17,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class Notification {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "notification_id")
+    @Setter(AccessLevel.NONE)
     Long id;
 
     String title;

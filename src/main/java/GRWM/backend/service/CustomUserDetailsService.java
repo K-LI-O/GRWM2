@@ -1,8 +1,8 @@
 package GRWM.backend.service;
 
-import GRWM.backend.entity.CustomUserDetails;
-import GRWM.backend.entity.Member;
-import GRWM.backend.repository.MemberRepository;
+import GRWM.backend.entity.user.CustomUserDetails;
+import GRWM.backend.entity.user.Member;
+import GRWM.backend.repository.user.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -41,6 +41,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         // 2. 조회된 Member 객체를 기반으로 UserDetails 구현체 (MemberDetails)를 생성하여 반환합니다.
         // MemberDetails는 Member 객체의 정보를 스프링 시큐리티가 요구하는 UserDetails 형태로 변환합니다.
-        return new CustomUserDetails(member.getLoginId(), member.getPassword(),authorities);
+        return new CustomUserDetails(member.getCommunityUser().getId(), member.getId(), member.getLoginId(), member.getPassword(),authorities);
     }
 }

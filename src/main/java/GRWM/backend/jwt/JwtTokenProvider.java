@@ -1,6 +1,6 @@
 package GRWM.backend.jwt;
 
-import GRWM.backend.entity.CustomUserDetails;
+import GRWM.backend.entity.user.CustomUserDetails;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -10,7 +10,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -46,6 +45,9 @@ public class JwtTokenProvider {
      */
     public String generateToken(Authentication authentication) {
         // 1. 권한 정보 가져오기
+
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(",")); // 콤마로 구분된 문자열로 변환 (예: "ROLE_USER,ROLE_ADMIN")
@@ -57,6 +59,8 @@ public class JwtTokenProvider {
         // 3. JWT 토큰 생성
         return Jwts.builder()
                 .setSubject(authentication.getName()) // subject: 사용자 ID (username)
+                .claim("userId", userDetails.getUserId()) // userId 추가
+                .claim("communityUserId", userDetails.getCommunityUserId()) // communityUserId 추가
                 .claim("auth", authorities) // "auth" 클레임에 권한 정보 저장
                 .setIssuedAt(new Date()) // 토큰 발행 시간
                 .setExpiration(validity) // 토큰 만료 시간
@@ -73,7 +77,15 @@ public class JwtTokenProvider {
 
     public Authentication getAuthentication(String token) {
 
-        Claims claims = parseClaims(token);
+        // 1. 토큰에서 클레임 추출
+        Claims claims = parseClaims(token); // parseClaims 함수가 JWT를 파싱하여 Claims를 반환한다고 가정
+
+        // 2. 클레임에서 정보 추출
+        String username = claims.getSubject();
+        Long userId = claims.get("userId", Long.class);
+        Long communityUserId = claims.get("communityUserId", Long.class);
+
+
         String authClaim = claims.get("auth", String.class);
         Collection<? extends GrantedAuthority> authorities;
 
@@ -88,14 +100,12 @@ public class JwtTokenProvider {
             authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
         }
 
-        String username = claims.getSubject();
+        // 3. CustomUserDetails 인스턴스 생성
+        CustomUserDetails principal = new CustomUserDetails(userId, communityUserId, username, authorities);
+        // 비밀번호는 이미 인증이 완료되었으므로 빈 문자열("") 또는 null을 전달
 
-        // ** 여기서 CustomUserDetails 의 새로운 생성자를 사용합니다.**
-        // MemberDetails 객체는 이제 Member 엔티티 조회 없이 username과 authorities로만 구성됩니다.
-        UserDetails principal = new CustomUserDetails(username, authorities); // 수정된 부분
-
-        return new UsernamePasswordAuthenticationToken(principal, null, authorities); // credential은 null 또는 ""
-    }
+        // 4. Authentication 객체 반환
+        return new UsernamePasswordAuthenticationToken(principal, null, authorities); }
 
     /**
      * JWT 토큰의 유효성을 검증합니다.

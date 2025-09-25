@@ -1,16 +1,21 @@
 package GRWM.backend.entity.community;
 
+import GRWM.backend.entity.user.CommunityUser;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
 @Getter
+@EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
 public class Post {
 
@@ -28,15 +33,18 @@ public class Post {
 
     private String visibility;
 
+    @CreatedDate
     private LocalDateTime createdAt;
 
+    @UpdateTimestamp
     private LocalDateTime updatedAt;
 
     @ManyToOne
+    @JoinColumn
     private CommunityUser user;
 
     @OneToMany(mappedBy = "post")
-    private List<Like> likeList;
+    private List<Liked> likedList;
 
     @OneToMany(mappedBy = "post")
     private List<Comment> commentList;

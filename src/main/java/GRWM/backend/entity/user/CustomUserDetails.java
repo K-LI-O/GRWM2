@@ -1,7 +1,6 @@
-package GRWM.backend.entity;
+package GRWM.backend.entity.user;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

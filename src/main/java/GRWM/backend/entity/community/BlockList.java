@@ -1,5 +1,6 @@
 package GRWM.backend.entity.community;
 
+import GRWM.backend.entity.user.CommunityUser;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

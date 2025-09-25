@@ -1,7 +1,7 @@
-package GRWM.backend.repository;
+package GRWM.backend.repository.personalplanner;
 
-import GRWM.backend.entity.Member;
-import GRWM.backend.entity.PersonalPlanner;
+import GRWM.backend.entity.user.Member;
+import GRWM.backend.entity.personalplanner.PersonalPlanner;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

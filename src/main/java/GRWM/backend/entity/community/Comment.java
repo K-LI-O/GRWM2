@@ -1,5 +1,6 @@
 package GRWM.backend.entity.community;
 
+import GRWM.backend.entity.user.CommunityUser;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -7,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -15,7 +17,7 @@ public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "reply_id")
+    @Column(name = "comment_id")
     @Setter(AccessLevel.NONE)
     private Long id;
 
@@ -24,8 +26,9 @@ public class Comment {
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
-
     private boolean isEdited;
+
+    private boolean isPrivate;
 
     private boolean isReply;
 
@@ -34,7 +37,14 @@ public class Comment {
     @ManyToOne
     private CommunityUser user;
 
-
     @ManyToOne
     private Post post;
+
+    @OneToMany(mappedBy = "rootComment")
+    private List<Reply> rootCommentList;
+
+    @OneToMany(mappedBy = "reply")
+    private List<Reply> replyList;
+
+
 }

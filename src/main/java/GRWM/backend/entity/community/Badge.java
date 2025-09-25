@@ -24,7 +24,7 @@ public class Badge {
 
     private String description;
 
-    @OneToMany
+    @OneToMany(mappedBy = "badge")
     private List<UserBadge> userBadgeList;
 
 }

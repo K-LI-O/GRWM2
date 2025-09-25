@@ -18,5 +18,6 @@ public class ChatMessageDto {
     private String content;
     private LocalDateTime createdAt;
     private String writerChatName;
+    // private boolean isMyChat;
 
 }

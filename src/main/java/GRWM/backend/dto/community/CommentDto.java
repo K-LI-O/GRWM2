@@ -14,15 +14,13 @@ public class CommentDto {
 
     private Long commentId;
 
-    private Long communityId;
+    private CommunityUserBriefDto userInfo;
 
     private String content;
 
-    private LocalDateTime createdAt;
+    private boolean isPrivate;
 
-    private boolean isUpdated;
-
-    private boolean isReply;
+    private boolean isEdited;
 
     // Nullable
     private Long rootCommentId;

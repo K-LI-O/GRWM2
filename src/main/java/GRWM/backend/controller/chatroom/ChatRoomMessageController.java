@@ -3,12 +3,14 @@ package GRWM.backend.controller.chatroom;
 
 import GRWM.backend.dto.ChatMessageCreateDto;
 import GRWM.backend.dto.ChatMessageDto;
-import GRWM.backend.service.ChatMessageService;
+import GRWM.backend.entity.user.CustomUserDetails;
+import GRWM.backend.service.chatroom.ChatMessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 
 
@@ -33,7 +35,7 @@ public class ChatRoomMessageController {
     @MessageMapping("/chat.{chatRoomId}.sendMessage") // Client sends to /app/chat/{roomId}/sendMessage
     @SendTo("/topic/chat.{chatRoomId}")              // Server broadcasts to /topic/chat/{roomId}
     // @PreAuthorize("isAuthenticated()")
-    public ChatMessageDto sendMessage(@DestinationVariable Long chatRoomId, @Payload ChatMessageCreateDto dto) {
+    public ChatMessageDto sendMessage(@DestinationVariable Long chatRoomId, @Payload ChatMessageCreateDto dto, @AuthenticationPrincipal CustomUserDetails userDetails) {
         // 메시지 처리 로직 (DB 저장 등)
         return chatMessageService.saveMessage(chatRoomId, dto);
 

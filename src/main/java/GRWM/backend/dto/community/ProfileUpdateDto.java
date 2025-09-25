@@ -10,16 +10,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostCreateDto {
+public class ProfileUpdateDto {
 
-    private String title;
-
-    // private List<String> imageList;
-
-    private String content;
-
-    private String visibility;
-
-    private Long communityId;
-
+    private String nickname;
+    private String profileImage;
+    private String description;
+    private String bannerImage;
 }

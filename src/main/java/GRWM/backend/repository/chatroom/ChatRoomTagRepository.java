@@ -1,4 +1,4 @@
-package GRWM.backend.repository;
+package GRWM.backend.repository.chatroom;
 
 import GRWM.backend.entity.chatroom.ChatRoomTag;
 import org.springframework.data.jpa.repository.JpaRepository;

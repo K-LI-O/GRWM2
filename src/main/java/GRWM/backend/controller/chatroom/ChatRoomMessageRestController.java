@@ -1,7 +1,7 @@
 package GRWM.backend.controller.chatroom;
 
 import GRWM.backend.dto.ChatMessageDto;
-import GRWM.backend.service.ChatMessageService;
+import GRWM.backend.service.chatroom.ChatMessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

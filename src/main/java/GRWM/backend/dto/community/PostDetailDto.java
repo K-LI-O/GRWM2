@@ -11,6 +11,10 @@ public class PostDetailDto {
 
     // + Like 수, 코멘트 수
 
+    private Long postId;
+
+    private Long communityId;
+
     private String title;
 
     // private List<String> imageList;
@@ -19,6 +23,9 @@ public class PostDetailDto {
 
     private String visibility;
 
-    private Long communityId;
+
+    private int likedCount;
+
+    private int commentCount;
 
 }

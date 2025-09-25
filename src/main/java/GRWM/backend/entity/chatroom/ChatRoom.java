@@ -1,6 +1,6 @@
 package GRWM.backend.entity.chatroom;
 
-import GRWM.backend.entity.Member;
+import GRWM.backend.entity.user.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -44,7 +44,7 @@ public class ChatRoom {
 
 
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ChatRoomMember> chatRoomMembers = new ArrayList<>();
+    private List<ChatRoomCommunity> chatRoomCommunity = new ArrayList<>();
 
 
     // 채팅방의 태그 한 개

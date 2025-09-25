@@ -1,4 +1,4 @@
-package GRWM.backend.repository;
+package GRWM.backend.repository.community;
 
 import GRWM.backend.entity.community.Hashtag;
 import org.springframework.data.jpa.repository.JpaRepository;

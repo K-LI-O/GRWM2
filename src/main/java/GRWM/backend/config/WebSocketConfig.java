@@ -33,7 +33,10 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void configureMessageBroker(MessageBrokerRegistry config) {
         // 클라이언트에게 메시지를 발행할 때 사용할 prefix
         // "/topic"으로 시작하는 메시지는 메시지 브로커가 처리하여 구독자에게 전달
-        config.enableSimpleBroker("/topic", "/user");
+        config.enableStompBrokerRelay("/topic", "/user").
+                setRelayHost("localhost").setRelayPort(61613).
+                setClientLogin("guest").setClientPasscode("guest").
+                setSystemLogin("guest").setSystemPasscode("guest");
 
         // 애플리케이션으로 들어오는 메시지의 destination prefix
         // "/app"으로 시작하는 메시지는 @MessageMapping 어노테이션이 붙은 컨트롤러 메서드로 라우팅

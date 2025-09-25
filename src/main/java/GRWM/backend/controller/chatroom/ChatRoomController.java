@@ -2,11 +2,13 @@ package GRWM.backend.controller.chatroom;
 
 
 import GRWM.backend.config.ChatRoomManager;
-import GRWM.backend.dto.chatRoom.*;
-import GRWM.backend.service.ChatRoomService;
+import GRWM.backend.dto.chatroom.*;
+import GRWM.backend.entity.user.CustomUserDetails;
+import GRWM.backend.service.chatroom.ChatRoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -123,10 +125,12 @@ public class ChatRoomController {
 
     @PostMapping("/{chatRoomId}/join")
     public ResponseEntity<Void> joinChatRoom(@PathVariable Long chatRoomId,
-                                             @RequestBody ChatRoomJoinDto dto){
+                                             @RequestBody ChatRoomJoinDto dto,
+                                             @AuthenticationPrincipal CustomUserDetails userDetails){
+
 
         try{
-            chatRoomService.joinChatRoom(dto.getUserId(), chatRoomId, dto.getChatName());
+            chatRoomService.joinChatRoom(userDetails.getCommunityUserId(), chatRoomId);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -144,8 +148,10 @@ public class ChatRoomController {
 
     @PostMapping("/{chatRoomId}/{userId}/leave")
     public ResponseEntity<Void> joinChatRoom(@PathVariable Long chatRoomId,
-                                             @PathVariable Long userId){
-        chatRoomService.leaveChatRoom(userId, chatRoomId);
+                                             @PathVariable Long userId,
+                                             @AuthenticationPrincipal CustomUserDetails userDetails
+                                            ){
+        chatRoomService.leaveChatRoom(userDetails.getUserId(), chatRoomId);
         return ResponseEntity.noContent().build();
     }
 

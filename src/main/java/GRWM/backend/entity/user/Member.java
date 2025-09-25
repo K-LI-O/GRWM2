@@ -1,7 +1,6 @@
-package GRWM.backend.entity;
+package GRWM.backend.entity.user;
 
 import GRWM.backend.entity.chatroom.ChatRoomMember;
-import GRWM.backend.entity.community.CommunityUser;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

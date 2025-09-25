@@ -11,6 +11,8 @@ public class PostDto {
 
     private Long postId;
 
+    private Long communityId;
+
     private String title;
 
     // private List<String> imageList;
@@ -18,7 +20,5 @@ public class PostDto {
     private String content;
 
     private String visibility;
-
-    private Long communityId;
 
 }

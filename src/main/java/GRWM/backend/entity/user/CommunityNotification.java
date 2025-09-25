@@ -1,6 +1,7 @@
-package GRWM.backend.entity;
+package GRWM.backend.entity.user;
 
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,4 +9,10 @@ import lombok.Setter;
 @Setter
 @Entity
 public class CommunityNotification {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "notification_id")
+    @Setter(AccessLevel.NONE)
+    public Long id;
 }

@@ -1,4 +1,4 @@
-package GRWM.backend.service;
+package GRWM.backend.service.chatroom;
 
 
 import GRWM.backend.dto.chatroom.ChatRoomTagCreateDto;

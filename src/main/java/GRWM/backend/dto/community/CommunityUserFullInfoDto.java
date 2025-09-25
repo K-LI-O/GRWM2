@@ -1,31 +1,30 @@
 package GRWM.backend.dto.community;
 
-import GRWM.backend.entity.Member;
-import GRWM.backend.entity.community.CommunityUserHashtag;
-import GRWM.backend.entity.community.Following;
-import GRWM.backend.entity.community.Post;
-import GRWM.backend.entity.community.UserBadge;
-import jakarta.persistence.*;
-import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
 
-public class CommunityUserDto {
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class CommunityUserFullInfoDto {
 
-    private Long communityId;
-
-    private String nickname;
+    private CommunityUserBriefDto userBriefDto;
 
     private String description;
+    private String bannerImage;
 
-    private String profileImage;
+    private int postCount;
 
-    private int following;
-    private int follower;
+    private int followerCount;
+    private int followingCount;
 
-    private int badge; // 뱃지 정보;
+    private int archivedBadgeCount; // 뱃지 정보;
+    private Long pinnedPostId;
 
-    private List<String> subscribedHashtagList;
 
 }

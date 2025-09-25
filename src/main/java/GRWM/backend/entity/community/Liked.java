@@ -1,5 +1,6 @@
 package GRWM.backend.entity.community;
 
+import GRWM.backend.entity.user.CommunityUser;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -9,11 +10,11 @@ import lombok.Setter;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Like {
+public class Liked {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "like_id")
+    @Column(name = "liked_id")
     @Setter(AccessLevel.NONE)
     private Long id;
 

@@ -1,6 +1,6 @@
 package GRWM.backend.entity.chatroom;
 
-import GRWM.backend.entity.Member;
+import GRWM.backend.entity.user.Member;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

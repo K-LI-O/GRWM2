@@ -1,4 +1,4 @@
-package GRWM.backend.entity;
+package GRWM.backend.entity.personalplanner;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;

@@ -1,4 +1,4 @@
-package GRWM.backend.dto.chatRoom;
+package GRWM.backend.dto.chatroom;
 
 
 import lombok.AllArgsConstructor;

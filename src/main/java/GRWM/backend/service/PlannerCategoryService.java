@@ -2,10 +2,10 @@ package GRWM.backend.service;
 
 import GRWM.backend.dto.personalPlanner.CategoryInfoDto;
 import GRWM.backend.dto.personalPlanner.PlannerCategoryCreateRequestDto;
-import GRWM.backend.entity.PersonalPlanner;
-import GRWM.backend.entity.PlannerCategory;
-import GRWM.backend.repository.PersonalPlannerRepository;
-import GRWM.backend.repository.PlannerCategoryRepository;
+import GRWM.backend.entity.personalplanner.PersonalPlanner;
+import GRWM.backend.entity.personalplanner.PlannerCategory;
+import GRWM.backend.repository.personalplanner.PersonalPlannerRepository;
+import GRWM.backend.repository.personalplanner.PlannerCategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

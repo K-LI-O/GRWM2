@@ -1,6 +1,9 @@
-package GRWM.backend.entity.community;
+package GRWM.backend.entity.user;
 
-import GRWM.backend.entity.Member;
+import GRWM.backend.entity.community.CommunityUserHashtag;
+import GRWM.backend.entity.community.Following;
+import GRWM.backend.entity.community.Post;
+import GRWM.backend.entity.community.UserBadge;
 import GRWM.backend.entity.chatroom.ChatRoomCommunity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -25,6 +28,7 @@ public class CommunityUser {
     private String description;
 
     private String profileImage;
+    private String bannerImage;
 
     @OneToOne
     private Member member;
@@ -48,6 +52,9 @@ public class CommunityUser {
     @OneToMany(mappedBy = "communityUser")
     private List<ChatRoomCommunity> chatRoomCommunityList;
 
+    @OneToOne
+    @JoinColumn
+    private Post pinnedPost;
 
 
 

@@ -1,5 +1,6 @@
 package GRWM.backend.entity.community;
 
+import GRWM.backend.entity.user.CommunityUser;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -17,9 +18,21 @@ public class Following {
     @Setter(AccessLevel.NONE)
     private Long id;
 
-    @OneToOne
+    @ManyToOne
+    @JoinColumn(name = "following")
     private CommunityUser following;
 
-    @OneToOne
+    @ManyToOne
+    @JoinColumn(name = "follower")
     private CommunityUser follower;
+
+
+    public Following(CommunityUser following, CommunityUser follower){
+        this.following = following;
+        this.follower = follower;
+    }
 }
+
+
+
+

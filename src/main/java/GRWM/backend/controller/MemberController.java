@@ -1,10 +1,7 @@
 package GRWM.backend.controller;
 
-import GRWM.backend.dto.personalPlanner.MemberCreateRequestDto;
-import GRWM.backend.repository.MemberRepository;
-import GRWM.backend.service.MemberService;
+import GRWM.backend.repository.user.MemberRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

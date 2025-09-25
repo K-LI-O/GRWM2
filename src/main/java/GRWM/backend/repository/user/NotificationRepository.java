@@ -1,4 +1,9 @@
-package GRWM.backend.repository;
+package GRWM.backend.repository.user;
 
-public interface NotificationRepository {
+import GRWM.backend.entity.user.Notification;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface NotificationRepository extends JpaRepository<Notification, Long> {
 }

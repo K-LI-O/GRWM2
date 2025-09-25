@@ -1,9 +1,6 @@
 package GRWM.backend.entity.community;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -17,10 +14,12 @@ public class Reply {
     @GeneratedValue
     private Long id;
 
-    @OneToOne
+    @ManyToOne
+    @JoinColumn
     private Comment rootComment;
 
-    @OneToOne
+    @ManyToOne
+    @JoinColumn
     private Comment reply;
 
 }

@@ -1,6 +1,6 @@
-package GRWM.backend.repository;
+package GRWM.backend.repository.personalplanner;
 
-import GRWM.backend.entity.Schedule;
+import GRWM.backend.entity.personalplanner.Schedule;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;

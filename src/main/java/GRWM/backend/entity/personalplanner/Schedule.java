@@ -1,7 +1,6 @@
-package GRWM.backend.entity;
+package GRWM.backend.entity.personalplanner;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
