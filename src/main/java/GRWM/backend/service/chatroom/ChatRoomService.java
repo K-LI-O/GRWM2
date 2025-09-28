@@ -25,7 +25,7 @@ public class ChatRoomService {
 
     private final ChatRoomRepository chatRoomRepository;
     private final MemberRepository memberRepository;
-    private final ChatRoomMemberRepository chatRoomMemberRepository;
+    //private final ChatRoomMemberRepository chatRoomMemberRepository;
     private final ChatRoomAnnouncementRepository announcementRepository;
     private final ChatRoomTagRepository chatRoomTagRepository;
 
@@ -228,12 +228,15 @@ public class ChatRoomService {
     반환값 : void
      */
 
-    public void leaveChatRoom(Long userId, Long chatRoomId){
+    public void leaveChatRoom(Long communityId, Long chatRoomId){
         // chatroomMemberId 구하기
-        ChatRoomMember cm = chatRoomMemberRepository.findByMember_IdAndChatRoom_Id(userId, chatRoomId);
-
+        //ChatRoomMember cm = chatRoomMemberRepository.findByMember_IdAndChatRoom_Id(userId, chatRoomId);
+        ChatRoomCommunity cc = chatRoomCommunityRepository.findByCommunityUserAndChatRoom(
+                extractOptionalUser(communityId),
+                extractOptionalChatroom(chatRoomId)
+        );
         // chatroomMember 객체 삭제
-        chatRoomMemberRepository.deleteById(cm.getId());
+        chatRoomCommunityRepository.delete(cc);
 
     }
 
@@ -348,8 +351,13 @@ public class ChatRoomService {
         ChatRoom chatRoom = chatRoomRepository.getReferenceById(chatRoomId);
 
         // 채팅방 아이디와 사용자 아이디로 채팅방-멤버 객체 가져오기, 기반으로 멤버 객체 가져오기
-        ChatRoomMember joinedMember = chatRoomMemberRepository.findByMember_IdAndChatRoom_Id(dto.getUserId(), chatRoomId);
-        String chatName = joinedMember.getChatName();
+        //ChatRoomMember joinedMember = chatRoomMemberRepository.findByMember_IdAndChatRoom_Id(dto.getUserId(), chatRoomId);
+
+        ChatRoomCommunity joinedMember = chatRoomCommunityRepository.findByCommunityUserAndChatRoom(
+                extractOptionalUser(dto.getUserId()),
+                extractOptionalChatroom(chatRoomId)
+        );
+        String chatName = joinedMember.getCommunityUser().getNickname();
 
 
         // 새로운 announcement 객체 생성
@@ -407,6 +415,22 @@ public class ChatRoomService {
     }
 
 
+
+
+    private ChatRoom extractOptionalChatroom(Long chatroomId){
+        Optional<ChatRoom> optionalChatroom = chatRoomRepository.findById(chatroomId);
+        ChatRoom chatroom = null;
+
+        try {
+            if (optionalChatroom.isPresent()) {
+                chatroom = optionalChatroom.get();
+            }
+        } catch (RuntimeException e) {
+            throw new RuntimeException("존재하지 않는 채팅방입니다.");
+        }
+
+        return chatroom;
+    }
 
 
 }

@@ -4,15 +4,19 @@ import GRWM.backend.dto.ChatMessageCreateDto;
 import GRWM.backend.dto.ChatMessageDto;
 import GRWM.backend.entity.chatroom.ChatMessage;
 import GRWM.backend.entity.chatroom.ChatRoom;
+import GRWM.backend.entity.user.CommunityUser;
 import GRWM.backend.repository.chatroom.ChatMessageRepository;
-import GRWM.backend.repository.chatroom.ChatRoomMemberRepository;
+//import GRWM.backend.repository.chatroom.ChatRoomMemberRepository;
+import GRWM.backend.repository.chatroom.ChatRoomCommunityRepository;
 import GRWM.backend.repository.chatroom.ChatRoomRepository;
+import GRWM.backend.repository.user.CommunityUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,35 +26,35 @@ public class ChatMessageService {
 
     private final ChatMessageRepository messageRepository;
     private final ChatRoomRepository chatRoomRepository;
-    private final ChatRoomMemberRepository chatRoomMemberRepository;
-
+    //private final ChatRoomMemberRepository chatRoomMemberRepository;
+    private final ChatRoomCommunityRepository ccRepository;
+    private final CommunityUserRepository communityUserRepository;
 
     /*
     함수명 : saveMessage
     기능 : 메시지를 DB 에 저장하고 리턴한다.
-    매개변수 : Long chatRoomId, chatMessageCreateDTO
+    매개변수 : Long chatRoomId, chatMessageCreateDTO(채팅방 아이디, 내용, 커뮤니티 아이디)
     반환값 : Long messageId
     warning : 이것은... 기존 멤버의 일반적인 chat 타입 메시지를 저장하는 함수이다.
 
      */
 
     public ChatMessageDto saveMessage(Long chatRoomId, ChatMessageCreateDto dto){
-        System.out.println("come in\n");
+
         // 채팅방 가져오기
         ChatRoom chatRoom = chatRoomRepository.getReferenceById(chatRoomId);
-        System.out.println("get the chatroom obj\n");
+
         // 멤버 아이디 가져오기
-        String chatName = dto.getWriterChatName();
-        Long memberId = chatRoomMemberRepository.findByChatName(chatName).getMember().getId();
+        String nickname = extractOptionalUser(dto.getConmmunityId()).getNickname();
         System.out.println("get the member ID\n");
 
         // 메시지 객체 생성
         ChatMessage message = new ChatMessage(
-                memberId,
+                dto.getConmmunityId(),
                 dto.getContent(),
                 ChatMessage.MessageType.CHAT.ordinal(),
                 chatRoom,
-                dto.getWriterChatName()
+                nickname
         );
         ChatMessage savedMessage = messageRepository.save(message);
 
@@ -104,6 +108,22 @@ public class ChatMessageService {
         // 메시지 삭제하기
     }
 
+
+
+    private CommunityUser extractOptionalUser(Long communityId){
+        Optional<CommunityUser> optionalUser = communityUserRepository.findById(communityId);
+        CommunityUser user = null;
+
+        try {
+            if (optionalUser.isPresent()) {
+                user = optionalUser.get();
+            }
+        } catch (RuntimeException e) {
+            throw new RuntimeException("존재하지 않는 프로필입니다.");
+        }
+
+        return user;
+    }
 
 
 
