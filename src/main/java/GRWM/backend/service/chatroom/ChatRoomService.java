@@ -1,7 +1,7 @@
 package GRWM.backend.service.chatroom;
 
 
-import GRWM.backend.dto.chatroom.*;
+import GRWM.backend.dto.*;
 import GRWM.backend.entity.chatroom.*;
 import GRWM.backend.entity.user.CommunityUser;
 import GRWM.backend.entity.user.Member;
