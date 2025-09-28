@@ -282,14 +282,18 @@ public class ChatRoomService {
     반환값 : Dto list; 채팅방명, description, isPrivate, 최대 인원, 현재 입장한 사람들;
      */
 
-    public List<ChatRoomShowDto> showJoinedChatRoomListDto(Long userId){
+    public List<ChatRoomShowDto> showJoinedChatRoomListDto(Long communityId){
 
         // 유저 아이디로 채팅방과 멤버의 중간 테이블 리스트 찾아오기
-        List<ChatRoomMember> joinedChatRoomMemberList = chatRoomMemberRepository.findByMember_Id(userId);
+        // List<ChatRoomMember> joinedChatRoomMemberList = chatRoomMemberRepository.findByMember_Id(userId);
+
+        List<ChatRoomCommunity> joinedChatRoomMemberList = chatRoomCommunityRepository.findByCommunityUser(
+                extractOptionalUser(communityId)
+        );
 
         // 채팅방 객체 찾아오기
         List<ChatRoom> joinedChatRoomList = joinedChatRoomMemberList.stream()
-                .map(ChatRoomMember::getChatRoom) // getChatRoom()을 통해 연관된 ChatRoom 객체 로드
+                .map(ChatRoomCommunity::getChatRoom) // getChatRoom()을 통해 연관된 ChatRoom 객체 로드
                 .collect(Collectors.toList());
 
         // 채팅방 객체 dto로 변환
@@ -385,6 +389,23 @@ public class ChatRoomService {
         return dto;
 
     }
+
+
+    private CommunityUser extractOptionalUser(Long communityId){
+        Optional<CommunityUser> optionalUser = communityUserRepository.findById(communityId);
+        CommunityUser user = null;
+
+        try {
+            if (optionalUser.isPresent()) {
+                user = optionalUser.get();
+            }
+        } catch (RuntimeException e) {
+            throw new RuntimeException("존재하지 않는 프로필입니다.");
+        }
+
+        return user;
+    }
+
 
 
 

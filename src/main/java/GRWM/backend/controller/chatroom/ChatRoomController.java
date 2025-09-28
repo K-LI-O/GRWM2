@@ -178,8 +178,9 @@ public class ChatRoomController {
      */
 
     @GetMapping("/show/{userId}/joinlist")
-    public List<ChatRoomShowDto> showJoinedChatRoomListInfo(@PathVariable Long userId){
-        return chatRoomService.showJoinedChatRoomListDto(userId);
+    public List<ChatRoomShowDto> showJoinedChatRoomListInfo(@PathVariable Long userId,
+                                                            @AuthenticationPrincipal CustomUserDetails userDetails){
+        return chatRoomService.showJoinedChatRoomListDto(userDetails.getCommunityUserId());
 
     }
 
