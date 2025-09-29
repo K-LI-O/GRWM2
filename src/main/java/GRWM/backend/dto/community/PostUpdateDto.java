@@ -1,6 +1,5 @@
 package GRWM.backend.dto.community;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,14 +11,9 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostCreateDto {
-
-    private String title;
+public class PostUpdateDto {
 
     private PostContentDto content;
-
-    private String visibility; // 설정하지 않을 시 public
-
     private List<String> hashtags;
-
+    private String visibility;
 }

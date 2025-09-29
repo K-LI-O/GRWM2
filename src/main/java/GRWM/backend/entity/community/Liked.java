@@ -26,4 +26,10 @@ public class Liked {
     @JoinColumn
     private CommunityUser user;
 
+    public Liked(Post post, CommunityUser user){
+        this.post = post;
+        this.user = user;
+
+    }
+
 }

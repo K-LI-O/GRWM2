@@ -21,4 +21,12 @@ public class Hashtag {
     @OneToMany(mappedBy = "hashtag")
     private List<CommunityUserHashtag> cuHashtag;
 
+    @OneToMany(mappedBy = "hashtag")
+    private List<PostHashtag> postHashtagList;
+
+
+    public Hashtag(String name){
+        this.name = name;
+    }
+
 }

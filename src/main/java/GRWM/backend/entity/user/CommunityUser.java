@@ -1,9 +1,6 @@
 package GRWM.backend.entity.user;
 
-import GRWM.backend.entity.community.CommunityUserHashtag;
-import GRWM.backend.entity.community.Following;
-import GRWM.backend.entity.community.Post;
-import GRWM.backend.entity.community.UserBadge;
+import GRWM.backend.entity.community.*;
 import GRWM.backend.entity.chatroom.ChatRoomCommunity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -52,6 +49,9 @@ public class CommunityUser {
     @OneToMany(mappedBy = "communityUser")
     private List<ChatRoomCommunity> chatRoomCommunityList;
 
+    @OneToMany(mappedBy = "blockedUser")
+    private List<BlockList> blockList;
+
     @OneToOne
     @JoinColumn
     private Post pinnedPost;
@@ -65,6 +65,29 @@ public class CommunityUser {
         this.description = description;
         this.member = member;
     }
+
+
+    public int countPost(){
+        return this.getPostList().size();
+    }
+
+    public int countFollowing(){
+        return this.getFollowingList().size();
+    }
+
+    public int countFollower(){
+        return this.getFollowerList().size();
+    }
+
+    public int countArchivedBadge(){
+        return this.getUserBadgeList().size();
+    }
+
+    public int countBlockedUsers(){
+        return this.getBlockList().size();
+    }
+
+
 
 
 }

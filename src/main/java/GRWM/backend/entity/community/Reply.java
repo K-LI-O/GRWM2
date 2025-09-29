@@ -14,12 +14,18 @@ public class Reply {
     @GeneratedValue
     private Long id;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn
     private Comment rootComment;
 
     @ManyToOne
     @JoinColumn
     private Comment reply;
+
+
+    public Reply(Comment rootComment, Comment reply){
+        this.rootComment = rootComment;
+        this.reply = reply;
+    }
 
 }

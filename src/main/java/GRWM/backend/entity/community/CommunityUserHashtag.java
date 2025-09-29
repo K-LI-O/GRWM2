@@ -26,5 +26,10 @@ public class CommunityUserHashtag {
     private Hashtag hashtag;
 
 
-    private List<String> hashtagOrder;
+    private int hashtagOrder;
+
+    public CommunityUserHashtag(CommunityUser user, Hashtag hashtag){
+        this.user = user;
+        this.hashtag = hashtag;
+    }
 }

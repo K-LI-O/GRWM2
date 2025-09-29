@@ -25,4 +25,10 @@ public class BlockList {
     @ManyToOne
     @JoinColumn(name = "blocked_user")
     private CommunityUser blockedUser;
+
+
+    public BlockList(CommunityUser blocker, CommunityUser blockedUser){
+        this.blocker = blocker;
+        this.blockedUser = blockedUser;
+    }
 }
