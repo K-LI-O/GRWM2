@@ -61,6 +61,7 @@ public class ChatMessageService {
         // 전송할 dto 객체 생성
         ChatMessageDto newDto = new ChatMessageDto(
                 savedMessage.getId(),
+                savedMessage.getMemberId(), // 멤버 아이디라고 되어있지만 커뮤니티 아이디임
                 savedMessage.getType().ordinal(),
                 savedMessage.getContent(),
                 savedMessage.getCreatedAt(),
@@ -88,6 +89,7 @@ public class ChatMessageService {
 
         for(ChatMessage chatMessage : messageList){
             ChatMessageDto dto = new ChatMessageDto(chatMessage.getId(),
+                    chatMessage.getMemberId(),
                     chatMessage.getType().ordinal(),
                     chatMessage.getContent(),
                     chatMessage.getCreatedAt(),
