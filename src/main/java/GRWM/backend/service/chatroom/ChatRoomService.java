@@ -319,6 +319,32 @@ public class ChatRoomService {
 
 
 
+            /*
+    함수명 : showChatRoomListInfo
+    기능 : 모든 채팅방들의 정보를 전달한다
+    매개변수 : xx
+    반환값 : Dto; 채팅방명, description, isPrivate, 최대 인원, 현재 입장한 사람들;
+     */
+
+    public List<ChatRoomShowDto> showChatRoomListInfo(){
+        List<ChatRoom> chatRoomList = chatRoomRepository.findAll();
+
+        List<ChatRoomShowDto> dtoList = new ArrayList<>();
+        for(ChatRoom chatRoom : chatRoomList){
+
+            ChatRoomShowDto dto = new ChatRoomShowDto(
+                    chatRoom.getId(),
+                    chatRoom.getName(), chatRoom.getDescription(),
+                    chatRoom.getChatRoomTag().getContent(), chatRoom.isPrivate(), chatRoom.getMaxMembers(),
+                    chatRoom.getCurrentMembers());
+
+            dtoList.add(dto);
+        }
+        return dtoList;
+    }
+
+
+
     /*
     함수명 : searchChatRoomListByTag
     기능 : 키워드로 채팅방을 검색한다.

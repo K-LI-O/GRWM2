@@ -184,6 +184,19 @@ public class ChatRoomController {
 
     }
 
+        /*
+    함수명 : showChatRoomListInfo
+    기능 : 모든 채팅방들의 정보를 전달한다
+    매개변수 : xx
+    반환값 : Dto; 채팅방명, description, isPrivate, 최대 인원, 현재 입장한 사람들;
+     */
+
+    @GetMapping("/show")
+    public List<ChatRoomShowDto> showChatRoomListInfo(){
+        return chatRoomService.showChatRoomListInfo();
+
+    }
+
 
 
     /*
