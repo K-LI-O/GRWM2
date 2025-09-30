@@ -46,7 +46,6 @@ public class PostService {
 
         // Post 객체 생성
         Post newPost = new Post(extractOptionalUser(communityId),
-                dto.getTitle(),
                 dto.getContent().getImages(),
                 dto.getContent().getText(),
                 dto.getVisibility()
@@ -455,7 +454,6 @@ public class PostService {
         PostDto postDto = new PostDto(
                 t.getId(),
                 userDto,
-                t.getTitle(),
                 contentDto,
                 hashtagList,
                 t.getVisibility(),

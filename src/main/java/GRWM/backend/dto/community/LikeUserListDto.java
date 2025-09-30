@@ -11,6 +11,6 @@ import java.util.List;
 @NoArgsConstructor
 public class LikeUserListDto {
 
-    private List<CommunityUserBriefDto> likedUserList;
+    private List<CommunityUserBriefDto> likedUsers;
 
 }

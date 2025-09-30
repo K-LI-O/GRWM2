@@ -14,7 +14,6 @@ import java.util.List;
 @AllArgsConstructor
 public class PostCreateDto {
 
-    private String title;
 
     private PostContentDto content;
 

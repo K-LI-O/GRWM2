@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 public class CommunityUserFullInfoDto {
 
-    private CommunityUserBriefDto userBriefDto;
+    private CommunityUserBriefDto User;
 
     private String description;
     private String bannerImage;

@@ -18,6 +18,6 @@ public class CommentCreateDto {
     private boolean isPrivate;
 
     // Nullable
-    private Long rootCommentId;
+    private Long parentCommentId;
 
 }

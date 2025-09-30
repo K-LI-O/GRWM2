@@ -13,6 +13,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FollowDto {
-    List<CommunityUserBriefDto> userBriefDtoList;
+    List<CommunityUserBriefDto> User;
     int count;
 }

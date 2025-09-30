@@ -16,13 +16,13 @@ public class PostDto {
 
     private Long postId;
 
-    private CommunityUserBriefDto dto;
+    private CommunityUserBriefDto User;
 
-    private String title;
+    //private String title;
 
     private PostContentDto content;
 
-    private List<String> hashtagList;
+    private List<String> hashtags;
 
     private String visibility;
 

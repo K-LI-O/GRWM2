@@ -59,8 +59,8 @@ public class CommentService {
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
         Comment parentComment = null;
-        if(dto.getRootCommentId() != null){
-            parentComment = commentRepository.findById(dto.getRootCommentId()).get();
+        if(dto.getParentCommentId() != null){
+            parentComment = commentRepository.findById(dto.getParentCommentId()).get();
         }
         // 댓글 생성
         Comment comment = new Comment(post, user, parentComment, dto.getContent(), dto.isPrivate());

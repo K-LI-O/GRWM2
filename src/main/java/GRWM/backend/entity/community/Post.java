@@ -6,8 +6,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -27,8 +25,6 @@ public class Post {
     @Column(name = "post_id")
     @Setter(AccessLevel.NONE)
     private Long id;
-
-    private String title;
 
     private List<String> imageLink;
 
@@ -74,9 +70,8 @@ public class Post {
     }
 
 
-    public Post(CommunityUser user, String title, List<String> imageLink, String content, String visibility){
+    public Post(CommunityUser user, List<String> imageLink, String content, String visibility){
         this.user = user;
-        this.title = title;
         this.imageLink = imageLink;
         this.content = content;
         this.visibility = visibility;

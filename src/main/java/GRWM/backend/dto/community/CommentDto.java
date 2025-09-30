@@ -16,14 +16,14 @@ public class CommentDto {
 
     private Long commentId;
 
-    private CommunityUserBriefDto userInfo;
+    private CommunityUserBriefDto User;
 
     private String content;
 
     private boolean isPrivate;
 
     // Nullable
-    private Long rootCommentId;
+    private Long parentCommentId;
 
     private boolean isEdited;
 
