@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/users/{userId}")
+@RequestMapping("api/users/")
 public class ProfileController {
 
     private final CommunityUserService communityUserService;
@@ -88,7 +88,7 @@ public class ProfileController {
     반환값 : dto CommunityUserFullInfoDto
      */
 
-    @GetMapping("/followers")
+    @GetMapping("/{userId}/followers")
     public FollowDto getFollowerList(@PathVariable Long userId){
         FollowDto dto = new FollowDto(
         communityUserService.getFollowerList(userId),
@@ -105,7 +105,7 @@ public class ProfileController {
     반환값 : dto CommunityUserFullInfoDto
      */
 
-    @GetMapping("/following")
+    @GetMapping("/{userId}/following")
     public FollowDto getFollowingList(@PathVariable Long userId){
         FollowDto dto = new FollowDto(
         communityUserService.getFollowingList(userId),
