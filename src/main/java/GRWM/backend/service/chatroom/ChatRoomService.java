@@ -413,14 +413,21 @@ public class ChatRoomService {
         // 특정 채팅방에서 가장 최근에 올라간 공지 불러오기
         ChatRoomAnnouncement mainAnnouncement = announcementRepository.findFirstByChatRoom_IdOrderByCreatedAtDesc(chatRoomId);
 
-        // dto에 담기
-        ChatRoomAnnouncementDto dto = new ChatRoomAnnouncementDto(
-                mainAnnouncement.getId(),
-                mainAnnouncement.getContent(),
-                mainAnnouncement.getCreatedAt(),
-                mainAnnouncement.getWriterChatName());
+        if (mainAnnouncement != null) { // Null 체크 추가
+            // dto에 담기
+            ChatRoomAnnouncementDto dto = new ChatRoomAnnouncementDto(
+                    mainAnnouncement.getId(),
+                    mainAnnouncement.getContent(),
+                    mainAnnouncement.getCreatedAt(),
+                    mainAnnouncement.getWriterChatName()
+            );
 
-        return dto;
+            return dto;
+        } else{
+            ChatRoomAnnouncementDto dto = null;
+            return dto;
+        }
+
 
     }
 

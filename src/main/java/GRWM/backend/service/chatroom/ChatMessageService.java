@@ -104,10 +104,15 @@ public class ChatMessageService {
 
     // DeleteMessage
 
-    public void deleteMessage(Long messageId, Long memberId){
+    public void deleteMessage(Long messageId, Long communityId){
         // 원하는 메시지 불러오기
+        ChatMessage message = messageRepository.findByIdAndMemberId(messageId, communityId);
+        if(message != null){
+            messageRepository.delete(message);
+        } else{
+            throw new RuntimeException("존재하지 않는 메시지입니다.");
+        }
 
-        // 메시지 삭제하기
     }
 
 

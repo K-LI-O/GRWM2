@@ -1,15 +1,17 @@
 package GRWM.backend.controller.chatroom;
 
 import GRWM.backend.dto.ChatMessageDto;
+import GRWM.backend.entity.user.CustomUserDetails;
 import GRWM.backend.service.chatroom.ChatMessageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/chatroom/message/")
+@RequestMapping("/api/chatroom")
 @RequiredArgsConstructor
 public class ChatRoomMessageRestController {
 
@@ -23,7 +25,7 @@ public class ChatRoomMessageRestController {
      * return value : dtoList
      */
 
-    @GetMapping("showlist/{chatRoomId}")
+    @GetMapping("/{chatRoomId}/show")
     public List<ChatMessageDto> showMessageList(@PathVariable Long chatRoomId){
 
         return chatMessageService.showMessageList(chatRoomId);
@@ -36,12 +38,12 @@ public class ChatRoomMessageRestController {
      * return value :
      */
 
-    @DeleteMapping("/api/chatroom/message/delete")
-    public void deleteMessage(Long messageId, Principal principal) {
-        // principal의 이름 불러오기
-        String memberName = principal.getName();
+    @DeleteMapping("/{chatRoomId}/delete/{messageId}")
+    public void deleteMessage(@PathVariable Long messageId,
+                              @AuthenticationPrincipal CustomUserDetails userDetails) {
 
 
+        chatMessageService.deleteMessage(messageId, userDetails.getCommunityUserId());
         // 메시지 처리 로직 (DB 저장 등)
 
 

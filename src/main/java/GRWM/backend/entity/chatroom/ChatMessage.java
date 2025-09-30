@@ -42,7 +42,7 @@ public class ChatMessage {
 
 
     public ChatMessage(Long memberId, String content, int type, ChatRoom chatRoom, String writerChatName){
-        this.memberId = memberId;
+        this.memberId = memberId; // communityId
         this.content = content;
         this.type = castingIntToEnum(type);
         this.chatRoom = chatRoom;
