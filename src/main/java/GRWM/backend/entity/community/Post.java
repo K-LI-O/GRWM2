@@ -50,7 +50,7 @@ public class Post {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Comment> commentList;
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<PostHashtag> postHashtagList;
 
 
@@ -66,7 +66,10 @@ public class Post {
 
     public void addPostHashtag(PostHashtag postHashtag) {
         this.postHashtagList.add(postHashtag);
-        postHashtag.setPost(this); // 필요에 따라 PostHashtag 에서도 관계 설정
+        // 양방향 관계 설정: PostHashtag에 Post 객체도 설정
+        if (postHashtag.getPost() != this) {
+            postHashtag.setPost(this);
+        }
     }
 
 

@@ -55,31 +55,31 @@ public class PostService {
         // 해시태그 처리;
         // 이미 존재하는 해시태그인지 확인,
 
-        if(dto.getHashtags() != null) {
-            List<PostHashtag> phtagList = new ArrayList<>();
-            for (String t : dto.getHashtags()) {
-                Hashtag hashtag = hashtagRepository.findByName(t); // DB 조회 1회
+        if (dto.getHashtags() != null) {
+            for (String tagName : dto.getHashtags()) {
+
+                // 1. 이미 존재하는 해시태그인지 확인
+                Hashtag hashtag = hashtagRepository.findByName(tagName); // DB 조회 1회
 
                 if (hashtag == null) {
-                    // 존재하지 않으면 생성 후 저장
-                    Hashtag newTag = new Hashtag(t);
+                    // 2. 존재하지 않으면 생성 후 저장 (DB 저장 1회)
+                    Hashtag newTag = new Hashtag(tagName);
                     hashtag = hashtagRepository.save(newTag);
-
                 }
 
-                // 2. PostHashtag 관계가 있는지 확인 (DB 접근 2회)
-                // 💡 주의: 이 단계는 '게시글 수정' 시에만 필요하며 '게시글 생성' 시에는 불필요합니다.
-                // 게시글 생성(createPost)이라면 무조건 관계가 없으므로 아래 if문은 필요 없습니다.
+                // 3. PostHashtag 생성 및 양방향 관계 설정 (DB 저장 1회)
+                // 편의 메서드 사용
+                // 이 메서드 내에서 PostHashtag 객체 생성, Post 컬렉션에 추가, Hashtag 컬렉션에 추가, postHashtagRepository.save(객체) 처리까지 모두 처리합니다.
+                // PostHashtag postHashtag = PostHashtag.createPostHashtag(savedPost, hashtag);
 
-                // 3. 관계가 없다면 새로 생성하고 저장 (DB 접근 3회)
-                PostHashtag postHashtag = new PostHashtag(savedPost, hashtag);
+                // save는 서비스에서 명시적으로 처리하고 객체 생성/관계 설정만 편의 메서드로 처리
+                PostHashtag postHashtag = PostHashtag.createPostHashtag(savedPost, hashtag);
+                // -> 이 메서드는 PostHashtag 객체를 만들고, savedPost.getPostHashtags().add()와 hashtag.getPostHashtags().add()를 수행합니다.
+
+                // DB에 저장
                 postHashtagRepository.save(postHashtag);
-
-                 // 해시태그가 있고, 이미 포스트와 관계가 있다면, 안 건들면 됨.
-
             }
         }
-
         return savedPost.getId();
 
     }
@@ -179,8 +179,6 @@ public class PostService {
                 }
 
                 // 2. PostHashtag 관계가 있는지 확인 (DB 접근 2회)
-                // 💡 주의: 이 단계는 '게시글 수정' 시에만 필요하며 '게시글 생성' 시에는 불필요합니다.
-                // 게시글 생성(createPost)이라면 무조건 관계가 없으므로 아래 if문은 필요 없습니다.
                 PostHashtag postHashtag = postHashtagRepository.findByPostAndHashtag(savedPost, hashtag);
 
                 if (postHashtag == null) {

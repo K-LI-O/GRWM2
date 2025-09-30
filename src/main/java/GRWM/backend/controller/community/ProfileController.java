@@ -33,6 +33,19 @@ public class ProfileController {
     }
 
 
+        /*
+    함수명 : showCommunityUserBriefInfo
+    기능  : 사용자 프로필 조회
+    매개변수: briefDto
+    반환값 : dto CommunityUserFullInfoDto
+     */
+
+    @GetMapping("/community/info")
+    public CommunityUserBriefDto showCommunityUserBriefInfo(@AuthenticationPrincipal CustomUserDetails userDetails){
+        return communityUserService.showCommunityUserBriefInfo(userDetails.getCommunityUserId());
+    }
+
+
 
 
     /*

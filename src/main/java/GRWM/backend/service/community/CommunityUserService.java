@@ -80,6 +80,23 @@ public class CommunityUserService {
 
 
 
+
+
+            /*
+    함수명 : showCommunityUserBriefInfo
+    기능  : 사용자 프로필 조회
+    매개변수: x
+    반환값 : dto CommunityUserFullInfoDto
+     */
+
+    public CommunityUserBriefDto showCommunityUserBriefInfo(Long communityId){
+        CommunityUser user = extractOptionalUser(communityId);
+        return userToDto(user);
+    }
+
+
+
+
     /*
     함수명 : updateUserProfile
     기능  : 사용자 프로필 수정
