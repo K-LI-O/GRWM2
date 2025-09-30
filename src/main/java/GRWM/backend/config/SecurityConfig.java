@@ -6,6 +6,7 @@ import GRWM.backend.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -36,6 +37,7 @@ public class SecurityConfig {
                         .requestMatchers("/ws/chatroom/**").permitAll() // Ensure this matches your STOMP endpoint
                         .requestMatchers("/api/chat-room/create").permitAll() // 임시 테스트용
                         .requestMatchers("/api/auth/**").permitAll() // 로그인, 회원가입 경로는 허용
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated() // 나머지 요청은 JWT 인증 필요
 
                 )
