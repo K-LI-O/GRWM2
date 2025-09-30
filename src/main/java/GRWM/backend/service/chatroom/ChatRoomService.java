@@ -190,7 +190,7 @@ public class ChatRoomService {
      */
 
     @Transactional
-    public void joinChatRoom(Long communityId, Long chatRoomId){
+    public void joinChatRoom(Long communityId, Long chatRoomId, ChatRoomJoinDto dto){
 
         // (커뮤니티)멤버 객체 불러오기
         CommunityUser cu;
@@ -212,7 +212,7 @@ public class ChatRoomService {
 
 
        // 채팅방-커뮤니티유저 객체 생성하기
-        ChatRoomCommunity joinInfo = new ChatRoomCommunity(chatRoom, cu);
+        ChatRoomCommunity joinInfo = new ChatRoomCommunity(chatRoom, cu, dto.isManager());
         // 그리고 저장하기.
         chatRoomCommunityRepository.save(joinInfo);
 

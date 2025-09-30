@@ -34,9 +34,10 @@ public class ChatRoomCommunity {
 
     private boolean isManager;
 
-    public ChatRoomCommunity(ChatRoom chatRoom, CommunityUser communityUser){
+    public ChatRoomCommunity(ChatRoom chatRoom, CommunityUser communityUser, boolean isManager){
         this.chatRoom = chatRoom;
         this.communityUser = communityUser;
+        this.isManager = isManager;
 
     }
 

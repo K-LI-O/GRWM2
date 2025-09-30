@@ -129,7 +129,7 @@ public class ChatRoomController {
 
 
         try{
-            chatRoomService.joinChatRoom(userDetails.getCommunityUserId(), chatRoomId);
+            chatRoomService.joinChatRoom(userDetails.getCommunityUserId(), chatRoomId, dto);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

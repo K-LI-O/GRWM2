@@ -14,4 +14,6 @@ public class ChatRoomJoinDto {
     private Long userId;
 
     private String chatName;
+
+    private boolean isManager; // 새로운 어쩌구.
 }
