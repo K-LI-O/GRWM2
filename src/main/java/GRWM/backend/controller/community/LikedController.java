@@ -25,11 +25,11 @@ public class LikedController {
      */
 
     @PostMapping()
-    public ResponseEntity<Void> likePost(@PathVariable Long postId,
+    public ResponseEntity<Integer> likePost(@PathVariable Long postId,
                                          @AuthenticationPrincipal CustomUserDetails userDetails){
 
         likedService.likePost(postId, userDetails.getCommunityUserId());
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(likedService.countLikes(postId));
 
     }
 
@@ -42,11 +42,11 @@ public class LikedController {
      */
 
     @DeleteMapping()
-    public ResponseEntity<Void> cancelLike(@PathVariable Long postId,
+    public ResponseEntity<Integer> cancelLike(@PathVariable Long postId,
                                            @AuthenticationPrincipal CustomUserDetails userDetails){
         likedService.cancelLike(postId, userDetails.getCommunityUserId());
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(likedService.countLikes(postId));
     }
 
 
@@ -59,7 +59,7 @@ public class LikedController {
     반환값 : List<communityUserBriefDto>
      */
 
-    @GetMapping("/liked-users")
+    @GetMapping("s")
     public List<CommunityUserBriefDto> getPostLikedUserList(@PathVariable Long postId){
         return likedService.getPostLikedUserList(postId);
     }
