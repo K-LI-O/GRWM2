@@ -1,10 +1,14 @@
 package GRWM.backend.controller.community;
 
+import GRWM.backend.dto.community.CommunityUseListDto;
 import GRWM.backend.dto.community.CommunityUserBriefDto;
 import GRWM.backend.dto.community.PostDto;
+import GRWM.backend.dto.community.PostListDto;
 import GRWM.backend.service.community.CommunityUserService;
 import GRWM.backend.service.community.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,8 +38,9 @@ public class SearchController {
      */
 
     @GetMapping("/hashtags")
-    public List<PostDto> searchHashtag(@RequestParam String keyword){
-        return postService.searchByHashtag(keyword);
+    public PostListDto searchHashtag(@RequestParam String keyword,
+                                     @PageableDefault(size = 20) Pageable pageable){
+        return postService.searchByHashtag(keyword, pageable);
     }
 
 
@@ -48,8 +53,9 @@ public class SearchController {
      */
 
     @GetMapping("/users")
-    public List<CommunityUserBriefDto> searchUser(@RequestParam String keyword){
-        return communityUserService.searchUser(keyword);
+    public CommunityUseListDto searchUser(@RequestParam String keyword,
+                                          @PageableDefault(size = 20) Pageable pageable){
+        return communityUserService.searchUser(keyword, pageable);
     }
 
 
@@ -61,8 +67,9 @@ public class SearchController {
     반환값 : PostList, 게시글 개수, boolean hasMore
      */
     @GetMapping("/posts")
-    public List<PostDto> searchPost(@RequestParam String keyword){
-        return postService.searchPost(keyword);
+    public PostListDto searchPost(@RequestParam String keyword,
+                                    @PageableDefault(size = 20) Pageable pageable){
+        return postService.searchPost(keyword, pageable);
     }
 
 

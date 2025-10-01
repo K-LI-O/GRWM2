@@ -18,6 +18,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     Slice<Post> findByUser(CommunityUser user, Pageable pageable);
 
-    List<Post> findByContentContaining(String keyword);
+    Slice<Post> findByContentContaining(String keyword, Pageable pageable);
 
 }

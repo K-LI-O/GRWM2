@@ -1,5 +1,6 @@
 package GRWM.backend.service.community;
 
+import GRWM.backend.dto.community.CommunityUseListDto;
 import GRWM.backend.dto.community.CommunityUserBriefDto;
 import GRWM.backend.dto.community.CommunityUserFullInfoDto;
 import GRWM.backend.dto.community.ProfileUpdateDto;
@@ -14,6 +15,7 @@ import GRWM.backend.repository.community.FollowingRepository;
 import GRWM.backend.repository.user.CommunityUserRepository;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -296,17 +298,25 @@ public class CommunityUserService {
     반환값 : UserBriefDto List,  유저 목록 개수
      */
 
-    public List<CommunityUserBriefDto> searchUser(String keyword){
+    public CommunityUseListDto searchUser(String keyword, Pageable pageable){
+
+        // pageable 객체 생성
+        Pageable p = PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by(Sort.Direction.DESC, "createdAt")
+        );
+
         // 키워드로 nickname 검색하는 리포지토리 로직 생성
-        List<CommunityUser> userList = communityUserRepository.findByNicknameContaining(keyword);
+        Slice<CommunityUser> userSlice = communityUserRepository.findByNicknameContaining(keyword, p);
+        List<CommunityUser> userList = userSlice.getContent();
 
         List<CommunityUserBriefDto> dtoList = new ArrayList<>();
         for(CommunityUser t : userList){
             dtoList.add(userToDto(t));
         }
 
-        return dtoList;
-
+        return new CommunityUseListDto(dtoList, userSlice.hasNext());
     }
 
 

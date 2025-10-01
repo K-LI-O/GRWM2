@@ -346,7 +346,7 @@ public class PostService {
      */
 
     @Transactional(readOnly = true)
-    public List<PostDto> searchByHashtag(String keyword){
+    public PostListDto searchByHashtag(String keyword, Pageable pageable){
         // 키워드로 해시태그 찾기
         Hashtag tag;
         try{
@@ -355,9 +355,16 @@ public class PostService {
             throw new RuntimeException("존재하지 않는 해시태그입니다.");
         }
 
-        // 포스트-해시태그 찾기
+        // Pageable 객체 생성
+        Pageable p = PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by(Sort.Direction.DESC, "createdAt")
+        );
 
-        List<PostHashtag> phList = postHashtagRepository.findByHashtag(tag);
+        // 포스트-해시태그 찾기
+        Slice<PostHashtag> phSlice = postHashtagRepository.findByHashtag(tag, p);
+        List<PostHashtag> phList = phSlice.getContent();
 
         // 포스트 dto 목록 반환
         List<PostDto> dtoList = new ArrayList<>();
@@ -365,7 +372,7 @@ public class PostService {
             dtoList.add(postToDto(t.getPost()));
         }
 
-        return dtoList;
+        return new PostListDto(dtoList, phSlice.hasNext());
     }
 
 
@@ -382,15 +389,24 @@ public class PostService {
 
 
     @Transactional(readOnly = true)
-    public List<PostDto> searchPost(String keyword){
-        List<Post> postList = postRepository.findByContentContaining(keyword);
+    public PostListDto searchPost(String keyword, Pageable pageable){
+        // Pageable 객체 생성
+        Pageable p = PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by(Sort.Direction.DESC, "createdAt")
+        );
+
+        // 포스트 목록 슬라이스로 찾아오기
+        Slice<Post> postSlice = postRepository.findByContentContaining(keyword, p);
+        List<Post> postList = postSlice.getContent();
 
         List<PostDto> dtoList = new ArrayList<>();
         for(Post t : postList){
             dtoList.add(postToDto(t));
         }
 
-        return dtoList;
+        return new PostListDto(dtoList, postSlice.hasNext());
 
     }
 
