@@ -125,14 +125,18 @@ public class HashtagController {
 
 
 
-    //------ 해시태그 검색 로직 ------//
+    //------ 해시태그 id 반환 로직 ------//
 
     /*
-    함수명 :
-    기능  :
-    매개변수 :
-    반환값 :
+    함수명 : getHashtagId
+    기능  : 해시태그 아이디를 반환한다.
+    매개변수 : String keyword
+    반환값 : Long id
      */
+    @GetMapping("/hashtag")
+    public ResponseEntity<Long> getHashtagId(@RequestParam String keyword){
+        return ResponseEntity.ok(hashtagService.getHashtagId(keyword));
+    }
 
 
 

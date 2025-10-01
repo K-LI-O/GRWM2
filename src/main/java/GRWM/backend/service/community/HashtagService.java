@@ -117,6 +117,17 @@ public class HashtagService {
     }
 
 
+    /*
+    함수명 : getHashtagId
+    기능  : 해시태그 아이디를 반환한다.
+    매개변수 : String keyword
+    반환값 : Long id
+     */
+    public Long getHashtagId(String keyword){
+        return hashtagRepository.findByName(keyword).getId();
+    }
+
+
 
 
 
