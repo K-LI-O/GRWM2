@@ -11,6 +11,7 @@ import GRWM.backend.repository.user.CommunityUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +33,9 @@ public class PostService {
     private final PostHashtagRepository postHashtagRepository;
     private final CommunityUserHashtagRepository cuHashtagRepository;
 
+
+
+    // ======== CRUD 로직 ======== ///
     /*
     함수명 : createPost
     기능 : 커뮤니티 게시글 생성
@@ -82,48 +86,6 @@ public class PostService {
         }
         return savedPost.getId();
 
-    }
-
-
-
-
-    /*
-    함수명 : showTimelinePostList
-    기능 : 타임라인 리스트 불러오기; 팔로우하는 사람의 최근 포스트
-    매개변수 : communityId 추가 필요
-    반환값:
-    포스트 리스트,
-    좋아요 개수 리스트,
-    boolean - 더 있는가?
-    */
-
-    @Transactional(readOnly = true)
-    public List<PostDto> showTimelinePostList(Long communityId){
-
-        // 사용자가 팔로우하는 계정 목록 알아내기
-
-        List<Following> followingList = extractOptionalUser(communityId).getFollowingList();
-
-        // 해당 계정의 포스트 목록 시간순으로 가져오기 향상된 for 문 이용;
-        List<CommunityUser> followingUserList = new ArrayList<>();
-        for(Following t : followingList){
-            followingUserList.add(t.getFollowing());
-        }
-
-        // Pageable 객체 생성하여 가져오기
-        Pageable pageable = PageRequest.of(0, 40, Sort.by(Sort.Direction.DESC, "createdAt"));
-        List<Post> postList = postRepository.findAllByUserIn(followingUserList, pageable);
-
-        // dto 리스트에 담기
-
-        List<PostDto> dtoList = new ArrayList<>();
-        for(Post t: postList){
-
-            dtoList.add(postToDto(t));
-        }
-
-        // 반환
-        return dtoList;
     }
 
 
@@ -202,13 +164,93 @@ public class PostService {
     기능 : 게시글 삭제하기
     매개변수 : path variable Long postId
     반환값: Dto: responseEntity 200 OK
-
     */
-
     @Transactional
     public void deletePost(Long postId){
         postRepository.delete(findPostById(postId));
     }
+
+
+    // ======= Pageable 사용 로직 ======= //
+
+
+
+    /*
+    함수명 : showTimelinePostList
+    기능 : 타임라인 리스트 불러오기; 팔로우하는 사람의 최근 포스트
+    매개변수 : communityId 추가 필요
+    반환값: PostListDto
+    포스트 리스트,
+    boolean - hasMore
+    */
+
+    @Transactional(readOnly = true)
+    public PostListDto showTimelinePostList(Long communityId, Pageable pageable){
+
+        // 사용자가 팔로우하는 계정 목록 알아내기
+
+        List<Following> followingList = extractOptionalUser(communityId).getFollowingList();
+
+        // 해당 계정의 포스트 목록 시간순으로 가져오기 향상된 for 문 이용;
+        List<CommunityUser> followingUserList = new ArrayList<>();
+        for(Following t : followingList){
+            followingUserList.add(t.getFollowing());
+        }
+
+        // Pageable 객체 추가 설정
+        Pageable p = PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by(Sort.Direction.DESC, "createdAt")
+        );
+        Slice<Post> postSlice = postRepository.findAllByUserIn(followingUserList, p);
+        List<Post> postList = postSlice.getContent();
+
+        // dto 리스트에 담기
+        List<PostDto> dtoList = new ArrayList<>();
+        for(Post t: postList){
+            dtoList.add(postToDto(t));
+        }
+
+        // 반환
+        return new PostListDto(dtoList, postSlice.hasNext());
+    }
+
+
+        /*
+    함수명 : getUserPosts
+    기능 : 각 계정별 포스트를 리스트로 반환;
+    매개변수 : path variable Long postId
+    반환값: Dto: responseEntity 200 OK
+
+    */
+
+    @Transactional(readOnly = true)
+    public PostListDto getUserPosts(Long communityId, Pageable pageable){
+        CommunityUser user = findCommunityUserById(communityId);
+
+        // pageable 객체 생성;
+        Pageable p = PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by(Sort.Direction.DESC, "createdAt")
+        );
+
+        Slice<Post> postSlice = postRepository.findByUser(user, p);
+        List<Post> postList = postSlice.getContent();
+
+        List<PostDto> dtoList = new ArrayList<>();
+        for(Post t: postList){
+
+            dtoList.add(postToDto(t));
+        }
+
+        return new PostListDto(dtoList, postSlice.hasNext());
+    }
+
+
+
+   // ======= 프로필 메인 게시물 설정 로직 ======= ///
 
 
     /*
@@ -249,32 +291,11 @@ public class PostService {
 
 
 
-    /*
-    함수명 : getUserPosts
-    기능 : 각 계정별 포스트를 리스트로 반환;
-    매개변수 : path variable Long postId
-    반환값: Dto: responseEntity 200 OK
-
-    */
-
-    @Transactional(readOnly = true)
-    public List<PostDto> getUserPosts(Long communityId){
-        CommunityUser user = findCommunityUserById(communityId);
-
-        List<Post> postList = postRepository.findByUser(user);
-
-        List<PostDto> dtoList = new ArrayList<>();
-        for(Post t: postList){
-
-            dtoList.add(postToDto(t));
-        }
-
-        return dtoList;
-    }
 
 
 
-    // ======== 해시태그 관련 로직 ======= //
+
+    // ======== 해시태그 관련 게시물 조회 로직 ======= //
 
 
          /*
