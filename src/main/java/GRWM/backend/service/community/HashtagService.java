@@ -6,8 +6,7 @@ import GRWM.backend.entity.community.Hashtag;
 import GRWM.backend.entity.user.CommunityUser;
 import GRWM.backend.repository.community.CommunityUserHashtagRepository;
 import GRWM.backend.repository.community.HashtagRepository;
-import GRWM.backend.repository.community.PostHashtagRepository;
-import GRWM.backend.repository.community.PostRepository;
+
 import GRWM.backend.repository.user.CommunityUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

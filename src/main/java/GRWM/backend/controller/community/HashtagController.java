@@ -1,6 +1,6 @@
 package GRWM.backend.controller.community;
 
-import GRWM.backend.dto.community.HashtagDto;
+
 import GRWM.backend.dto.community.PostDto;
 import GRWM.backend.entity.user.CustomUserDetails;
 import GRWM.backend.service.community.HashtagService;
