@@ -1,8 +1,6 @@
 package GRWM.backend.controller.community;
 
 import GRWM.backend.dto.community.CommunityUseListDto;
-import GRWM.backend.dto.community.CommunityUserBriefDto;
-import GRWM.backend.dto.community.PostDto;
 import GRWM.backend.dto.community.PostListDto;
 import GRWM.backend.service.community.CommunityUserService;
 import GRWM.backend.service.community.PostService;
@@ -11,7 +9,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
