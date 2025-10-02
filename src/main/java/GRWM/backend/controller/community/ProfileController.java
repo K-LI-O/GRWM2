@@ -27,15 +27,15 @@ public class ProfileController {
     반환값 : dto CommunityUserFullInfoDto
      */
 
-    @GetMapping("/profile")
-    public CommunityUserFullInfoDto showUserProfile(@PathVariable Long userId){
-        return communityUserService.showUserProfile(userId);
+    @GetMapping("/{communityId}/profile")
+    public CommunityUserFullInfoDto showUserProfile(@PathVariable Long communityId){
+        return communityUserService.showUserProfile(communityId);
     }
 
 
         /*
     함수명 : showCommunityUserBriefInfo
-    기능  : 사용자 프로필 조회
+    기능  : 커뮤니티 프로필 간단 조회(사용자 화면용)
     매개변수: briefDto
     반환값 : dto CommunityUserFullInfoDto
      */
