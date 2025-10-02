@@ -228,7 +228,7 @@ public class ChatRoomService {
     매개 변수 : Long userId, Long chatRoomId,
     반환값 : void
      */
-
+    @Transactional(readOnly = true)
     public void leaveChatRoom(Long communityId, Long chatRoomId){
         // chatroomMemberId 구하기
         //ChatRoomMember cm = chatRoomMemberRepository.findByMember_IdAndChatRoom_Id(userId, chatRoomId);
@@ -250,7 +250,7 @@ public class ChatRoomService {
     매개변수 : path variable chatRoomId
     반환값 : Dto; 채팅방명, description, isPrivate, 현재 입장한 사람들;
      */
-
+    @Transactional(readOnly = true)
     public ChatRoomShowDto showChatRoomInfo(Long chatRoomId, Long communityId){
 
         // 채팅방 객체 가져오기
@@ -286,7 +286,7 @@ public class ChatRoomService {
     매개변수 : path var Long userId
     반환값 : Dto list; 채팅방명, description, isPrivate, 최대 인원, 현재 입장한 사람들;
      */
-
+    @Transactional(readOnly = true)
     public List<ChatRoomShowDto> showJoinedChatRoomListDto(Long communityId){
 
         // 유저 아이디로 채팅방과 멤버의 중간 테이블 리스트 찾아오기
@@ -328,7 +328,7 @@ public class ChatRoomService {
     매개변수 : xx
     반환값 : Dto; 채팅방명, description, isPrivate, 최대 인원, 현재 입장한 사람들;
      */
-
+    @Transactional(readOnly = true)
     public List<ChatRoomShowDto> showChatRoomListInfo(Long communityId){
         List<ChatRoom> chatRoomList = chatRoomRepository.findAll();
 
