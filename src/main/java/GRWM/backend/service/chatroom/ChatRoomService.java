@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+
 public class ChatRoomService {
 
     private final ChatRoomRepository chatRoomRepository;
@@ -250,7 +251,7 @@ public class ChatRoomService {
     반환값 : Dto; 채팅방명, description, isPrivate, 현재 입장한 사람들;
      */
 
-    public ChatRoomShowDto showChatRoomInfo(Long chatRoomId){
+    public ChatRoomShowDto showChatRoomInfo(Long chatRoomId, Long communityId){
 
         // 채팅방 객체 가져오기
         Optional<ChatRoom> optionalChatRoom = chatRoomRepository.findById(chatRoomId);
@@ -262,7 +263,6 @@ public class ChatRoomService {
             // 플래너를 찾지 못했을 때의 로직
             throw new IllegalArgumentException("Planner not found with ID: " + chatRoomId);
         }
-
         // 카테고리 객체를 아이디로 바꾸기.
         String tagContent = chatRoom.getChatRoomTag().getContent();
 
@@ -272,7 +272,9 @@ public class ChatRoomService {
                 chatRoom.getName(),
                 chatRoom.getDescription(),
                 tagContent, chatRoom.isPrivate(),
-                chatRoom.getMaxMembers(), chatRoom.getCurrentMembers());
+                chatRoom.getMaxMembers(), chatRoom.getCurrentMembers(),
+                getIsManager(communityId, chatRoomId)
+                );
 
         return dto;
     }
@@ -308,7 +310,8 @@ public class ChatRoomService {
                     chatRoom.getId(),
                     chatRoom.getName(), chatRoom.getDescription(),
                     chatRoom.getChatRoomTag().getContent(), chatRoom.isPrivate(), chatRoom.getMaxMembers(),
-                    chatRoom.getCurrentMembers());
+                    chatRoom.getCurrentMembers(),
+                    getIsManager(communityId, chatRoom.getId()));
 
             dtoList.add(dto);
         }
@@ -326,7 +329,7 @@ public class ChatRoomService {
     반환값 : Dto; 채팅방명, description, isPrivate, 최대 인원, 현재 입장한 사람들;
      */
 
-    public List<ChatRoomShowDto> showChatRoomListInfo(){
+    public List<ChatRoomShowDto> showChatRoomListInfo(Long communityId){
         List<ChatRoom> chatRoomList = chatRoomRepository.findAll();
 
         List<ChatRoomShowDto> dtoList = new ArrayList<>();
@@ -336,7 +339,8 @@ public class ChatRoomService {
                     chatRoom.getId(),
                     chatRoom.getName(), chatRoom.getDescription(),
                     chatRoom.getChatRoomTag().getContent(), chatRoom.isPrivate(), chatRoom.getMaxMembers(),
-                    chatRoom.getCurrentMembers());
+                    chatRoom.getCurrentMembers(),
+                    getIsManager(communityId, chatRoom.getId()));
 
             dtoList.add(dto);
         }
@@ -393,6 +397,23 @@ public class ChatRoomService {
 
         return savedAnnouncement.getId();
     }
+
+
+    /*
+    함수명: getIsManager
+    기능: 사용작 해당 채팅방의 방장인지 여부를 반환한다.
+    매개변수: Long communityId, Long chatroomId
+    반환값: boolean
+     */
+
+    private boolean getIsManager(Long communityId, Long chatroomId){
+        CommunityUser user = extractOptionalUser(communityId);
+        ChatRoom chatroom = extractOptionalChatroom(chatroomId);
+
+        ChatRoomCommunity cc = chatRoomCommunityRepository.findByCommunityUserAndChatRoom(user,chatroom);
+        return cc.isManager();
+    }
+
 
 
 
@@ -464,6 +485,10 @@ public class ChatRoomService {
 
         return chatroom;
     }
+
+
+
+
 
 
 }

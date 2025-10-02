@@ -164,8 +164,9 @@ public class ChatRoomController {
      */
 
     @GetMapping("/show/{chatRoomId}")
-    public ChatRoomShowDto showChatRoomInfo(@PathVariable Long chatRoomId){
-        return chatRoomService.showChatRoomInfo(chatRoomId);
+    public ChatRoomShowDto showChatRoomInfo(@PathVariable Long chatRoomId,
+                                            @AuthenticationPrincipal CustomUserDetails userDetails){
+        return chatRoomService.showChatRoomInfo(chatRoomId, userDetails.getCommunityUserId());
     }
 
 
@@ -192,8 +193,8 @@ public class ChatRoomController {
      */
 
     @GetMapping("/show")
-    public List<ChatRoomShowDto> showChatRoomListInfo(){
-        return chatRoomService.showChatRoomListInfo();
+    public List<ChatRoomShowDto> showChatRoomListInfo(@AuthenticationPrincipal CustomUserDetails userDetails){
+        return chatRoomService.showChatRoomListInfo(userDetails.getCommunityUserId());
 
     }
 

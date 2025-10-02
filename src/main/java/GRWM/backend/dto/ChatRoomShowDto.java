@@ -25,4 +25,6 @@ public class ChatRoomShowDto {
     private int maxMembers;    // 최대 참여 가능 인원 (0 = 무제한)
 
     private int currentMembers;
+
+    private boolean isManager;
 }
