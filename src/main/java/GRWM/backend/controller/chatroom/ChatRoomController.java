@@ -138,14 +138,14 @@ public class ChatRoomController {
 
 
 
-     /* POST
+     /* Delete
     함수명 : leaveChatRoom
     기능 : 멤버가 채팅방에서 퇴장
     매개 변수 : path variable userId, path variable chatRoomId
     반환값 : ResponseEntity<Void>
      */
 
-    @PostMapping("/{chatRoomId}/{userId}/leave")
+    @DeleteMapping("/{chatRoomId}/{userId}/leave")
     public ResponseEntity<Void> joinChatRoom(@PathVariable Long chatRoomId,
                                              @PathVariable Long userId,
                                              @AuthenticationPrincipal CustomUserDetails userDetails

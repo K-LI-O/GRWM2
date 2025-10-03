@@ -62,6 +62,7 @@ public class AuthenticationController {
                 jwt,
                 "Bearer",
                 memberService.findUsernameByLoginId(dto.getLoginId()),
+                memberService.findUserIdByLoginId(dto.getLoginId()),
                 memberService.findUserIdByLoginId(dto.getLoginId())
                 ));
 

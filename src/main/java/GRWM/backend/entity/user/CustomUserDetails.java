@@ -1,6 +1,7 @@
 package GRWM.backend.entity.user;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -10,7 +11,6 @@ import java.util.List;
 
 
 @Getter
-
 public class CustomUserDetails implements UserDetails {
 
     private final Long userId;
@@ -107,6 +107,7 @@ public class CustomUserDetails implements UserDetails {
     public boolean isEnabled() {
         return true; // 실제 로직 구현
     }
+
 
 
     public CustomUserDetails(Long userId, Long communityId, String username, String password, Collection<? extends GrantedAuthority> authorities) {

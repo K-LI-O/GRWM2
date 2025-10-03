@@ -12,6 +12,7 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
+@Table(name = "chat_room_tag")
 @NoArgsConstructor
 public class ChatRoomTag {
 
@@ -21,7 +22,7 @@ public class ChatRoomTag {
     @Setter(AccessLevel.NONE)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "tag_name")
     private String content;
 
     @OneToMany(mappedBy = "chatRoomTag", cascade = CascadeType.ALL) // ChatRoom 엔티티의 "chatRoomTags" 필드에 의해 매핑됨

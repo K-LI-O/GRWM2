@@ -15,5 +15,5 @@ public class ChatRoomJoinDto {
 
     private String chatName;
 
-    private boolean isManager; // 새로운 어쩌구.
+    private Boolean isManager; // 새로운 어쩌구.
 }

@@ -31,7 +31,7 @@ public class Member {
     @Column(nullable = false)
     private String loginId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "pwd")
     private String password;
 
     @Column(nullable = false)

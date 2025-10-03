@@ -213,7 +213,7 @@ public class ChatRoomService {
 
 
        // 채팅방-커뮤니티유저 객체 생성하기
-        ChatRoomCommunity joinInfo = new ChatRoomCommunity(chatRoom, cu, dto.isManager());
+        ChatRoomCommunity joinInfo = new ChatRoomCommunity(chatRoom, cu, dto.getIsManager());
         // 그리고 저장하기.
         chatRoomCommunityRepository.save(joinInfo);
 
