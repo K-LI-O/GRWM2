@@ -410,8 +410,13 @@ public class ChatRoomService {
         CommunityUser user = extractOptionalUser(communityId);
         ChatRoom chatroom = extractOptionalChatroom(chatroomId);
 
+
         ChatRoomCommunity cc = chatRoomCommunityRepository.findByCommunityUserAndChatRoom(user,chatroom);
-        return cc.isManager();
+        if(cc != null){
+            return cc.isManager();
+        } else{
+            return false;
+        }
     }
 
 
