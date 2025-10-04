@@ -149,7 +149,7 @@ public class ChatRoomController {
     public ResponseEntity<Void> joinChatRoom(@PathVariable Long chatRoomId,
                                                                                          @AuthenticationPrincipal CustomUserDetails userDetails
                                             ){
-        chatRoomService.leaveChatRoom(userDetails.getCommunityId(), chatRoomId);
+        chatRoomService.leaveChatRoom(userDetails.getCommunityUserId(), chatRoomId);
         return ResponseEntity.noContent().build();
     }
 
