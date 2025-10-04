@@ -145,12 +145,11 @@ public class ChatRoomController {
     반환값 : ResponseEntity<Void>
      */
 
-    @DeleteMapping("/{chatRoomId}/{userId}/leave")
+    @DeleteMapping("/{chatRoomId}/leave")
     public ResponseEntity<Void> joinChatRoom(@PathVariable Long chatRoomId,
-                                             @PathVariable Long userId,
-                                             @AuthenticationPrincipal CustomUserDetails userDetails
+                                                                                         @AuthenticationPrincipal CustomUserDetails userDetails
                                             ){
-        chatRoomService.leaveChatRoom(userDetails.getUserId(), chatRoomId);
+        chatRoomService.leaveChatRoom(userDetails.getCommunityId(), chatRoomId);
         return ResponseEntity.noContent().build();
     }
 

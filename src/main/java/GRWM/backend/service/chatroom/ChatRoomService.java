@@ -228,7 +228,7 @@ public class ChatRoomService {
     매개 변수 : Long userId, Long chatRoomId,
     반환값 : void
      */
-    @Transactional(readOnly = true)
+    @Transactional
     public void leaveChatRoom(Long communityId, Long chatRoomId){
         // chatroomMemberId 구하기
         //ChatRoomMember cm = chatRoomMemberRepository.findByMember_IdAndChatRoom_Id(userId, chatRoomId);
