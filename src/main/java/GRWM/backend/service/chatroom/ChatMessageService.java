@@ -45,12 +45,12 @@ public class ChatMessageService {
         ChatRoom chatRoom = chatRoomRepository.getReferenceById(chatRoomId);
 
         // 멤버 아이디 가져오기
-        String nickname = extractOptionalUser(dto.getConmmunityId()).getNickname();
+        String nickname = extractOptionalUser(dto.getCommunityId()).getNickname();
         System.out.println("get the member ID\n");
 
         // 메시지 객체 생성
         ChatMessage message = new ChatMessage(
-                dto.getConmmunityId(),
+                dto.getCommunityId(),
                 dto.getContent(),
                 ChatMessage.MessageType.CHAT.ordinal(),
                 chatRoom,
