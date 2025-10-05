@@ -236,6 +236,9 @@ public class ChatRoomService {
                 extractOptionalUser(communityId),
                 extractOptionalChatroom(chatRoomId)
         );
+        // chatRoom 사람 수 하나 감소
+        cc.getChatRoom().decreaseCurrentMemberCount();
+
         // chatroomMember 객체 삭제
         chatRoomCommunityRepository.delete(cc);
 

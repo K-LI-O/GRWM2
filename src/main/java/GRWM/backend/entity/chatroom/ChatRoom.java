@@ -78,4 +78,10 @@ public class ChatRoom {
         this.owner = owner;
     }
 
+    // 비즈니스 로직
+
+    public void decreaseCurrentMemberCount(){
+        setCurrentMembers(currentMembers - 1);
+    }
+
 }
