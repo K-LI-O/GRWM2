@@ -42,13 +42,11 @@ public class Member {
     // 단체 플래너
 
     // 채팅방
-
     @OneToMany(mappedBy = "member")
     private List<ChatRoomMember> chatRoomMembers = new ArrayList<>();
 
 
     // 커뮤니티
-
     @OneToOne
     private CommunityUser communityUser;
 
