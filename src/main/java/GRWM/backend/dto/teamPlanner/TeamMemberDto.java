@@ -10,4 +10,22 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TeamMemberDto {
+    /*
+    Long userId,
+String username,
+String nickname, (맨 처음에는 빈 String)
+String profileImage,
+String email,
+String role,
+String status (맨 처음에는 active, 탈퇴 시 withdraw)
+
+     */
+
+    private Long userID;
+    private String username;
+    private String nickname;
+    private String profileImage;
+    private String email;
+    private String roll;
+    private String status;
 }
