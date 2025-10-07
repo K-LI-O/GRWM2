@@ -3,7 +3,7 @@ package GRWM.backend.controller.personalplanner;
 
 import GRWM.backend.dto.personalPlanner.CategoryInfoDto;
 import GRWM.backend.dto.personalPlanner.PlannerCategoryCreateRequestDto;
-import GRWM.backend.service.PlannerCategoryService;
+import GRWM.backend.service.personalPlanner.PlannerCategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

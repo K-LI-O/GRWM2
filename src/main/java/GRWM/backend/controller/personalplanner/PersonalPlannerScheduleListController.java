@@ -2,7 +2,7 @@ package GRWM.backend.controller.personalplanner;
 
 
 import GRWM.backend.dto.personalPlanner.PersonalScheduleSimpleDto;
-import GRWM.backend.service.ScheduleService;
+import GRWM.backend.service.personalPlanner.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

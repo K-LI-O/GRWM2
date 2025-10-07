@@ -1,4 +1,4 @@
-package GRWM.backend.service;
+package GRWM.backend.service.personalPlanner;
 
 import GRWM.backend.dto.personalPlanner.*;
 import GRWM.backend.entity.personalplanner.PersonalPlanner;

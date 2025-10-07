@@ -145,10 +145,10 @@ public class CommunityUserService {
     함수명 : followUser
     기능  : 다른 사용자 팔로우
     매개변수: dto username, profileImage, description
-    반환값 : dto CommunityUserFullInfoDto
+    반환값 : int
      */
 
-    public void followUser(Long communityId, Long targetId){
+    public int followUser(Long communityId, Long targetId){
 
         // 팔로잉 리스트 생성
         Following following = new Following(
@@ -158,6 +158,7 @@ public class CommunityUserService {
 
         // 저장
         followingRepository.save(following);
+        return countFollowing(communityId);
     }
 
 
@@ -168,7 +169,7 @@ public class CommunityUserService {
     반환값 : dto CommunityUserFullInfoDto
      */
 
-    public void unfollowUser(Long communityId, Long followingId){
+    public int unfollowUser(Long communityId, Long followingId){
 
         // Id로 커뮤니티 객체 불러오기;
 
@@ -179,6 +180,7 @@ public class CommunityUserService {
                 extractOptionalUser(communityId)
                 );
         followingRepository.delete(following);
+        return countFollowing(communityId);
     }
 
 
@@ -187,7 +189,7 @@ public class CommunityUserService {
     함수명 : getFollowerList
     기능  : 팔로워 리스트 가져오기
     매개변수: Long communityId
-    반환값 : List<CommunityUserBriefDto>
+    반환값 : int
      */
 
     public List<CommunityUserBriefDto> getFollowerList(Long communityId){

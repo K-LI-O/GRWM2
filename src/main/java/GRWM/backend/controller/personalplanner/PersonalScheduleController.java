@@ -5,7 +5,7 @@ import GRWM.backend.dto.personalPlanner.PersonalScheduleCreateRequestDto;
 import GRWM.backend.dto.personalPlanner.PersonalScheduleDateTimeDto;
 import GRWM.backend.dto.personalPlanner.PersonalScheduleDto;
 
-import GRWM.backend.service.ScheduleService;
+import GRWM.backend.service.personalPlanner.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
