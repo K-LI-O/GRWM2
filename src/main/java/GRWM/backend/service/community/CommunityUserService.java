@@ -47,32 +47,32 @@ public class CommunityUserService {
         CommunityUser target = extractOptionalUser(targetId);
 
         CommunityUserBriefDto briefDto = new CommunityUserBriefDto(
-                user.getId(),
-                user.getNickname(),
-                user.getProfileImage()
+                target.getId(),
+                target.getNickname(),
+                target.getProfileImage()
         );
 
-        List<Post> postList = user.getPostList();
+        List<Post> postList = target.getPostList();
         int postCount = postList.size();
 
-        List<Following> followingList = user.getFollowingList();
+        List<Following> followingList = target.getFollowingList();
         int followingCount = followingList.size();
 
-        List<Following> followerList = user.getFollowerList();
+        List<Following> followerList = target.getFollowerList();
         int followerCount = followerList.size();
 
-        List<UserBadge> archivedBadgeList = user.getUserBadgeList();
+        List<UserBadge> archivedBadgeList = target.getUserBadgeList();
         int archivedBadgeCount = archivedBadgeList.size();
 
         CommunityUserFullInfoDto dto = CommunityUserFullInfoDto.builder()
                 .User(briefDto)
-                .description(user.getDescription())
-                .bannerImage(user.getBannerImage())
+                .description(target.getDescription())
+                .bannerImage(target.getBannerImage())
                 .postCount(postCount)
                 .followerCount(followerCount)
                 .followingCount(followingCount)
                 .archivedBadgeCount(archivedBadgeCount)
-                .pinnedPostId(Optional.ofNullable(user.getPinnedPost())
+                .pinnedPostId(Optional.ofNullable(target.getPinnedPost())
                         .map(Post::getId) // Post 객체가 있으면 getId() 호출
                         .orElse(null)   // 메인 포스트
                 )
