@@ -72,10 +72,11 @@ public class ProfileController {
      */
 
     @PostMapping("/{targetId}/follow")
-    public ResponseEntity<Void> followUser(@PathVariable Long targetId,
+    public ResponseEntity<Integer> followUser(@PathVariable Long targetId,
                                            @AuthenticationPrincipal CustomUserDetails userDetails){
-        communityUserService.followUser(userDetails.getCommunityUserId(), targetId);
-        return ResponseEntity.ok().build();
+
+        return ResponseEntity.ok(
+                communityUserService.followUser(userDetails.getCommunityUserId(), targetId));
     }
 
     /*
@@ -86,10 +87,11 @@ public class ProfileController {
      */
 
     @DeleteMapping("/{targetId}/follow")
-    public ResponseEntity<Void> unfollowUser(@PathVariable Long targetId,
+    public ResponseEntity<Integer> unfollowUser(@PathVariable Long targetId,
                                            @AuthenticationPrincipal CustomUserDetails userDetails){
-        communityUserService.unfollowUser(userDetails.getCommunityUserId(), targetId);
-        return ResponseEntity.ok().build();
+
+        return ResponseEntity.ok(
+                communityUserService.unfollowUser(userDetails.getCommunityUserId(), targetId));
     }
 
 
