@@ -11,14 +11,15 @@ import java.util.List;
 
 
 @Getter
+@Setter
 @NoArgsConstructor
 public class CustomUserDetails implements UserDetails {
 
-    private final Long userId;
-    private final Long communityUserId;
-    private final String username;
-    private final String password;
-    private final Collection<? extends GrantedAuthority> authorities;
+    private Long userId;
+    private Long communityUserId;
+    private String username;
+    private String password;
+    private Collection<? extends GrantedAuthority> authorities;
 
     private boolean enabled;
     private boolean accountNonExpired;
