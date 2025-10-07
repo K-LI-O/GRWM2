@@ -1,15 +1,12 @@
 package GRWM.backend.dto.community;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
+@Builder
 @AllArgsConstructor
 public class CommunityUserFullInfoDto {
 
@@ -26,5 +23,6 @@ public class CommunityUserFullInfoDto {
     private int archivedBadgeCount; // 뱃지 정보;
     private Long pinnedPostId;
 
+    private String relationship;
 
 }

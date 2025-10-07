@@ -28,8 +28,9 @@ public class ProfileController {
      */
 
     @GetMapping("/{communityId}/profile")
-    public CommunityUserFullInfoDto showUserProfile(@PathVariable Long communityId){
-        return communityUserService.showUserProfile(communityId);
+    public CommunityUserFullInfoDto showUserProfile(@PathVariable Long communityId,
+                                                    @AuthenticationPrincipal CustomUserDetails userDetails){
+        return communityUserService.showUserProfile(userDetails.getCommunityUserId(), communityId);
     }
 
 

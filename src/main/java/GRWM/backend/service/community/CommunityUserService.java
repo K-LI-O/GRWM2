@@ -41,9 +41,10 @@ public class CommunityUserService {
     반환값 : dto CommunityUserFullInfoDto
      */
 
-    public CommunityUserFullInfoDto showUserProfile(Long communityUserId){
-
+    public CommunityUserFullInfoDto showUserProfile(Long communityUserId, Long targetId) {
+        // user는 로그인한 사용자, target은 프로필 조회하는 상대방
         CommunityUser user = extractOptionalUser(communityUserId);
+        CommunityUser target = extractOptionalUser(targetId);
 
         CommunityUserBriefDto briefDto = new CommunityUserBriefDto(
                 user.getId(),
@@ -63,18 +64,20 @@ public class CommunityUserService {
         List<UserBadge> archivedBadgeList = user.getUserBadgeList();
         int archivedBadgeCount = archivedBadgeList.size();
 
-        CommunityUserFullInfoDto dto = new CommunityUserFullInfoDto(
-                briefDto,
-                user.getDescription(),
-                user.getBannerImage(),
-                postCount,
-                followerCount,
-                followingCount,
-                archivedBadgeCount, // 뱃지 개수
-                Optional.ofNullable(user.getPinnedPost())
+        CommunityUserFullInfoDto dto = CommunityUserFullInfoDto.builder()
+                .User(briefDto)
+                .description(user.getDescription())
+                .bannerImage(user.getBannerImage())
+                .postCount(postCount)
+                .followerCount(followerCount)
+                .followingCount(followingCount)
+                .archivedBadgeCount(archivedBadgeCount)
+                .pinnedPostId(Optional.ofNullable(user.getPinnedPost())
                         .map(Post::getId) // Post 객체가 있으면 getId() 호출
                         .orElse(null)   // 메인 포스트
-                );
+                )
+                .relationship(getRelationship(user, target))
+                .build();
 
         return dto;
     }
@@ -91,7 +94,7 @@ public class CommunityUserService {
     반환값 : dto CommunityUserFullInfoDto
      */
 
-    public CommunityUserBriefDto showCommunityUserBriefInfo(Long communityId){
+    public CommunityUserBriefDto showCommunityUserBriefInfo(Long communityId) {
         CommunityUser user = extractOptionalUser(communityId);
         return userToDto(user);
     }
@@ -106,7 +109,7 @@ public class CommunityUserService {
     반환값 : dto CommunityUserFullInfoDto
      */
 
-    public CommunityUserFullInfoDto updateUserProfile(Long communityId, ProfileUpdateDto dto){
+    public CommunityUserFullInfoDto updateUserProfile(Long communityId, ProfileUpdateDto dto) {
         // 사용자 객체 불러오기
 
         CommunityUser user = extractOptionalUser(communityId);
@@ -122,18 +125,19 @@ public class CommunityUserService {
         communityUserRepository.flush();
 
         CommunityUserBriefDto briefDto = new CommunityUserBriefDto(user.getId(), user.getNickname(), user.getProfileImage());
-        CommunityUserFullInfoDto updatedDto = new CommunityUserFullInfoDto(
-                briefDto,
-                user.getDescription(),
-                user.getBannerImage(),
-                user.countPost(),
-                user.countFollowing(),
-                user.countFollower(),
-                user.countArchivedBadge(),
-                Optional.ofNullable(user.getPinnedPost())
+        CommunityUserFullInfoDto updatedDto = CommunityUserFullInfoDto.builder()
+                .User(briefDto)
+                .description(user.getDescription())
+                .bannerImage(user.getBannerImage())
+                .postCount(user.countPost())
+                .followerCount(user.countFollower())
+                .followingCount(user.countFollowing())
+                .archivedBadgeCount(user.countArchivedBadge())
+                .pinnedPostId(Optional.ofNullable(user.getPinnedPost())
                         .map(Post::getId) // Post 객체가 있으면 getId() 호출
-                        .orElse(null)
-        );
+                        .orElse(null)   // 메인 포스트
+                )
+                .build();
 
         return updatedDto;
 
@@ -148,7 +152,7 @@ public class CommunityUserService {
     반환값 : int
      */
 
-    public int followUser(Long communityId, Long targetId){
+    public int followUser(Long communityId, Long targetId) {
 
         // 팔로잉 리스트 생성
         Following following = new Following(
@@ -169,7 +173,7 @@ public class CommunityUserService {
     반환값 : dto CommunityUserFullInfoDto
      */
 
-    public int unfollowUser(Long communityId, Long followingId){
+    public int unfollowUser(Long communityId, Long followingId) {
 
         // Id로 커뮤니티 객체 불러오기;
 
@@ -178,7 +182,7 @@ public class CommunityUserService {
 
                 extractOptionalUser(followingId),
                 extractOptionalUser(communityId)
-                );
+        );
         followingRepository.delete(following);
         return countFollowing(communityId);
     }
@@ -192,12 +196,12 @@ public class CommunityUserService {
     반환값 : int
      */
 
-    public List<CommunityUserBriefDto> getFollowerList(Long communityId){
+    public List<CommunityUserBriefDto> getFollowerList(Long communityId) {
         // communityId로 followingList 조회하여.
-        List<Following> followerList= followingRepository.findByFollowing(extractOptionalUser(communityId));
+        List<Following> followerList = followingRepository.findByFollowing(extractOptionalUser(communityId));
 
         List<CommunityUserBriefDto> dtoList = new ArrayList<>();
-        for( Following t : followerList){
+        for (Following t : followerList) {
             dtoList.add(userToDto(t.getFollower()));
         }
 
@@ -216,12 +220,12 @@ public class CommunityUserService {
     반환값 : List<CommunityUserBriefDto>
      */
 
-    public List<CommunityUserBriefDto> getFollowingList(Long communityId){
+    public List<CommunityUserBriefDto> getFollowingList(Long communityId) {
 
         List<Following> followingList = followingRepository.findByFollower(extractOptionalUser(communityId));
 
         List<CommunityUserBriefDto> dtoList = new ArrayList<>();
-        for( Following t : followingList){
+        for (Following t : followingList) {
             dtoList.add(userToDto(t.getFollowing()));
         }
 
@@ -237,7 +241,7 @@ public class CommunityUserService {
     반환값 : dto CommunityUserFullInfoDto
      */
 
-    public void blockUser(Long communityUserId, Long targetId){
+    public void blockUser(Long communityUserId, Long targetId) {
 
         // 블락 리스트의 새 칼럼 생성
         BlockList block = new BlockList(
@@ -256,14 +260,14 @@ public class CommunityUserService {
     반환값 : void
      */
 
-    public void unblockUser(Long communityUserId, Long targetId){
+    public void unblockUser(Long communityUserId, Long targetId) {
 
-         BlockList block = blockListRepository.findByBlockerAndBlockedUser(
+        BlockList block = blockListRepository.findByBlockerAndBlockedUser(
                 extractOptionalUser(communityUserId),
                 extractOptionalUser(targetId)
-         );
+        );
 
-         blockListRepository.delete(block);
+        blockListRepository.delete(block);
 
     }
 
@@ -275,18 +279,17 @@ public class CommunityUserService {
     반환값 : dto CommunityUserBriefDto
      */
 
-    public List<CommunityUserBriefDto> getBlockedUserList(Long communityId){
+    public List<CommunityUserBriefDto> getBlockedUserList(Long communityId) {
         List<BlockList> blockList = blockListRepository.findByBlocker(extractOptionalUser(communityId));
 
         List<CommunityUserBriefDto> dtoList = new ArrayList<>();
-        for( BlockList t : blockList){
+        for (BlockList t : blockList) {
 
             dtoList.add(userToDto(t.getBlockedUser()));
         }
 
         return dtoList;
     }
-
 
 
     // ======= 검색 로직 ======= //
@@ -300,7 +303,7 @@ public class CommunityUserService {
     반환값 : UserBriefDto List,  유저 목록 개수
      */
 
-    public CommunityUseListDto searchUser(String keyword, Pageable pageable){
+    public CommunityUseListDto searchUser(String keyword, Pageable pageable) {
 
         // pageable 객체 생성
         Pageable p = PageRequest.of(
@@ -314,7 +317,7 @@ public class CommunityUserService {
         List<CommunityUser> userList = userSlice.getContent();
 
         List<CommunityUserBriefDto> dtoList = new ArrayList<>();
-        for(CommunityUser t : userList){
+        for (CommunityUser t : userList) {
             dtoList.add(userToDto(t));
         }
 
@@ -322,39 +325,36 @@ public class CommunityUserService {
     }
 
 
-
     // ======= count 로직; ======= //
 
-    public int countFollowing(Long communityId){
+    public int countFollowing(Long communityId) {
         return extractOptionalUser(communityId).countFollowing();
     }
 
-    public int countFollower(Long communityId){
+    public int countFollower(Long communityId) {
         return extractOptionalUser(communityId).countFollower();
     }
 
-    public int countBlockedUsers(Long communityId){
+    public int countBlockedUsers(Long communityId) {
         List<BlockList> blockList = blockListRepository.findByBlocker(extractOptionalUser(communityId));
         return blockList.size();
     }
 
 
-
-    private CommunityUser extractOptionalUser(Long communityId){
+    private CommunityUser extractOptionalUser(Long communityId) {
         Optional<CommunityUser> optionalUser = communityUserRepository.findById(communityId);
         CommunityUser user = null;
 
 
         if (optionalUser.isPresent()) {
             return optionalUser.get();
-        } else{
+        } else {
             throw new RuntimeException("존재하지 않는 사용자입니다.");
         }
     }
 
 
-
-    private CommunityUserBriefDto userToDto(CommunityUser user){
+    private CommunityUserBriefDto userToDto(CommunityUser user) {
 
         CommunityUserBriefDto newDto = new CommunityUserBriefDto(
                 user.getId(),
@@ -366,5 +366,22 @@ public class CommunityUserService {
 
     }
 
+    private String getRelationship(CommunityUser user, CommunityUser target) {
+        if(user.equals(target)) return null;
+        else if (followingRepository.findByFollowingAndFollower(user, target) != null
+            // 내가 팔로우됨, 타겟이 팔로워
+        ) return "isFollowingMe";
+        else if (followingRepository.findByFollowingAndFollower(target, user) != null
+            // 내가 타겟의 팔로워
+        ) return "followedByMe";
 
+        else if (blockListRepository.findByBlockerAndBlockedUser(user, target) != null
+            // 내가 target 을 블락함
+        ) return "isBlockedByMe";
+        else if (blockListRepository.findByBlockerAndBlockedUser(target, user) != null
+            // 내가 target 에게 블락됨
+        ) return "isBlockingMe";
+        else return "noRelationship";
+
+    }
 }
