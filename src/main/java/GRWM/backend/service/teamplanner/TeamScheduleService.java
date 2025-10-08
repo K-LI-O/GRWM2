@@ -86,4 +86,26 @@ public class TeamScheduleService {
     param : Long plannerId, int year, int month, int day
     return value : List<TeamScheduleBrieDto> schedules
      */
+
+
+
+
+
+        /*
+    함수명 : addMemberToSchedule
+    기능 : 일정에 참여하는 멤버 추가(일정 로직이긴 함)
+    POST /api/team-planner/{plannerId}/schedule/{scheduleId}/add-member
+    매개변수 : Long plannerId, Long scheduleId
+    반환값 : List<MemberBriefDto> members
+     */
+
+
+    /*
+    함수명 : deleteMember
+    기능 : 일정에 참여하는 멤버 삭제(일정 로직이긴 함)
+    POST /api/team-planner/{plannerId}/schedule/{scheduleId}/delete-member
+    매개변수 : Long plannerId, Long scheduleId
+    반환값 : responseEntity 204
+     */
+
 }
