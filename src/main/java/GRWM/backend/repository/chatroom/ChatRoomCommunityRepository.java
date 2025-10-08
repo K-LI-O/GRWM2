@@ -11,4 +11,6 @@ public interface ChatRoomCommunityRepository extends JpaRepository<ChatRoomCommu
     List<ChatRoomCommunity> findByCommunityUser(CommunityUser user);
 
     ChatRoomCommunity findByCommunityUserAndChatRoom(CommunityUser user, ChatRoom chatroom);
+
+    List<ChatRoomCommunity> findByChatRoom(ChatRoom chatroom);
 }

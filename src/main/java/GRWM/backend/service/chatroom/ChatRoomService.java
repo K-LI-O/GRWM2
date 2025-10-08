@@ -2,6 +2,7 @@ package GRWM.backend.service.chatroom;
 
 
 import GRWM.backend.dto.chatroom.*;
+import GRWM.backend.dto.community.CommunityUserBriefDto;
 import GRWM.backend.entity.chatroom.*;
 import GRWM.backend.entity.user.CommunityUser;
 import GRWM.backend.entity.user.Member;
@@ -26,7 +27,6 @@ public class ChatRoomService {
 
     private final ChatRoomRepository chatRoomRepository;
     private final MemberRepository memberRepository;
-    //private final ChatRoomMemberRepository chatRoomMemberRepository;
     private final ChatRoomAnnouncementRepository announcementRepository;
     private final ChatRoomTagRepository chatRoomTagRepository;
 
@@ -352,17 +352,31 @@ public class ChatRoomService {
 
 
 
-    /*
-    함수명 : searchChatRoomListByTag
-    기능 : 키워드로 채팅방을 검색한다.
-    매개변수 : path variable String tag
-    반환값 : Dto; String chatRoomName, String description, Bool isPrivate, int maxMembers int currentMembers;
+        /*
+    함수명 : getChatroomUsers
+    기능 : 특정 채팅방의 사용자 목록을 제공한다.
+    매개변수 : Long chatRoomId
+    반환값 : List<CommunityUserBriefDto>}
+
      */
 
-//    public List<ChatRoomAnnouncementDto> searchChatRoomListByTag(String tag){
-//
-//        //
-//    }
+    public List<CommunityUserBriefDto> getChatRoomUsers(Long chatRoomId){
+        // 채팅방 객체 추출
+        // 객체로 채팅방-유저 객체 리스트 가져오기
+        List<ChatRoomCommunity> userList = chatRoomCommunityRepository.findByChatRoom(extractOptionalChatroom(chatRoomId));
+        List<CommunityUserBriefDto> dtoList = new ArrayList<>();
+
+        for(ChatRoomCommunity t : userList){
+            CommunityUserBriefDto dto = CommunityUserBriefDto.builder()
+                    .communityId(t.getCommunityUser().getId())
+                    .nickname(t.getCommunityUser().getNickname())
+                    .profileImage(t.getCommunityUser().getProfileImage())
+                    .build();
+
+            dtoList.add(dto);
+        }
+        return dtoList;
+    }
 
 
         /*

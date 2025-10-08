@@ -2,6 +2,7 @@ package GRWM.backend.controller.chatroom;
 
 import GRWM.backend.config.ChatRoomManager;
 import GRWM.backend.dto.chatroom.*;
+import GRWM.backend.dto.community.CommunityUserBriefDto;
 import GRWM.backend.entity.user.CustomUserDetails;
 import GRWM.backend.service.chatroom.ChatRoomService;
 import lombok.RequiredArgsConstructor;
@@ -200,17 +201,17 @@ public class ChatRoomController {
 
 
     /*
-    함수명 : 채팅방 검색
-    기능 : 키워드로 채팅방을 검색한다.
-    매개변수 : path variable String tag
-    반환값 : Dto; String chatRoomName, String description, Bool isPrivate, int maxMembers int currentMembers;
-//     */
-//
-//    @GetMapping("search/{tag}")
-//    public List<ChatRoomShowDto> searchChatRoomListByTag(@PathVariable String tag){
-//
-//    }
+    함수명 : getChatroomUsers
+    기능 : 특정 채팅방의 사용자 목록을 제공한다.
+    매개변수 : Long chatRoomId
+    반환값 : List<CommunityUserBriefDto>}
 
+     */
+
+    @GetMapping("/{chatRoomId}/users")
+    public List<CommunityUserBriefDto> getChatroomUsers(@PathVariable Long chatRoomId){
+        return getChatroomUsers(chatRoomId);
+    }
 
     /*
     함수명 : createAnnouncement
