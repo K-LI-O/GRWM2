@@ -6,6 +6,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class CommunityUserBriefDto {
 
     private Long communityId;
@@ -14,6 +15,5 @@ public class CommunityUserBriefDto {
 
     private String profileImage;
 
-    //private String description;
 
 }
