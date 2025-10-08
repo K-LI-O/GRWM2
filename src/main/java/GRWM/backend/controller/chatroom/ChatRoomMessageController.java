@@ -1,8 +1,8 @@
 package GRWM.backend.controller.chatroom;
 
 
-import GRWM.backend.dto.ChatMessageCreateDto;
-import GRWM.backend.dto.ChatMessageDto;
+import GRWM.backend.dto.chatroom.ChatMessageCreateDto;
+import GRWM.backend.dto.chatroom.ChatMessageDto;
 import GRWM.backend.entity.user.CustomUserDetails;
 import GRWM.backend.service.chatroom.ChatMessageService;
 import lombok.RequiredArgsConstructor;

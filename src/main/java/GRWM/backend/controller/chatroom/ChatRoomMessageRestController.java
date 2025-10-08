@@ -1,13 +1,12 @@
 package GRWM.backend.controller.chatroom;
 
-import GRWM.backend.dto.ChatMessageDto;
+import GRWM.backend.dto.chatroom.ChatMessageDto;
 import GRWM.backend.entity.user.CustomUserDetails;
 import GRWM.backend.service.chatroom.ChatMessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.List;
 
 @RestController

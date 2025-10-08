@@ -1,4 +1,4 @@
-package GRWM.backend.dto;
+package GRWM.backend.dto.chatroom;
 
 
 import lombok.AllArgsConstructor;
@@ -8,8 +8,11 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class ChatRoomTagCreateDto {
-    String tagName;
+@AllArgsConstructor
+public class ChatRoomEditDto {
+
+    private String roomName;
+
+    private String description;
 }

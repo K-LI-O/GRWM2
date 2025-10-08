@@ -1,6 +1,6 @@
 package GRWM.backend.controller.chatroom;
 
-import GRWM.backend.dto.ChatRoomTagCreateDto;
+import GRWM.backend.dto.chatroom.ChatRoomTagCreateDto;
 import GRWM.backend.service.chatroom.ChatRoomTagService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

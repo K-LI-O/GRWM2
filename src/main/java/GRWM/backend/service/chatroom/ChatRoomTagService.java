@@ -1,7 +1,7 @@
 package GRWM.backend.service.chatroom;
 
 
-import GRWM.backend.dto.ChatRoomTagCreateDto;
+import GRWM.backend.dto.chatroom.ChatRoomTagCreateDto;
 import GRWM.backend.entity.chatroom.ChatRoomTag;
 import GRWM.backend.repository.chatroom.ChatRoomTagRepository;
 import lombok.RequiredArgsConstructor;
