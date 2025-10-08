@@ -1,6 +1,6 @@
 package GRWM.backend.repository;
 
-import GRWM.backend.entity.Notification;
+import GRWM.backend.entity.notification.Notification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

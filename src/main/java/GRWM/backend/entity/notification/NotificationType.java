@@ -1,4 +1,4 @@
-package GRWM.backend.entity;
+package GRWM.backend.entity.notification;
 
 public enum NotificationType {
     FOLLOW,

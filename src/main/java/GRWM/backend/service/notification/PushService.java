@@ -1,6 +1,5 @@
 package GRWM.backend.service.notification;
 
-import GRWM.backend.repository.NotificationRepository;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
@@ -13,12 +12,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PushService {
 
-    private final NotificationService notificationService;
-
-    public void sendNotification(String token,
-                                 String title,
-                                 String body,
-                                 GRWM.backend.entity.Notification notification) throws Exception{
+    public void send(String token,
+                                 String title, String body, String type) throws Exception{
 
         Notification not = Notification.builder()
                 .setTitle(title)
@@ -28,8 +23,7 @@ public class PushService {
         Message message = Message.builder()
                 .setToken(token)
                 .setNotification(not)
-                .putData("type", notification.getType().toString())
-                .putData("senderId", String.valueOf(notification.getSenderId()))
+                .putData("type", type)
                 .build();
 
         FirebaseMessaging.getInstance().send(message);

@@ -1,4 +1,4 @@
-package GRWM.backend.entity;
+package GRWM.backend.entity.notification;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -9,7 +9,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
-import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.time.LocalDateTime;
 
