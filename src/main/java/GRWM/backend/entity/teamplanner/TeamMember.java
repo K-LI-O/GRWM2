@@ -2,22 +2,20 @@ package GRWM.backend.entity.teamplanner;
 
 import GRWM.backend.entity.user.Member;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.springframework.data.annotation.CreatedBy;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
-import java.util.List;
+
 
 @Getter
 @Setter
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class TeamMember {
     /*
     {
@@ -50,19 +48,17 @@ LocalDateTime createdAt,
     private String nickname;
     private String status; // 살아있을 때는 active, 살아있지 않을 때는 withdraw
 
+
     @CreatedDate
     private LocalDateTime createdAt;
 
 
 
-
-
-
-    public TeamMember(Member member, TeamPlanner teamPlanner, String role, String nickname){
+    public TeamMember(Member member, TeamPlanner teamPlanner, String role){
         this.member = member;
         this.teamPlanner = teamPlanner;
         this.role = role;
-        this.nickname = nickname;
+        this.nickname = "";
         this.status = "active";
     }
 

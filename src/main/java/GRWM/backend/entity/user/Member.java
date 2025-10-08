@@ -1,6 +1,7 @@
 package GRWM.backend.entity.user;
 
 import GRWM.backend.entity.chatroom.ChatRoomMember;
+import GRWM.backend.entity.teamplanner.TeamMember;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -36,10 +37,13 @@ public class Member {
 
     @Column(nullable = false)
     private String email;
+    private String profileImageLink;
 
     // 개인 플래너
 
     // 단체 플래너
+    @OneToMany(mappedBy = "member")
+    private List<TeamMember> teamMembers = new ArrayList<>();
 
     // 채팅방
     @OneToMany(mappedBy = "member")

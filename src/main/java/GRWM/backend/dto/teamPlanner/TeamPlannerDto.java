@@ -1,9 +1,6 @@
 package GRWM.backend.dto.teamPlanner;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
@@ -11,6 +8,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class TeamPlannerDto {
 
     /*
@@ -18,7 +16,7 @@ public class TeamPlannerDto {
 String title,
 String description,
 String profileImageLink,
-List<MemberDto> members
+List<TeamMemberDto> members
 
      */
 
@@ -26,5 +24,5 @@ List<MemberDto> members
     private String title;
     private String description;
     private String  profileImageLink;
-    private List<TeamMemberDto> members;
+    private List<TeamMemberBriefDto> members;
 }

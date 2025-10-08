@@ -1,14 +1,12 @@
 package GRWM.backend.dto.teamPlanner;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class TeamMemberBriefDto {
     // {Long userId, String username, String profileImage}
     private Long userId; // 탈퇴한 멤버여도 Id는 유지.
