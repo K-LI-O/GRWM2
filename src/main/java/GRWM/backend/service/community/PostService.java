@@ -193,6 +193,7 @@ public class PostService {
 
         // 해당 계정의 포스트 목록 시간순으로 가져오기 향상된 for 문 이용;
         List<CommunityUser> followingUserList = new ArrayList<>();
+        followingUserList.add(extractOptionalUser(communityId));
         for(Following t : followingList){
             followingUserList.add(t.getFollowing());
         }
