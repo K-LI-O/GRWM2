@@ -81,11 +81,15 @@ public class TeamMemberService {
     반환값 : ResponseEntity 204
 */
 
-    public void deleteMember(Long memberId){
-        TeamMember member = extractOptionalTeamMember(memberId);
+    public void deleteMember(Long plannerId, Long memberId){
+        // user 추출
+        Member member = extractOptionalMember(memberId);
+        TeamPlanner planner = extractOptionalPlanner(plannerId);
+        // team member 추출
+        TeamMember deletedMember = teamMemberRepository.findByTeamPlannerAndMember(planner, member);
 
-        member.setStatus("withdrawn");
-        teamMemberRepository.save(member);
+        deletedMember.setStatus("withdrawn");
+        teamMemberRepository.save(deletedMember);
     }
 
 

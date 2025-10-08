@@ -1,20 +1,35 @@
 package GRWM.backend.controller.teamplanner;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import GRWM.backend.dto.teamPlanner.TeamMemberBriefDto;
+import GRWM.backend.service.teamplanner.TeamMemberService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
-@RequestMapping("api/team-planner/")
+@RequiredArgsConstructor
+@RequestMapping("/api/team-planner")
 public class TeamMemberController {
+
+    private final TeamMemberService teamMemberService;
 
     /*
     함수명 : addMember
     기능 : 멤버 추가
     매개변수 : Long plannerId, Long MemberId,
-    POST /api/team-planner/{plannerId}/member/{memberId}
+    POST /api/team-planner/{plannerId}/member/{memberId}/{memberRole}
     반환값: ResponseEntity<Void>
-*/
+    */
 
+    @PostMapping("/{plannerId}/member/{memberId}/{memberRole}")
+    public ResponseEntity<Void> addMember(@PathVariable Long plannerId,
+                                          @PathVariable Long memberId,
+                                          @PathVariable String memberRole){
+        teamMemberService.addMember(plannerId, memberId, memberRole);
+        return ResponseEntity.ok().build();
+    }
 
 
     /*
@@ -23,7 +38,12 @@ public class TeamMemberController {
     GET /api/team-planner/{plannerId}/member
     매개변수 : plannerId
     반환값 : List<MemberBriefDto> members
-*/
+    */
+
+    @GetMapping("/{plannerId}/member")
+    public List<TeamMemberBriefDto> getMemberList(@PathVariable Long plannerId){
+        return teamMemberService.getTeamMemberList(plannerId);
+    }
 
 
 
@@ -33,8 +53,14 @@ public class TeamMemberController {
     DELETE /api/team-planner/{plannerId}/member/{memberId}
     매개변수 : Long plannerId, Long plannerId
     반환값 : ResponseEntity 204
-*/
+    */
 
+    @DeleteMapping("/{plannerId}/member/{memberId}")
+    public ResponseEntity<Void> deleteMember(@PathVariable Long plannerId,
+                                             @PathVariable Long memberId){
+        teamMemberService.deleteMember(plannerId, memberId);
+        return ResponseEntity.noContent().build();
+    }
 
     /*
     함수명 : setMemberNickname
@@ -42,26 +68,15 @@ public class TeamMemberController {
     PUT /api/team-planner/{plannerId}/member/{memberId}/{roleName}
     매개변수 : Long plannerId, Long memberId, String roleName
     * 방장. 멤버 그 역할과는 별개.
-*/
+    */
 
-
-    /*
-    함수명 : addMemberToSchedule
-    기능 : 일정에 참여하는 멤버 추가(일정 로직이긴 함)
-    POST /api/team-planner/{plannerId}/schedule/{scheduleId}/add-member
-    매개변수 : Long plannerId, Long scheduleId
-    반환값 : List<MemberBriefDto> members
-     */
-
-
-    /*
-    함수명 : deleteMember
-    기능 : 일정에 참여하는 멤버 삭제(일정 로직이긴 함)
-    POST /api/team-planner/{plannerId}/schedule/{scheduleId}/delete-member
-    매개변수 : Long plannerId, Long scheduleId
-    반환값 : responseEntity 204
-     */
-
+    @PutMapping("/{plannerId}/member/{memberId}/{roleName}")
+    public ResponseEntity<Void> setMemberNickname(@PathVariable Long plannerId,
+                                                  @PathVariable Long memberId,
+                                                  @PathVariable String roleName){
+            teamMemberService.setMemberNickName(plannerId, memberId, roleName);
+        return ResponseEntity.ok().build();
+    }
 
 
 }
