@@ -37,7 +37,7 @@ public class ChatRoomMessageController {
     // @PreAuthorize("isAuthenticated()")
     public ChatMessageDto sendMessage(@DestinationVariable Long chatRoomId, @Payload ChatMessageCreateDto dto, @AuthenticationPrincipal CustomUserDetails userDetails) {
         // 메시지 처리 로직 (DB 저장 등)
-        return chatMessageService.saveMessage(chatRoomId, dto);
+        return chatMessageService.saveMessage(chatRoomId, dto, userDetails.getCommunityUserId());
 
     }
 

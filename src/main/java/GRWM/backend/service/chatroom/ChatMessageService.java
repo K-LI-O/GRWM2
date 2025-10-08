@@ -39,7 +39,8 @@ public class ChatMessageService {
 
      */
 
-    public ChatMessageDto saveMessage(Long chatRoomId, ChatMessageCreateDto dto){
+    @Transactional
+    public ChatMessageDto saveMessage(Long chatRoomId, ChatMessageCreateDto dto, Long communityId){
 
         // 채팅방 가져오기
         ChatRoom chatRoom = chatRoomRepository.getReferenceById(chatRoomId);
@@ -119,17 +120,18 @@ public class ChatMessageService {
 
     private CommunityUser extractOptionalUser(Long communityId){
         Optional<CommunityUser> optionalUser = communityUserRepository.findById(communityId);
-        CommunityUser user = null;
 
-        try {
-            if (optionalUser.isPresent()) {
-                user = optionalUser.get();
-            }
-        } catch (RuntimeException e) {
-            throw new RuntimeException("존재하지 않는 프로필입니다.");
+        if (communityId == null) {
+            // 필수 ID가 누락되었음을 알리는 명확한 예외 발생
+            // (NullPointerException 방지 및 오류 맥락 제공)
+            throw new IllegalArgumentException("사용자 ID는 null일 수 없습니다.");
         }
 
-        return user;
+        if (optionalUser.isPresent()) {
+            return optionalUser.get();
+        } else{
+            throw new RuntimeException("존재하지 않는 사용자입니다.");
+        }
     }
 
 
