@@ -119,7 +119,7 @@ public class PostController {
     반환값: Dto: responseEntity 200 OK
     */
 
-    @GetMapping("?communityId={communityId}")
+    @GetMapping("/user/{communityId}")
     public PostListDto getUserPosts(@PathVariable Long communityId,
                                     @PageableDefault(size = 20) Pageable pageable){
         return postService.getUserPosts(communityId, pageable);
