@@ -210,7 +210,7 @@ public class ChatRoomController {
 
     @GetMapping("/{chatRoomId}/users")
     public List<CommunityUserBriefDto> getChatroomUsers(@PathVariable Long chatRoomId){
-        return getChatroomUsers(chatRoomId);
+        return chatRoomService.getChatRoomUsers(chatRoomId);
     }
 
     /*
