@@ -4,8 +4,11 @@ package GRWM.backend.controller;
 import GRWM.backend.dto.auth.LoginRequestDto;
 import GRWM.backend.dto.auth.LoginTokenResponse;
 import GRWM.backend.dto.personalPlanner.MemberCreateRequestDto;
+import GRWM.backend.entity.notification.PushToken;
 import GRWM.backend.jwt.JwtTokenProvider;
 import GRWM.backend.service.MemberService;
+import GRWM.backend.service.PushTokenService;
+import GRWM.backend.service.community.CommunityUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,6 +26,8 @@ public class AuthenticationController {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final MemberService memberService;
+    private final CommunityUserService communityUserService;
+    private final PushTokenService pushTokenService;
 
 
         /*
@@ -54,15 +59,26 @@ public class AuthenticationController {
         // 이후 요청에서 @AuthenticationPrincipal 등으로 인증된 사용자 정보를 사용할 수 있게 됨
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
+        // fcm 토큰 저장
+        if(dto.getFcmToken() != null){
+            pushTokenService.saveToken(
+                    memberService.findUserIdByLoginId(dto.getLoginId()),
+                    dto.getFcmToken()
+            );
+        }
+
         // 4. JWT 토큰 생성
         String jwt = jwtTokenProvider.generateToken(authentication);
+        Long userId = memberService.findUserIdByLoginId(dto.getLoginId());
+
 
         // 5. 클라이언트에게 토큰 반환
         return ResponseEntity.ok(new LoginTokenResponse(
                 jwt,
                 "Bearer",
                 memberService.findUsernameByLoginId(dto.getLoginId()),
-                memberService.findUserIdByLoginId(dto.getLoginId())
+                userId,
+                communityUserService.findNicknameById(userId)
                 ));
 
     }

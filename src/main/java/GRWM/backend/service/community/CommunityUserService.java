@@ -324,6 +324,12 @@ public class CommunityUserService {
         return new CommunityUseListDto(dtoList, userSlice.hasNext());
     }
 
+    public String findNicknameById(Long communityId){
+        return extractOptionalUser(communityId).getNickname();
+    }
+
+
+
 
     // ======= count 로직; ======= //
 
