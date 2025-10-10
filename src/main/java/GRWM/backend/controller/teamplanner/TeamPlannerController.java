@@ -37,7 +37,7 @@ String profileImage
     public ResponseEntity<Long> createPlanner(@RequestBody TeamPlannerCreateDto dto,
                                               @AuthenticationPrincipal CustomUserDetails userDetails){
 
-        return ResponseEntity.ok(plannerService.createPlanner(dto, userDetails.getUserId()));
+        return ResponseEntity.ok(plannerService.createTeamPlanner(dto, userDetails.getUserId()));
     }
 
     /*
@@ -62,7 +62,8 @@ String profileImage
     */
 
     @PutMapping("/{plannerId}/update")
-    public TeamPlannerDto updatePlanner(@PathVariable Long plannerId, TeamPlannerUpdateDto dto){
+    public TeamPlannerDto updatePlanner(@PathVariable Long plannerId,
+                                        @RequestBody TeamPlannerUpdateDto dto){
         return plannerService.updatePlanner(plannerId, dto);
     }
 

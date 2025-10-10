@@ -23,6 +23,6 @@ List<TeamMemberDto> members
     private Long plannerId;
     private String title;
     private String description;
-    private String  profileImageLink;
+    private String  profileImage;
     private List<TeamMemberBriefDto> members;
 }

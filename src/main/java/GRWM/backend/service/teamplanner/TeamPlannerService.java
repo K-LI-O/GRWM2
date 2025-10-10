@@ -12,6 +12,7 @@ import GRWM.backend.repository.teamplanner.TeamPlannerRepository;
 import GRWM.backend.repository.user.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class TeamPlannerService {
 
     private final TeamPlannerRepository teamPlannerRepository;
@@ -39,7 +41,7 @@ String profileImage
     return value : ResponseEntity<Long> plannerId 반환;
     */
 
-    public Long createPlanner(TeamPlannerCreateDto dto, Long userId){
+    public Long createTeamPlanner(TeamPlannerCreateDto dto, Long userId){
 
         // 사용자 객체 불러오기
 
@@ -83,6 +85,7 @@ String profileImage
     */
 
 
+    @Transactional
     public TeamPlannerDto updatePlanner(Long plannerId, TeamPlannerUpdateDto dto){
         TeamPlanner planner = extractOptionalPlanner(plannerId);
 
@@ -90,8 +93,9 @@ String profileImage
         planner.setProfileImageLink(dto.getProfileImage());
         planner.setDescription(dto.getDescription());
 
-        planner = teamPlannerRepository.save(planner);
-        return plannerToDto(planner);
+        TeamPlanner savedPlanner = teamPlannerRepository.save(planner);
+        teamPlannerRepository.flush();
+        return plannerToDto(savedPlanner);
     }
 
 
@@ -148,7 +152,7 @@ String profileImage
                 .plannerId(planner.getId())
                 .title(planner.getTitle())
                 .description(planner.getDescription())
-                .profileImageLink(planner.getProfileImageLink())
+                .profileImage(planner.getProfileImageLink())
                 .members(dtoList)
                 .build();
 
