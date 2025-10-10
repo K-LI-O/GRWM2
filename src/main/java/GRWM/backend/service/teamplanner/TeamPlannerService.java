@@ -145,6 +145,7 @@ String profileImage
         }
 
         TeamPlannerDto dto = TeamPlannerDto.builder()
+                .plannerId(planner.getId())
                 .title(planner.getTitle())
                 .description(planner.getDescription())
                 .profileImageLink(planner.getProfileImageLink())
