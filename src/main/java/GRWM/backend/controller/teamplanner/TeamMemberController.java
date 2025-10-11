@@ -1,6 +1,7 @@
 package GRWM.backend.controller.teamplanner;
 
 import GRWM.backend.dto.teamPlanner.TeamMemberBriefDto;
+import GRWM.backend.dto.teamPlanner.TeamMemberDto;
 import GRWM.backend.service.teamplanner.TeamMemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -41,7 +42,7 @@ public class TeamMemberController {
     */
 
     @GetMapping("/{plannerId}/member")
-    public List<TeamMemberBriefDto> getMemberList(@PathVariable Long plannerId){
+    public List<TeamMemberDto> getMemberList(@PathVariable Long plannerId){
         return teamMemberService.getTeamMemberList(plannerId);
     }
 

@@ -1,14 +1,12 @@
 package GRWM.backend.dto.teamPlanner;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class TeamMemberDto {
     /*
     Long userId,
@@ -21,11 +19,11 @@ String status (맨 처음에는 active, 탈퇴 시 withdraw)
 
      */
 
-    private Long userID;
+    private Long userId;
     private String username;
     private String nickname;
     private String profileImage;
     private String email;
-    private String roll;
+    private String role;
     private String status;
 }

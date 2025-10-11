@@ -1,6 +1,7 @@
 package GRWM.backend.service.teamplanner;
 
 import GRWM.backend.dto.teamPlanner.TeamMemberBriefDto;
+import GRWM.backend.dto.teamPlanner.TeamMemberDto;
 import GRWM.backend.entity.teamplanner.TeamMember;
 import GRWM.backend.entity.teamplanner.TeamPlanner;
 import GRWM.backend.entity.user.Member;
@@ -9,6 +10,7 @@ import GRWM.backend.repository.teamplanner.TeamPlannerRepository;
 import GRWM.backend.repository.user.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +18,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class TeamMemberService {
 
     private final TeamMemberRepository teamMemberRepository;
@@ -60,13 +63,13 @@ public class TeamMemberService {
     반환값 : List<MemberBriefDto> members
 */
 
-    public List<TeamMemberBriefDto> getTeamMemberList(Long plannerId){
+    public List<TeamMemberDto> getTeamMemberList(Long plannerId){
         // 플래너 아이디로 플래너에 속한 팀-멤버 목록 불러오기
         List<TeamMember> members = teamMemberRepository.findByTeamPlanner(extractOptionalPlanner(plannerId));
 
-        List<TeamMemberBriefDto> dtoList = new ArrayList<>();
+        List<TeamMemberDto> dtoList = new ArrayList<>();
         for( TeamMember t : members){
-            dtoList.add(memberToBriefDto(t));
+            dtoList.add(memberToDto(t));
         }
         return dtoList;
     }
@@ -175,6 +178,20 @@ public class TeamMemberService {
                 .profileImage(member.getMember().getProfileImageLink())
                 .status(member.getStatus())
                 .build();
+        return dto;
+    }
+
+    public TeamMemberDto memberToDto(TeamMember member){
+        TeamMemberDto dto = TeamMemberDto.builder()
+                .userId(member.getId())
+                .username(member.getMember().getUsername())
+                .nickname(member.getNickname())
+                .profileImage(member.getMember().getProfileImageLink())
+                .email(member.getMember().getEmail())
+                .role(member.getRole())
+                .status(member.getStatus())
+                .build();
+
         return dto;
     }
 
