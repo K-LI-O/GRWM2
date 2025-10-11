@@ -8,6 +8,7 @@ import GRWM.backend.entity.teamplanner.TeamMember;
 import GRWM.backend.entity.teamplanner.TeamPlanner;
 
 import GRWM.backend.entity.user.Member;
+import GRWM.backend.repository.teamplanner.TeamMemberRepository;
 import GRWM.backend.repository.teamplanner.TeamPlannerRepository;
 import GRWM.backend.repository.user.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ public class TeamPlannerService {
 
     private final TeamPlannerRepository teamPlannerRepository;
     private final MemberRepository memberRepository;
+    private final TeamMemberRepository teamMemberRepository;
 
 
         /*
@@ -142,7 +144,7 @@ String profileImage
 
 
     private TeamPlannerDto plannerToDto(TeamPlanner planner){
-        List<TeamMember> members = planner.getTeamMembers();
+        List<TeamMember> members = teamMemberRepository.findByTeamPlanner(planner);
         List<TeamMemberBriefDto> dtoList = new ArrayList<>();
         for(TeamMember t : members){
             dtoList.add(memberToBriefDto(t));
