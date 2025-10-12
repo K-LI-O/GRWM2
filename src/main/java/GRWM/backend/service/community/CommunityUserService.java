@@ -154,6 +154,14 @@ public class CommunityUserService {
 
     public int followUser(Long communityId, Long targetId) {
 
+        if(followingRepository.existByFollowingAndFollower(
+                extractOptionalUser(targetId),
+                extractOptionalUser(communityId))
+        ){
+            // 팔로잉 관계 데이터가 이미 존재한다면
+            throw new RuntimeException("이미 팔로우한 사용자입니다.");
+        }
+
         // 팔로잉 리스트 생성
         Following following = new Following(
                 extractOptionalUser(targetId),
