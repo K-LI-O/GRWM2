@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 
 @Service
@@ -154,7 +153,7 @@ public class CommunityUserService {
 
     public int followUser(Long communityId, Long targetId) {
 
-        if(followingRepository.existByFollowingAndFollower(
+        if(followingRepository.existsByFollowingAndFollower(
                 extractOptionalUser(targetId),
                 extractOptionalUser(communityId))
         ){
