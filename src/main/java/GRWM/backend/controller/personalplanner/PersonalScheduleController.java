@@ -28,8 +28,7 @@ public class PersonalScheduleController {
     @PostMapping("/create")
     public ResponseEntity<Long> createSchedule(@PathVariable Long plannerId, @RequestBody PersonalScheduleCreateRequestDto dto){
 
-        Long scheduleID = scheduleService.createPersonalSchedule(dto);
-        return ResponseEntity.ok(scheduleID);
+        return ResponseEntity.ok(scheduleService.createPersonalSchedule(dto));
     }
 
 

@@ -218,24 +218,8 @@ public class ScheduleService {
 
         // dtoList 채우기
         for(Schedule schedule : monthlySchedule) {
-
-            PersonalScheduleSimpleDto dto;
-            if(schedule.getPlannerCategory() == null){
-                dto = new PersonalScheduleSimpleDto(schedule.getId(), schedule.getTitle(),
-                        null, null,
-                        schedule.getStartDateTime(), schedule.getFinishDateTime()
-                );
-
-            } else{
-
-                dto = new PersonalScheduleSimpleDto(schedule.getId(), schedule.getTitle(),
-                        schedule.getPlannerCategory().getName(), schedule.getPlannerCategory().getColor(),
-                        schedule.getStartDateTime(), schedule.getFinishDateTime()
-                );
+            dtoList.add(scheduleToDto(schedule));
             }
-
-            dtoList.add(dto);
-        }
 
         return dtoList;
     }
@@ -279,23 +263,7 @@ public class ScheduleService {
 
         // dtoList 채우기
         for(Schedule schedule : weeklySchedule) {
-
-            PersonalScheduleSimpleDto dto;
-            if(schedule.getPlannerCategory() == null){
-                dto = new PersonalScheduleSimpleDto(schedule.getId(), schedule.getTitle(),
-                        null, null,
-                        schedule.getStartDateTime(), schedule.getFinishDateTime()
-                );
-
-            } else{
-
-                dto = new PersonalScheduleSimpleDto(schedule.getId(), schedule.getTitle(),
-                        schedule.getPlannerCategory().getName(), schedule.getPlannerCategory().getColor(),
-                        schedule.getStartDateTime(), schedule.getFinishDateTime()
-                );
-            }
-
-            dtoList.add(dto);
+            dtoList.add(scheduleToDto(schedule));
         }
 
         return dtoList;
@@ -328,23 +296,7 @@ public class ScheduleService {
 
         // dtoList 채우기
         for(Schedule schedule : monthlySchedule) {
-
-            PersonalScheduleSimpleDto dto;
-            if(schedule.getPlannerCategory() == null){
-                dto = new PersonalScheduleSimpleDto(schedule.getId(), schedule.getTitle(),
-                        null, null,
-                        schedule.getStartDateTime(), schedule.getFinishDateTime()
-                );
-
-            } else{
-
-                dto = new PersonalScheduleSimpleDto(schedule.getId(), schedule.getTitle(),
-                        schedule.getPlannerCategory().getName(), schedule.getPlannerCategory().getColor(),
-                        schedule.getStartDateTime(), schedule.getFinishDateTime()
-                );
-            }
-
-            dtoList.add(dto);
+            dtoList.add(scheduleToDto(schedule));
         }
 
         return dtoList;
@@ -369,23 +321,7 @@ public class ScheduleService {
 
         // dto 리스트 채우기
         for(Schedule schedule : schedules) {
-
-            PersonalScheduleSimpleDto dto;
-            if(schedule.getPlannerCategory() == null){
-                dto = new PersonalScheduleSimpleDto(schedule.getId(), schedule.getTitle(),
-                        null, null,
-                        schedule.getStartDateTime(), schedule.getFinishDateTime()
-                );
-
-            } else{
-
-                dto = new PersonalScheduleSimpleDto(schedule.getId(), schedule.getTitle(),
-                        schedule.getPlannerCategory().getName(), schedule.getPlannerCategory().getColor(),
-                        schedule.getStartDateTime(), schedule.getFinishDateTime()
-                );
-            }
-
-            dtoList.add(dto);
+            dtoList.add(scheduleToDto(schedule));
         }
 
         return dtoList;
@@ -393,6 +329,37 @@ public class ScheduleService {
 
 
     }
+
+    private PersonalScheduleSimpleDto scheduleToDto(Schedule schedule){
+
+        PersonalScheduleSimpleDto dto;
+        if(schedule.getPlannerCategory() == null){
+            dto = new PersonalScheduleSimpleDto(
+                    schedule.getId(),
+                    schedule.getTitle(),
+                    null,
+                    schedule.getStartDateTime(),
+                    schedule.getFinishDateTime()
+            );
+
+        } else {
+            CategoryInfoDto category = new CategoryInfoDto(
+                    schedule.getPlannerCategory().getId(),
+                    schedule.getPlannerCategory().getName(),
+                    schedule.getPlannerCategory().getColor()
+            );
+
+            dto = new PersonalScheduleSimpleDto(
+                    schedule.getId(),
+                    schedule.getTitle(),
+                    category,
+                    schedule.getStartDateTime(),
+                    schedule.getFinishDateTime()
+            );
+        }
+        return dto;
+    }
+
 
 
 
