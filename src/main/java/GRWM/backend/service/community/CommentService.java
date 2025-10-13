@@ -170,9 +170,13 @@ public class CommentService {
             parentComment = comment.getParentComment().getId();
         }
 
+
+
+
         CommentDto newDto = new CommentDto(
                 comment.getId(),
-                userToDto(extractOptionalUser(communityId)),
+                // userToDto(extractOptionalUser(communityId)),
+                userToDto(comment.getUser()),
                 comment.getContent(),
                 comment.isPrivate(),
                 parentComment,
