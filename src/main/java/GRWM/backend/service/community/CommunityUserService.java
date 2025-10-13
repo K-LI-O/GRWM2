@@ -243,12 +243,13 @@ public class CommunityUserService {
 
     /*
     함수명 : blockUser
-    기능  : 사용자 프로필 수정
+    기능  : 사용자 블락
     매개변수: dto username, profileImage, description
     반환값 : dto CommunityUserFullInfoDto
      */
 
     public void blockUser(Long communityUserId, Long targetId) {
+
 
         // 블락 리스트의 새 칼럼 생성
         BlockList block = new BlockList(
@@ -381,19 +382,18 @@ public class CommunityUserService {
 
     private String getRelationship(CommunityUser user, CommunityUser target) {
         if(user.equals(target)) return null;
-        else if (followingRepository.findByFollowingAndFollower(user, target) != null
-            // 내가 팔로우됨, 타겟이 팔로워
-        ) return "isFollowingMe";
-        else if (followingRepository.findByFollowingAndFollower(target, user) != null
-            // 내가 타겟의 팔로워
-        ) return "followedByMe";
-
         else if (blockListRepository.findByBlockerAndBlockedUser(user, target) != null
             // 내가 target 을 블락함
         ) return "isBlockedByMe";
         else if (blockListRepository.findByBlockerAndBlockedUser(target, user) != null
             // 내가 target 에게 블락됨
         ) return "isBlockingMe";
+        else if (followingRepository.findByFollowingAndFollower(user, target) != null
+            // 내가 팔로우됨, 타겟이 팔로워
+        ) return "isFollowingMe";
+        else if (followingRepository.findByFollowingAndFollower(target, user) != null
+            // 내가 타겟의 팔로워
+        ) return "followedByMe";
         else return "noRelationship";
 
     }
