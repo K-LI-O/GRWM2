@@ -250,6 +250,16 @@ public class CommunityUserService {
 
     public void blockUser(Long communityUserId, Long targetId) {
 
+        if(followingRepository.findByFollowingAndFollower(
+                extractOptionalUser(targetId),
+                extractOptionalUser(communityUserId)) != null){
+            followingRepository.delete(
+                    followingRepository.findByFollowingAndFollower(
+                    extractOptionalUser(targetId),
+                    extractOptionalUser(communityUserId)
+                    )
+            );
+        }
 
         // 블락 리스트의 새 칼럼 생성
         BlockList block = new BlockList(
