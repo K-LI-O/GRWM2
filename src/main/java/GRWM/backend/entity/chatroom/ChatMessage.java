@@ -28,6 +28,7 @@ public class ChatMessage {
     protected Long id;
     protected Long memberId;
 
+    protected Long replyMessageId;
     protected MessageType type;
 
     protected String content;
@@ -41,8 +42,9 @@ public class ChatMessage {
     protected String writerChatName;
 
 
-    public ChatMessage(Long memberId, String content, int type, ChatRoom chatRoom, String writerChatName){
+    public ChatMessage(Long memberId, Long replyMessageId, String content, int type, ChatRoom chatRoom, String writerChatName){
         this.memberId = memberId; // communityId
+        this.replyMessageId = replyMessageId;
         this.content = content;
         this.type = castingIntToEnum(type);
         this.chatRoom = chatRoom;

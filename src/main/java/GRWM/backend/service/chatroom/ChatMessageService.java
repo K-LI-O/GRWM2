@@ -52,6 +52,7 @@ public class ChatMessageService {
         // 메시지 객체 생성
         ChatMessage message = new ChatMessage(
                 dto.getCommunityId(),
+                dto.getReplyMessageId(),
                 dto.getContent(),
                 ChatMessage.MessageType.CHAT.ordinal(),
                 chatRoom,
@@ -59,10 +60,17 @@ public class ChatMessageService {
         );
         ChatMessage savedMessage = messageRepository.save(message);
 
+        // 답장인지 아닌지 확인;
+        Long replyTo = null;
+        if(savedMessage.getReplyMessageId() != null){
+            replyTo = savedMessage.getReplyMessageId();
+        }
+
         // 전송할 dto 객체 생성
         ChatMessageDto newDto = new ChatMessageDto(
                 savedMessage.getId(),
                 savedMessage.getMemberId(), // 멤버 아이디라고 되어있지만 커뮤니티 아이디임
+                replyTo,
                 savedMessage.getType().ordinal(),
                 savedMessage.getContent(),
                 savedMessage.getCreatedAt(),
@@ -88,9 +96,16 @@ public class ChatMessageService {
         List<ChatMessage> messageList = messageRepository.findByChatRoom_IdOrderByCreatedAtDesc(chatRoomId);
         List<ChatMessageDto> dtoList = new ArrayList<>();
 
+
+
         for(ChatMessage chatMessage : messageList){
+            // 답장인지 아닌지 확인
+            Long replyTo = null;
+            if(chatMessage.getReplyMessageId() != null) replyTo = chatMessage.getReplyMessageId();
+
             ChatMessageDto dto = new ChatMessageDto(chatMessage.getId(),
                     chatMessage.getMemberId(),
+                    replyTo,
                     chatMessage.getType().ordinal(),
                     chatMessage.getContent(),
                     chatMessage.getCreatedAt(),

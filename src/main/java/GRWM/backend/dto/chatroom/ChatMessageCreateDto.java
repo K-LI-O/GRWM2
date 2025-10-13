@@ -15,5 +15,6 @@ public class ChatMessageCreateDto {
 
     private Long chatRoomId;
     private String content;
+    private Long replyMessageId;
     private Long communityId; // userId 넘겨주심 됩니도.
 }
