@@ -326,8 +326,7 @@ public class CommunityUserService {
         // pageable 객체 생성
         Pageable p = PageRequest.of(
                 pageable.getPageNumber(),
-                pageable.getPageSize(),
-                Sort.by(Sort.Direction.DESC, "createdAt")
+                pageable.getPageSize()
         );
 
         // 키워드로 nickname 검색하는 리포지토리 로직 생성
