@@ -42,7 +42,7 @@ public class ChatRoomMessageRestController {
                               @AuthenticationPrincipal CustomUserDetails userDetails) {
 
 
-        chatMessageService.deleteMessage(messageId, userDetails.getCommunityUserId());
+        //chatMessageService.deleteMessage(messageId, userDetails.getCommunityUserId());
         // 메시지 처리 로직 (DB 저장 등)
 
 

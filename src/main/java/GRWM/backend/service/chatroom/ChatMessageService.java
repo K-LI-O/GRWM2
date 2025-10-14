@@ -1,6 +1,7 @@
 package GRWM.backend.service.chatroom;
 
 import GRWM.backend.dto.chatroom.ChatMessageCreateDto;
+import GRWM.backend.dto.chatroom.ChatMessageDeleteDto;
 import GRWM.backend.dto.chatroom.ChatMessageDto;
 import GRWM.backend.entity.chatroom.ChatMessage;
 import GRWM.backend.entity.chatroom.ChatRoom;
@@ -120,11 +121,12 @@ public class ChatMessageService {
 
     // DeleteMessage
 
-    public void deleteMessage(Long messageId, Long communityId){
+    public ChatMessageDeleteDto deleteMessage(Long chatroomId, Long messageId, Long senderId){
         // 원하는 메시지 불러오기
-        ChatMessage message = messageRepository.findByIdAndMemberId(messageId, communityId);
+        ChatMessage message = messageRepository.findByIdAndMemberId(messageId, senderId);
         if(message != null){
-            messageRepository.delete(message);
+            message.setContent("삭제된 메시지입니다.");
+            return new ChatMessageDeleteDto(chatroomId, messageRepository.save(message).getId(), senderId);
         } else{
             throw new RuntimeException("존재하지 않는 메시지입니다.");
         }
