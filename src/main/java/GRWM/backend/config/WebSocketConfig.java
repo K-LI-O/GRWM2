@@ -36,7 +36,11 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         config.enableStompBrokerRelay("/topic", "/user").
                 setRelayHost("localhost").setRelayPort(61613).
                 setClientLogin("guest").setClientPasscode("guest").
-                setSystemLogin("guest").setSystemPasscode("guest");
+                setSystemLogin("guest").setSystemPasscode("guest").
+                setSystemHeartbeatSendInterval(10000).
+                // 서버가 클라이언트로부터 하트비트를 받기를 기대하는 주기 (10000ms = 10초)
+                setSystemHeartbeatReceiveInterval(10000);
+
 
         // 애플리케이션으로 들어오는 메시지의 destination prefix
         // "/app"으로 시작하는 메시지는 @MessageMapping 어노테이션이 붙은 컨트롤러 메서드로 라우팅
