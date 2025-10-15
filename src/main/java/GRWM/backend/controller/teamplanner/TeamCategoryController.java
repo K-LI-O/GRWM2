@@ -21,7 +21,7 @@ public class TeamCategoryController {
     /*
     name : getCategoryList
     function : 카테고리 목록보기,
-    GET /api/personal-planner/{plannerId}/category
+    GET /api/team-planner/{plannerId}/category
     param : Long plannerId
     return value : List<CategoryDto>
     */
@@ -29,7 +29,7 @@ public class TeamCategoryController {
     /*
     name : updateCategory
     function : 카테고리 수정하기
-    PUT /api/personal-planner/{plannerId}/category/{categoryId}
+    PUT /api/team-planner/{plannerId}/category/{categoryId}
     param : Long plannerId, Long categoryId
     return value : CategoryDto
     */
@@ -37,7 +37,7 @@ public class TeamCategoryController {
     /*
     name : deleteCategory
     function : 카테고리 삭제하기
-    DELETE /api/pe sonal-planner/{plannerId}/category/{categoryId}
+    DELETE /api/team-planner/{plannerId}/category/{categoryId}
     param : Long plannerId, Long categoryId
     return value : x
     */
@@ -45,7 +45,7 @@ public class TeamCategoryController {
     /*
     name : getScheduleListByCategory
     function : 카테고리별 일정 가져오기
-    GET /api/personal-planner/{plannerId}/category/{categoryId}
+    GET /api/team-planner/{plannerId}/category/{categoryId}
     param : Long plannerId, Long categoryId
     return value : List<TeamScheduleBriefDto
 
