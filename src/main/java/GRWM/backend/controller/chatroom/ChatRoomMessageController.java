@@ -59,7 +59,7 @@ public class ChatRoomMessageController {
                                               @Payload ChatMessageDeleteDto dto,
                                               @AuthenticationPrincipal CustomUserDetails userDetails) {
         // 메시지 처리 로직 (DB 저장 등)
-        return chatMessageService.deleteMessage(chatRoomId,dto.getDeleteMessageId(), userDetails.getCommunityUserId());
+        return chatMessageService.deleteMessage(chatRoomId, dto.getDeleteMessageId(), dto.getSenderId());
 
     }
 

@@ -91,7 +91,7 @@ public class ChatMessageService {
 
 
      */
-
+    @Transactional(readOnly = true)
     public List<ChatMessageDto> showMessageList(Long chatRoomId){
 
         List<ChatMessage> messageList = messageRepository.findByChatRoom_IdOrderByCreatedAtDesc(chatRoomId);
@@ -120,12 +120,13 @@ public class ChatMessageService {
     }
 
     // DeleteMessage
-
+    @Transactional
     public ChatMessageDeleteDto deleteMessage(Long chatroomId, Long messageId, Long senderId){
         // 원하는 메시지 불러오기
         ChatMessage message = messageRepository.findByIdAndMemberId(messageId, senderId);
         if(message != null){
             message.setContent("삭제된 메시지입니다.");
+            System.out.println("메시지가 삭제 처리되었습니다.");
             return new ChatMessageDeleteDto(chatroomId, messageRepository.save(message).getId(), senderId);
         } else{
             throw new RuntimeException("존재하지 않는 메시지입니다.");
