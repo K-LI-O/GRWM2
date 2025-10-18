@@ -127,7 +127,7 @@ public class ChatMessageService {
         if(message != null){
             message.setContent("삭제된 메시지입니다.");
             System.out.println("메시지가 삭제 처리되었습니다.");
-            return new ChatMessageDeleteDto(chatroomId, messageRepository.save(message).getId(), senderId);
+            return new ChatMessageDeleteDto(messageRepository.save(message).getId(), chatroomId, senderId);
         } else{
             throw new RuntimeException("존재하지 않는 메시지입니다.");
         }
