@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 @RestController
@@ -106,7 +107,7 @@ public class PostController {
 
     @GetMapping()
     public PostListDto showTimelinePostList(@AuthenticationPrincipal CustomUserDetails userDetails,
-                                              @PageableDefault(size = 20) Pageable pageable){
+                                              @PageableDefault(size = 20) Pageable pageable) throws AccessDeniedException{
 
         return postService.showTimelinePostList(userDetails.getCommunityUserId(), pageable);
     }
@@ -121,8 +122,10 @@ public class PostController {
 
     @GetMapping("/user/{communityId}")
     public PostListDto getUserPosts(@PathVariable Long communityId,
-                                    @PageableDefault(size = 20) Pageable pageable){
-        return postService.getUserPosts(communityId, pageable);
+                                    @PageableDefault(size = 20) Pageable pageable,
+                                    @AuthenticationPrincipal CustomUserDetails userDetails) throws AccessDeniedException {
+
+        return postService.getUserPosts(communityId, pageable, userDetails.getCommunityUserId());
     }
 
 

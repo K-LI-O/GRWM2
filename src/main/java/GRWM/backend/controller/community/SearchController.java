@@ -2,12 +2,16 @@ package GRWM.backend.controller.community;
 
 import GRWM.backend.dto.community.CommunityUseListDto;
 import GRWM.backend.dto.community.PostListDto;
+import GRWM.backend.entity.user.CustomUserDetails;
 import GRWM.backend.service.community.CommunityUserService;
 import GRWM.backend.service.community.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.nio.file.AccessDeniedException;
 
 
 @RestController
@@ -36,8 +40,10 @@ public class SearchController {
 
     @GetMapping("/hashtags")
     public PostListDto searchHashtag(@RequestParam String keyword,
-                                     @PageableDefault(size = 20) Pageable pageable){
-        return postService.searchByHashtag(keyword, pageable);
+                                     @PageableDefault(size = 20) Pageable pageable,
+                                     @AuthenticationPrincipal CustomUserDetails userDetails) throws Exception{
+
+        return postService.searchByHashtag(keyword, pageable, userDetails.getCommunityUserId());
     }
 
 
@@ -65,8 +71,9 @@ public class SearchController {
      */
     @GetMapping("/posts")
     public PostListDto searchPost(@RequestParam String keyword,
-                                    @PageableDefault(size = 20) Pageable pageable){
-        return postService.searchPost(keyword, pageable);
+                                  @PageableDefault(size = 20) Pageable pageable,
+                                  @AuthenticationPrincipal CustomUserDetails userDetails) throws AccessDeniedException {
+        return postService.searchPost(keyword, pageable, userDetails.getCommunityUserId());
     }
 
 

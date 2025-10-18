@@ -3,10 +3,7 @@ package GRWM.backend.service.community;
 import GRWM.backend.dto.community.*;
 import GRWM.backend.entity.community.*;
 import GRWM.backend.entity.user.CommunityUser;
-import GRWM.backend.repository.community.CommunityUserHashtagRepository;
-import GRWM.backend.repository.community.HashtagRepository;
-import GRWM.backend.repository.community.PostHashtagRepository;
-import GRWM.backend.repository.community.PostRepository;
+import GRWM.backend.repository.community.*;
 import GRWM.backend.repository.user.CommunityUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -17,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -32,6 +30,7 @@ public class PostService {
     private final HashtagRepository hashtagRepository;
     private final PostHashtagRepository postHashtagRepository;
     private final CommunityUserHashtagRepository cuHashtagRepository;
+    private final FollowingRepository followingRepository;
 
 
 
@@ -55,35 +54,11 @@ public class PostService {
                 dto.getVisibility()
         );
         Post savedPost = postRepository.save(newPost);
+        PostDto savedDto = postToDto(savedPost);
 
-        // 해시태그 처리;
-        // 이미 존재하는 해시태그인지 확인,
+        // 해시태그 처리(private 함수로 따로 작성)
+        saveHashtag(savedPost, dto.getHashtags());
 
-        if (dto.getHashtags() != null) {
-            for (String tagName : dto.getHashtags()) {
-
-                // 1. 이미 존재하는 해시태그인지 확인
-                Hashtag hashtag = hashtagRepository.findByName(tagName); // DB 조회 1회
-
-                if (hashtag == null) {
-                    // 2. 존재하지 않으면 생성 후 저장 (DB 저장 1회)
-                    Hashtag newTag = new Hashtag(tagName);
-                    hashtag = hashtagRepository.save(newTag);
-                }
-
-                // 3. PostHashtag 생성 및 양방향 관계 설정 (DB 저장 1회)
-                // 편의 메서드 사용
-                // 이 메서드 내에서 PostHashtag 객체 생성, Post 컬렉션에 추가, Hashtag 컬렉션에 추가, postHashtagRepository.save(객체) 처리까지 모두 처리합니다.
-                // PostHashtag postHashtag = PostHashtag.createPostHashtag(savedPost, hashtag);
-
-                // save는 서비스에서 명시적으로 처리하고 객체 생성/관계 설정만 편의 메서드로 처리
-                PostHashtag postHashtag = PostHashtag.createPostHashtag(savedPost, hashtag);
-                // -> 이 메서드는 PostHashtag 객체를 만들고, savedPost.getPostHashtags().add()와 hashtag.getPostHashtags().add()를 수행합니다.
-
-                // DB에 저장
-                postHashtagRepository.save(postHashtag);
-            }
-        }
         return savedPost.getId();
 
     }
@@ -128,30 +103,8 @@ public class PostService {
         // 포스트 저장하기
         Post savedPost = postRepository.save(post);
 
+        saveHashtag(savedPost, dto.getHashtags());
         // 이미 존재하는 해시태그인지 확인,
-        if(dto.getHashtags() != null) {
-            List<PostHashtag> phtagList = new ArrayList<>();
-            for (String t : dto.getHashtags()) {
-                Hashtag hashtag = hashtagRepository.findByName(t); // DB 조회 1회
-
-                if (hashtag == null) {
-                    // 존재하지 않으면 생성 후 저장
-                    Hashtag newTag = new Hashtag(t);
-                    hashtag = hashtagRepository.save(newTag);
-                }
-
-                // 2. PostHashtag 관계가 있는지 확인 (DB 접근 2회)
-                PostHashtag postHashtag = postHashtagRepository.findByPostAndHashtag(savedPost, hashtag);
-
-                if (postHashtag == null) {
-                    // 3. 관계가 없다면 새로 생성하고 저장 (DB 접근 3회)
-                    postHashtag = new PostHashtag(savedPost, hashtag);
-                    postHashtagRepository.save(postHashtag);
-                } // 해시태그가 있고, 이미 포스트와 관계가 있다면, 안 건들면 됨.
-
-            }
-        }
-
 
         // 반환
         return postToDto(savedPost);
@@ -185,7 +138,7 @@ public class PostService {
     */
 
     @Transactional(readOnly = true)
-    public PostListDto showTimelinePostList(Long communityId, Pageable pageable){
+    public PostListDto showTimelinePostList(Long communityId, Pageable pageable) throws AccessDeniedException{
 
         // 사용자가 팔로우하는 계정 목록 알아내기
 
@@ -195,7 +148,9 @@ public class PostService {
         List<CommunityUser> followingUserList = new ArrayList<>();
         followingUserList.add(extractOptionalUser(communityId));
         for(Following t : followingList){
-            followingUserList.add(t.getFollowing());
+            if(checkVisibility(t.getId(), communityId)) {
+                followingUserList.add(t.getFollowing());
+            }
         }
 
         // Pageable 객체 추가 설정
@@ -227,7 +182,7 @@ public class PostService {
     */
 
     @Transactional(readOnly = true)
-    public PostListDto getUserPosts(Long communityId, Pageable pageable){
+    public PostListDto getUserPosts(Long communityId, Pageable pageable, Long readerId) throws AccessDeniedException{
         CommunityUser user = findCommunityUserById(communityId);
 
         // pageable 객체 생성;
@@ -243,7 +198,9 @@ public class PostService {
         List<PostDto> dtoList = new ArrayList<>();
         for(Post t: postList){
 
+            if(checkVisibility(t.getId(), readerId)){
             dtoList.add(postToDto(t));
+            }
         }
 
         return new PostListDto(dtoList, postSlice.hasNext());
@@ -347,7 +304,7 @@ public class PostService {
      */
 
     @Transactional(readOnly = true)
-    public PostListDto searchByHashtag(String keyword, Pageable pageable){
+    public PostListDto searchByHashtag(String keyword, Pageable pageable, Long readerId) throws Exception {
         // 키워드로 해시태그 찾기
         Hashtag tag;
         try{
@@ -370,7 +327,9 @@ public class PostService {
         // 포스트 dto 목록 반환
         List<PostDto> dtoList = new ArrayList<>();
         for(PostHashtag t : phList){
+            if(checkVisibility(t.getId(), readerId)){
             dtoList.add(postToDto(t.getPost()));
+            }
         }
 
         return new PostListDto(dtoList, phSlice.hasNext());
@@ -390,7 +349,7 @@ public class PostService {
 
 
     @Transactional(readOnly = true)
-    public PostListDto searchPost(String keyword, Pageable pageable){
+    public PostListDto searchPost(String keyword, Pageable pageable, Long readerId) throws AccessDeniedException {
         // Pageable 객체 생성
         Pageable p = PageRequest.of(
                 pageable.getPageNumber(),
@@ -404,7 +363,9 @@ public class PostService {
 
         List<PostDto> dtoList = new ArrayList<>();
         for(Post t : postList){
-            dtoList.add(postToDto(t));
+            if(checkVisibility(t.getId(), readerId)) {
+                dtoList.add(postToDto(t));
+            }
         }
 
         return new PostListDto(dtoList, postSlice.hasNext());
@@ -504,8 +465,73 @@ public class PostService {
 
     }
 
+    private void saveHashtag(Post savedPost, List<String> hashtags){
+        // 이미 존재하는 해시태그인지 확인,
+        if(hashtags != null) {
+            List<PostHashtag> phtagList = new ArrayList<>();
+            for (String t : hashtags) {
+                Hashtag hashtag = hashtagRepository.findByName(t); // DB 조회 1회
+
+                if (hashtag == null) {
+                    // 존재하지 않으면 생성 후 저장
+                    Hashtag newTag = new Hashtag(t);
+                    hashtag = hashtagRepository.save(newTag);
+                }
+
+                // 2. PostHashtag 관계가 있는지 확인 (DB 접근 2회)
+                PostHashtag postHashtag = postHashtagRepository.findByPostAndHashtag(savedPost, hashtag);
+
+                if (postHashtag == null) {
+                    // 3. 관계가 없다면 새로 생성하고 저장 (DB 접근 3회)
+                    postHashtag = new PostHashtag(savedPost, hashtag);
+                    postHashtagRepository.save(postHashtag);
+                } // 해시태그가 있고, 이미 포스트와 관계가 있다면, 안 건들면 됨.
+
+            }
+        }
+    }
+
+    public boolean checkVisibility(Long postId, Long readerId) throws AccessDeniedException {
+        Post post = findPostById(postId);
+
+        // 1. 작성자 본인인지 확인 // private, public
+        if (post.getUser().getId().equals(readerId)) {
+            return true;
+        }
+
+        // 2. 전체 공개인지 확인 public
+        if ("public".equals(post.getVisibility())) {
+            return true;
+        }
+
+        // 3. 친구 공개인 경우 (가장 간단한 친구 검사)
+        if ("friends".equals(post.getVisibility())) {
+            // [핵심 로직] 두 사용자(작성자와 조회자)가 친구 테이블에 존재하는지 확인
+            boolean isFriend = isUsersFriend(post.getUser().getId(), readerId);
+
+            if (isFriend) {
+                return true;
+            }
+        }
+
+        // 4. 모든 조건 불만족 시 예외 발생
+        throw new AccessDeniedException("접근 권한이 없습니다.");
+    }
+
+    // 친구 관계를 확인하는 간단한 로직 (FriendshipRepository 사용 가정)
+    private boolean isUsersFriend(Long creatorId, Long readerId) {
+
+        if(followingRepository.existsByFollowingAndFollower(
+                findCommunityUserById(creatorId),
+                findCommunityUserById(readerId)
+        ) && followingRepository.existsByFollowingAndFollower(
+                findCommunityUserById(readerId),
+                findCommunityUserById(creatorId)
+        )) return true;
+        else return false;
+        }
+
+    }
 
 
 
-
-}
