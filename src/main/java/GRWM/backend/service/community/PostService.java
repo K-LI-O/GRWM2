@@ -493,6 +493,11 @@ public class PostService {
 
     public boolean checkVisibility(Long postId, Long readerId) throws AccessDeniedException {
         Post post = findPostById(postId);
+        if (post == null) {
+            // 알 수 없습니다: 포스트가 존재하지 않으므로, 가시성 체크를 할 수 없습니다.
+            // false를 반환하거나, 적절한 예외를 던지는 것이 일반적입니다.
+            return false; // 혹은 throw new PostNotFoundException("포스트를 찾을 수 없습니다.");
+        }
 
         // 1. 작성자 본인인지 확인 // private, public
         if (post.getUser().getId().equals(readerId)) {
