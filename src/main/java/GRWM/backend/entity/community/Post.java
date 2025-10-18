@@ -11,6 +11,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -26,7 +27,7 @@ public class Post {
     @Setter(AccessLevel.NONE)
     private Long id;
 
-    private List<String> imageLink;
+    private List<String> imageLink = new ArrayList<>();
 
     private String content;
 
@@ -45,13 +46,13 @@ public class Post {
     private CommunityUser user;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    private List<Liked> likedList;
+    private List<Liked> likedList = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    private List<Comment> commentList;
+    private List<Comment> commentList = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    private List<PostHashtag> postHashtagList;
+    private List<PostHashtag> postHashtagList = new ArrayList<>();
 
 
     public int countLikes(){
