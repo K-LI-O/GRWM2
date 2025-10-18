@@ -4,6 +4,7 @@ package GRWM.backend.controller.chatroom;
 import GRWM.backend.dto.chatroom.ChatMessageCreateDto;
 import GRWM.backend.dto.chatroom.ChatMessageDeleteDto;
 import GRWM.backend.dto.chatroom.ChatMessageDto;
+import GRWM.backend.entity.chatroom.ChatMessage;
 import GRWM.backend.entity.user.CustomUserDetails;
 import GRWM.backend.service.chatroom.ChatMessageService;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +39,7 @@ public class ChatRoomMessageController {
     // @PreAuthorize("isAuthenticated()")
     public ChatMessageDto sendMessage(@DestinationVariable Long chatRoomId, @Payload ChatMessageCreateDto dto, @AuthenticationPrincipal CustomUserDetails userDetails) {
         // 메시지 처리 로직 (DB 저장 등)
-        return chatMessageService.saveMessage(chatRoomId, dto, userDetails.getCommunityUserId());
+        return chatMessageService.saveMessage(chatRoomId, dto, userDetails.getCommunityUserId(), ChatMessage.MessageType.CHAT);
 
     }
 

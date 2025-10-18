@@ -41,7 +41,7 @@ public class ChatMessageService {
      */
 
     @Transactional
-    public ChatMessageDto saveMessage(Long chatRoomId, ChatMessageCreateDto dto, Long communityId){
+    public ChatMessageDto saveMessage(Long chatRoomId, ChatMessageCreateDto dto, Long communityId, ChatMessage.MessageType type){
 
         // 채팅방 가져오기
         ChatRoom chatRoom = chatRoomRepository.getReferenceById(chatRoomId);
@@ -55,7 +55,7 @@ public class ChatMessageService {
                 dto.getCommunityId(),
                 dto.getReplyMessageId(),
                 dto.getContent(),
-                ChatMessage.MessageType.CHAT.ordinal(),
+                type.ordinal(),
                 chatRoom,
                 nickname
         );

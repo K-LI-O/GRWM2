@@ -11,6 +11,7 @@ import GRWM.backend.repository.user.CommunityUserRepository;
 import GRWM.backend.repository.user.MemberRepository;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,9 +30,10 @@ public class ChatRoomService {
     private final MemberRepository memberRepository;
     private final ChatRoomAnnouncementRepository announcementRepository;
     private final ChatRoomTagRepository chatRoomTagRepository;
-
+    private final ChatMessageRepository chatMessageRepository;
     private final CommunityUserRepository communityUserRepository;
     private final ChatRoomCommunityRepository chatRoomCommunityRepository;
+    private final SimpMessagingTemplate messagingTemplate; // 메시지 전파 도구
 
 
     /* POST
@@ -141,7 +143,9 @@ public class ChatRoomService {
 
     @Transactional
     public void deleteChatRoom(Long chatRoomId){
-        chatRoomRepository.deleteById(chatRoomId);
+
+        chatRoomRepository.deleteById(chatRoomId)
+        ;
     }
 
 
@@ -239,9 +243,35 @@ public class ChatRoomService {
         // chatRoom 사람 수 하나 감소
         cc.getChatRoom().decreaseCurrentMemberCount();
 
+        sendLeaveMessage(chatRoomId, communityId);
         // chatroomMember 객체 삭제
         chatRoomCommunityRepository.delete(cc);
 
+
+
+    }
+
+    private void sendLeaveMessage(Long chatRoomId, Long communityId) {
+        // 1. 퇴장 메시지 DTO 생성 및 DB에 기록
+        ChatMessageCreateDto leaveMessageDto = new ChatMessageCreateDto(
+                chatRoomId,
+                extractOptionalUser(communityId).getNickname()+
+                        " 님께서 퇴장하였습니다." ,
+                null,
+                communityId);
+
+        ChatMessage leaveMessage = ChatMessage.builder()
+                        .memberId(communityId)
+        .type(ChatMessage.MessageType.LEAVE)
+                .content(leaveMessageDto.getContent())
+                .chatRoom(extractOptionalChatroom(chatRoomId))
+                .writerChatName(extractOptionalUser(communityId).getNickname())
+                .build();
+        chatMessageRepository.save(leaveMessage);
+
+        // 2. SimpMessagingTemplate을 사용하여 웹소켓으로 전파
+        String destination = "/topic/chat." + chatRoomId;
+        messagingTemplate.convertAndSend(destination, leaveMessage);
     }
 
 

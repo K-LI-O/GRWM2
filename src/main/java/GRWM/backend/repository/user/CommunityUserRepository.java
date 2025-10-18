@@ -10,4 +10,5 @@ import org.springframework.stereotype.Repository;
 public interface CommunityUserRepository extends JpaRepository<CommunityUser, Long> {
     Slice<CommunityUser> findByNicknameContaining(String keyword, Pageable pageable);
 
+    CommunityUser findByNickname(String nickname);
 }
