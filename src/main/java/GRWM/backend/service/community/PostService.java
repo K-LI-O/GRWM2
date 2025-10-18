@@ -165,7 +165,9 @@ public class PostService {
         // dto 리스트에 담기
         List<PostDto> dtoList = new ArrayList<>();
         for(Post t: postList){
-            dtoList.add(postToDto(t));
+            if(checkVisibility(t.getId(), communityId)) {
+                dtoList.add(postToDto(t));
+            }
         }
 
         // 반환
@@ -499,28 +501,24 @@ public class PostService {
             return false; // 혹은 throw new PostNotFoundException("포스트를 찾을 수 없습니다.");
         }
 
-        // 1. 작성자 본인인지 확인 // private, public
         if (post.getUser().getId().equals(readerId)) {
             return true;
         }
 
-        // 2. 전체 공개인지 확인 public
+        // 2. 전체 공개인지 확인
         if ("public".equals(post.getVisibility())) {
             return true;
         }
 
-        // 3. 친구 공개인 경우 (가장 간단한 친구 검사)
+        // 3. 친구 공개인지 확인
         if ("friends".equals(post.getVisibility())) {
-            // [핵심 로직] 두 사용자(작성자와 조회자)가 친구 테이블에 존재하는지 확인
-            boolean isFriend = isUsersFriend(post.getUser().getId(), readerId);
+            return isUsersFriend(post.getUser().getId(), readerId);
 
-            if (isFriend) {
-                return true;
-            }
         }
 
-        // 4. 모든 조건 불만족 시 예외 발생
-        throw new AccessDeniedException("접근 권한이 없습니다.");
+        // 4. 나만 보기(private)이거나 그 외 조건 불만족 시 거부
+        // "private" 포스트는 1번(본인 확인)에서 이미 처리되지 않았으므로 여기서 거부됩니다.
+        return false;
     }
 
     // 친구 관계를 확인하는 간단한 로직 (FriendshipRepository 사용 가정)
