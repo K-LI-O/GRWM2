@@ -45,9 +45,9 @@ public class WebsocketEventListener {
         CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
         Long communityId = userDetails.getCommunityUserId(); // ⬅️ 정의한 UserDetails 구현체에서 ID 필드 접근
 
-        String destination = accessor.getDestination(); // 구독 주소: /topic/chat/{roomId}
+        String destination = accessor.getDestination(); // 구독 주소: /topic/chat.{roomId}
 
-        if (destination != null && destination.startsWith("/topic/chat/")) {
+        if (destination != null && destination.startsWith("/topic/chat.")) {
         Long chatRoomId = extractChatRoomId(destination);
 
         if (chatRoomId != null) {
@@ -71,16 +71,23 @@ public class WebsocketEventListener {
 
         // 주소에서 채팅방 ID를 추출하는 헬퍼 메서드 (예시)
         private Long extractChatRoomId(String destination) {
-            // 예: "/topic/chat/123" -> "123" 추출
-            String[] parts = destination.split("/");
-            if (parts.length > 0) {
-                try {
-                    return Long.valueOf(parts[parts.length - 1]);
-                } catch (NumberFormatException e) {
-                    return null;
-                }
+            // 예: "/topic/chat.123" -> "123" 추출
+
+            if (destination == null || !destination.contains(".")) {
+                // 확실하지 않음: destination이 null이거나 '.'을 포함하지 않으면 유효하지 않음
+                return null;
             }
-            return null;
+            int lastDotIndex = destination.lastIndexOf('.');
+            String chatRoomIdString = destination.substring(lastDotIndex + 1);
+
+            try {
+                // 3. 추출된 문자열을 Long 타입으로 변환합니다.
+                return Long.valueOf(chatRoomIdString);
+            } catch (NumberFormatException e) {
+                // 확실하지 않음: 추출된 부분이 숫자가 아닐 경우 (예: "abc")
+                System.err.println("Chat Room ID 형식이 잘못되었습니다: " + chatRoomIdString);
+                return null;
+            }
         }
 
 
