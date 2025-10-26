@@ -267,11 +267,20 @@ public class ChatRoomService {
                 .chatRoom(extractOptionalChatroom(chatRoomId))
                 .writerChatName(extractOptionalUser(communityId).getNickname())
                 .build();
-        chatMessageRepository.save(leaveMessage);
+        ChatMessage savedMessage = chatMessageRepository.save(leaveMessage);
+
+        ChatMessageDto sendMessageDto = new ChatMessageDto(
+                savedMessage.getId(),
+                savedMessage.getMemberId(),
+                savedMessage.getReplyMessageId(),
+                3,
+                savedMessage.getContent(),
+                savedMessage.getCreatedAt(),
+                savedMessage.getWriterChatName());
 
         // 2. SimpMessagingTemplate을 사용하여 웹소켓으로 전파
         String destination = "/topic/chat." + chatRoomId;
-        messagingTemplate.convertAndSend(destination, leaveMessageDto);
+        messagingTemplate.convertAndSend(destination, sendMessageDto);
     }
 
 
