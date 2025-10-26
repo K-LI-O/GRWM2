@@ -271,7 +271,7 @@ public class ChatRoomService {
 
         // 2. SimpMessagingTemplate을 사용하여 웹소켓으로 전파
         String destination = "/topic/chat." + chatRoomId;
-        messagingTemplate.convertAndSend(destination, leaveMessage);
+        messagingTemplate.convertAndSend(destination, leaveMessageDto);
     }
 
 
