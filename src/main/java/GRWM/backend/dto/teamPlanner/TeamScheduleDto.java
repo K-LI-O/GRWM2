@@ -1,9 +1,6 @@
 package GRWM.backend.dto.teamPlanner;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -12,6 +9,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class TeamScheduleDto {
 
     /*
@@ -25,7 +23,6 @@ String memo,
 String editorRange,
 List<MemberDto> members, (참여자 목록),
 List<TodoDto> todoList
-
      */
     private TeamMemberBriefDto creator;
     String title;

@@ -21,7 +21,7 @@ public class TeamScheduleController {
     /*
     name : getDetailSchedule
     function : 일정 상세보기
-    GET /api/team-planner/{plannerId}/schedule/{scheduleId}
+    GET /api/team-planner/schedule/{scheduleId}
     param : Long plannerId, Long scheduleId
     return value : TeamScheduleDto
     */

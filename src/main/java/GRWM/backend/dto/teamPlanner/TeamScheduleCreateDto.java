@@ -29,7 +29,7 @@ String memo
     private String title;
     private LocalDateTime startDateTime;
     private LocalDateTime finishDateTime;
-    String location;
-    String memo;
-
+    private String location;
+    private String memo;
+    private String editorRange;
 }
