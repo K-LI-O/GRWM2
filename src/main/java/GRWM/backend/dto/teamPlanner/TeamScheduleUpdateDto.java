@@ -1,7 +1,14 @@
 package GRWM.backend.dto.teamPlanner;
 
+import lombok.*;
+
 import java.time.LocalDateTime;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class TeamScheduleUpdateDto {
     /*
 {

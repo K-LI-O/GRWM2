@@ -1,10 +1,7 @@
 package GRWM.backend.entity.teamplanner;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -14,6 +11,8 @@ import java.util.List;
 @Setter
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class TimeVote {
 
     /*
@@ -44,6 +43,7 @@ public class TimeVote {
     @OneToMany(fetch = FetchType.LAZY)
     private List<VoteResponse> voteResponses;
 
+    private List<Long> memberIds;
 
     public TimeVote(TeamPlanner teamPlanner, String title, List<LocalDate> voteRange,
                     LocalDateTime finishTime, List<VoteResponse> voteResponses){

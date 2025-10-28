@@ -75,7 +75,7 @@ public class TeamScheduleService {
     param : Long plannerId, Long scheduleId
     return value : TeamScheduleDto
     */
-    public void getDetailSchedule(Long plannerId, Long scheduleId){
+    public TeamScheduleDto getDetailSchedule(Long plannerId, Long scheduleId){
         // 일정 불러오기
         Optional<TeamSchedule> optionalSchedule = scheduleRepository.findById(scheduleId);
 
@@ -112,6 +112,7 @@ public class TeamScheduleService {
                 .build();
 
         // 반환
+        return teamScheduleDto;
     }
 
     /*
@@ -142,12 +143,12 @@ public class TeamScheduleService {
     PUT /api/team-planner/{plannerId}/schedule/{scheduleId}/edit
     param : Long plannerId, Long scheduleId,
     TeamScheduleUpdateDto
-    return value : TeamScheduleDto
+    return value : TeamScheduleUpdateDto
     */
 
     public TeamScheduleDto updateSchedule(Long plannerId,
                                           Long scheduleId,
-                                          TeamScheduleDto dto,
+                                          TeamScheduleUpdateDto dto,
                                           Long userId){
           TeamSchedule schedule = extractOptionalSchedule(scheduleId);
         // 수정자 확인
@@ -175,7 +176,7 @@ String editorRange,
         TeamSchedule savedSchedule = scheduleRepository.save(schedule);
         // DTO 반환;
         TeamScheduleDto result = TeamScheduleDto.builder()
-                .creator(dto.getCreator())
+                .creator(getCreatorDto(plannerId, savedSchedule))
                 .title(savedSchedule.getTitle())
                 .category(dto.getCategory())
                 .startDateTime(savedSchedule.getStartTime())
@@ -183,8 +184,8 @@ String editorRange,
                 .location(savedSchedule.getLocation())
                 .memo(savedSchedule.getMemo())
                 .editorRange(savedSchedule.getEditorRange())
-                .members(dto.getMembers())
-                .todoList(dto.getTodoList())
+                .members(getMemberDtoList(teamPlannerRepository.getReferenceById(plannerId), savedSchedule.getMemberIds()))
+                .todoList(getTodoDtoList(teamPlannerRepository.getReferenceById(plannerId), savedSchedule.getTodos()))
                 .build();
 
         return result;
