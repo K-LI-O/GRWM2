@@ -2,26 +2,25 @@ package GRWM.backend.entity.teamplanner;
 
 import GRWM.backend.entity.user.Member;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class TeamTodo {
-    /*
-    Long Id
-Schedule schedule
-member member
-String content,
-boolean isCompleted
-boolean isPrivate
-
-     */
+//    /*
+//    Long Id
+//Schedule schedule
+//member member
+//String content,
+//boolean isCompleted
+//boolean isPrivate
+//
+//     */
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
