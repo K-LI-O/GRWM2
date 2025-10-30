@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -34,7 +35,7 @@ List<TodoDto> todoList,
     private Member creator;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn
+    @JoinColumn(name = "team_planner_id") // 예: "planner_id"
     private TeamPlanner teamPlanner;
 
     @ManyToOne
@@ -48,9 +49,11 @@ List<TodoDto> todoList,
     private LocalDateTime startTime;
     private LocalDateTime finishTime;
 
-    List<Long> memberIds;
+    @Builder.Default
+    List<Long> memberIds = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "teamSchedule")
-    List<TeamTodo> todos;
+    List<TeamTodo> todos = new ArrayList<>();
 
 }

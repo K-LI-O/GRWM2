@@ -1,11 +1,9 @@
 package GRWM.backend.entity.teamplanner;
 
+import GRWM.backend.config.AvailableDateTimeConverter;
 import GRWM.backend.entity.user.Member;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
@@ -13,6 +11,8 @@ import java.util.List;
 @Setter
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class VoteResponse {
 
     /*
@@ -34,7 +34,7 @@ List<AvailableDateTime> availableDateTimes
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
-    @ElementCollection
+    @Convert(converter = AvailableDateTimeConverter.class)
     List<AvailableDateTime> availableDateTimes;
 
     public VoteResponse(TimeVote timeVote, Member member, List<AvailableDateTime> availableDateTimes){

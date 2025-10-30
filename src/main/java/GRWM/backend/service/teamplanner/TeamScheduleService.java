@@ -44,12 +44,13 @@ public class TeamScheduleService {
     param : TeamPlannerCreateDto
     return value : Long scheduleId
     */
+    @Transactional
     public Long createSchedule(TeamScheduleCreateDto dto, Long userId){
         // 일정 유효성 체크
 
         // 카테고리 아이디 체크
         TeamCategory category = null;
-        if(dto.getCategoryId() != null){
+        if(dto.getCategoryId().isPresent()){
             category = teamCategoryRepository.getReferenceById(dto.getCategoryId().get());
         }
         TeamSchedule schedule = TeamSchedule.builder()
@@ -61,6 +62,7 @@ public class TeamScheduleService {
                 .editorRange(dto.getEditorRange())
                 .startTime(dto.getStartDateTime())
                 .finishTime(dto.getFinishDateTime())
+                .teamPlanner(extractOptionalPlanner(dto.getPlannerId()))
                 .build();
         // 일정 생성
 
@@ -238,6 +240,7 @@ String editorRange,
     param : Long plannerId, int year, int month
     return value : List<TeamScheduleBriefDto> schedules
     */
+    @Transactional(readOnly = true)
     public List<TeamScheduleBriefDto> getMonthlySchedules(Long plannerId, int year, int month){
         YearMonth yearMonth = YearMonth.of(year, month);
         LocalDate startDate = yearMonth.atDay(1); // 해당 월의 첫째 날 (예: 2025-06-01)
@@ -246,14 +249,14 @@ String editorRange,
         LocalDateTime startDateTime = startDate.atStartOfDay(); // 2025-06-01T00:00:00
         LocalDateTime finishDateTime = finishDate.atTime(23, 59, 59, 999999999); // 2025-06-30T23:59:59.999999999
 
-        List<TeamSchedule> schedules = scheduleRepository.findByTeamPlannerAndStartTimeBetweenOrderByStartTimeAsc(
-                teamPlannerRepository.getReferenceById(plannerId), startDateTime, finishDateTime
+        List<TeamSchedule> schedules = scheduleRepository.findByTeamPlannerIdAndStartTimeBetweenOrderByStartTimeAsc(
+                plannerId,
+                startDateTime,
+                finishDateTime
         );
+
         List<TeamScheduleBriefDto> result = new ArrayList<>();
-
-
         for(TeamSchedule t : schedules){
-
             TeamScheduleBriefDto dto = TeamScheduleBriefDto.builder()
                     .scheduleId(t.getId())
                     .creator(getCreatorDto(plannerId, t))
@@ -275,6 +278,7 @@ String editorRange,
     param : Long plannerId, int year, int weekNumber
     return value : List<TeamScheduleBriefDto> schedules
     */
+    @Transactional(readOnly = true)
     public List<TeamScheduleBriefDto> getWeeklySchedules(Long plannerId, int year, int weekOfYear){
         // ISO 8601 WeekFields 인스턴스 생성 (월요일이 한 주의 시작, 최소 일수는 4일)
         WeekFields weekFields = WeekFields.ISO;
@@ -294,9 +298,9 @@ String editorRange,
         LocalDateTime startDateTime = firstDayOfTargetWeek.atStartOfDay(); // 해당 주의 월요일 00:00:00
         LocalDateTime finishDateTime = lastDayOfTargetWeek.atTime(23, 59, 59, 999999999); // 해당 주의 일요일 23:59:59.999999999
 
-        List<TeamSchedule> weeklySchedules = scheduleRepository.findByTeamPlannerAndStartTimeBetweenOrderByStartTimeAsc(
+        List<TeamSchedule> weeklySchedules = scheduleRepository.findByTeamPlannerIdAndStartTimeBetweenOrderByStartTimeAsc(
 
-                teamPlannerRepository.getReferenceById(plannerId), startDateTime,finishDateTime
+                plannerId, startDateTime,finishDateTime
         );
         List<TeamScheduleBriefDto> result = new ArrayList<>();
 
@@ -324,6 +328,7 @@ String editorRange,
     param : Long plannerId, int year, int month, int day
     return value : List<TeamScheduleBrieDto> schedules
      */
+    @Transactional(readOnly = true)
     public List<TeamScheduleBriefDto> getDailySchedules(Long plannerId, int year, int month, int day){
         // 날짜 형식으로 변환
         YearMonth yearMonth = YearMonth.of(year, month);
@@ -331,15 +336,16 @@ String editorRange,
 
         LocalDateTime startDateTime = startDate.atStartOfDay(); // 2025-06-01T00:00:00
         LocalDateTime finishDateTime = startDate.atTime(23, 59, 59, 999999999); // 2025-06-30T23:59:59.999999999
-
-        List<TeamSchedule> dailySchedules = scheduleRepository.findByTeamPlannerAndStartTimeBetweenOrderByStartTimeAsc(
-                teamPlannerRepository.getReferenceById(plannerId), startDateTime, finishDateTime
+        System.out.println(startDateTime);
+        System.out.println(finishDateTime);
+        System.out.println(extractOptionalPlanner(plannerId).getId());
+        List<TeamSchedule> dailySchedules = scheduleRepository.findByTeamPlannerIdAndStartTimeBetweenOrderByStartTimeAsc(
+                plannerId, startDateTime, finishDateTime
         );
+        System.out.println(dailySchedules.size());
         List<TeamScheduleBriefDto> result = new ArrayList<>();
 
-
         for(TeamSchedule t : dailySchedules){
-
             TeamScheduleBriefDto dto = TeamScheduleBriefDto.builder()
                     .scheduleId(t.getId())
                     .creator(getCreatorDto(plannerId, t))
@@ -366,10 +372,13 @@ String editorRange,
             TeamSchedule schedule = extractOptionalSchedule(scheduleId);
 
             List<Long> members = schedule.getMemberIds();
-            members.add(userId);
 
-            schedule.setMemberIds(members);
-            scheduleRepository.save(schedule);
+            // 이미 참여하는 멤버가 아닐 때에만 로직 실행
+            if(!members.contains(userId)){
+                members.add(userId);
+                schedule.setMemberIds(members);
+                scheduleRepository.save(schedule);
+            }
             return getMemberDtoList(teamPlannerRepository.getReferenceById(plannerId), members);
         }
 
@@ -400,9 +409,13 @@ String editorRange,
     }
 
     private List<TeamMemberBriefDto> getMemberDtoList(TeamPlanner planner, List<Long> memberIds){
+        if(memberIds.isEmpty()){
+            return null;
+        }
+
         List<Member> members = new ArrayList<>();
         for(Long t: memberIds){
-            members.add((memberRepository.getReferenceById(t) != null) ?  memberRepository.getReferenceById(t): null);
+            members.add((memberRepository.findById(t).isPresent()) ?  memberRepository.getReferenceById(t): null);
         }
 
         List<TeamMemberBriefDto> result = new ArrayList<>();
@@ -470,13 +483,14 @@ String editorRange,
     }
 
     private TeamCategoryDto getCategoryDto(TeamSchedule t){
+
+        if(t.getCategory() == null) return null;
         TeamCategory cat = teamCategoryRepository.getReferenceById(t.getCategory().getId());
-        TeamCategoryDto categoryDto = null;
-
-        categoryDto.setCategoryId(cat.getId());
-        categoryDto.setCategoryName(cat.getName());
-        categoryDto.setColor(cat.getColor());
-
+        TeamCategoryDto categoryDto = TeamCategoryDto.builder()
+                .categoryId(cat.getId())
+                .categoryName(cat.getName())
+                .color(cat.getColor())
+                .build();
         return categoryDto;
     }
 
@@ -487,6 +501,17 @@ String editorRange,
             throw new RuntimeException("존재하지 않는 스케줄입니다.");
         }
         return optionalSchedule.get();
+    }
+
+    private TeamPlanner extractOptionalPlanner(Long plannerId) throws RuntimeException{
+        Optional<TeamPlanner> optionalPlanner = teamPlannerRepository.findById(plannerId);
+
+        if(optionalPlanner.isPresent()){
+            return optionalPlanner.get();
+        }
+        else{
+            throw new RuntimeException("존재하지 않는 공유플래너입니다.");
+        }
     }
 
 }

@@ -38,8 +38,8 @@ public class TeamScheduleController {
     return value : TeamScheduleDto
     */
     @GetMapping("/api/team-planner/{plannerId}/schedule/{scheduleId}")
-    public TeamScheduleDto getDetailSchedule(@PathVariable Long plannerId, @PathVariable Long ScheduleId){
-        return teamScheduleService.getDetailSchedule(plannerId, ScheduleId);
+    public TeamScheduleDto getDetailSchedule(@PathVariable Long plannerId, @PathVariable Long scheduleId){
+        return teamScheduleService.getDetailSchedule(plannerId, scheduleId);
     }
 
     /*
@@ -73,13 +73,13 @@ public class TeamScheduleController {
     /*
     name : updateDateTimeSchedule
     function : 스케줄 DateTime만 수정하기(드래그앤드롭으로 스케줄 날짜 수정)
-    PUT /api/team-lanner/{plannerId}/schedule/{scheduleId}/drag-drop
+    PUT /api/team-planner/{plannerId}/schedule/{scheduleId}/drag-drop
     param: Long plannerId, Long scheduleId
     TeamScheduleTimeUpdateDto
     response : x
     */
 
-    @PutMapping("/api/team-lanner/{plannerId}/schedule/{scheduleId}/drag-drop")
+    @PutMapping("/api/team-planner/{plannerId}/schedule/{scheduleId}/drag-drop")
     public void updateDateTimeSchedule(@PathVariable Long plannerId, @PathVariable Long scheduleId,
                                        @RequestBody TeamScheduleTimeUpdateDto dto){
 
@@ -109,7 +109,7 @@ public class TeamScheduleController {
     param : Long plannerId, int year, int weekNumber
     return value : List<TeamScheduleBriefDto> schedules
     */
-    @GetMapping("/api/personal-planner/{plannerId}/schedule/weekly/{year}/{weekNumber}")
+    @GetMapping("/api/team-planner/{plannerId}/schedule/weekly/{year}/{weekNumber}")
     public List<TeamScheduleBriefDto> getWeeklySchedules(@PathVariable Long plannerId,
                                                          @PathVariable int year,
                                                          @PathVariable int weekNumber){
@@ -119,11 +119,11 @@ public class TeamScheduleController {
     /*
     name : getDailySchedules
     function : 데일리 일정 불러오기
-    GET /api/personal-planner/{plannerId}/schedule/daily/{year}/{month}/{day}
+    GET /api/team-planner/{plannerId}/schedule/daily/{year}/{month}/{day}
     param : Long plannerId, int year, int month, int day
     return value : List<TeamScheduleBrieDto> schedules
      */
-    @GetMapping("/api/personal-planner/{plannerId}/schedule/daily/{year}/{month}/{day}")
+    @GetMapping("/api/team-planner/{plannerId}/schedule/daily/{year}/{month}/{day}")
     public List<TeamScheduleBriefDto> getDailySchedules(@PathVariable Long plannerId,
                                                         @PathVariable int year,
                                                         @PathVariable int month,

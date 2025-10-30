@@ -53,5 +53,10 @@ public class TimeVote {
         this.finishTime = finishTime;
         this.voteResponses = voteResponses;
     }
+
+    // ======= 비즈니스 로직 ======= //
+
+
+
 }
 

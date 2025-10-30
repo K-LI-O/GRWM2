@@ -1,27 +1,19 @@
 package GRWM.backend.entity.teamplanner;
 
-import jakarta.persistence.Converter;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
-
 @Setter
 @Getter
-@Embeddable
 @AllArgsConstructor
 @Builder
+public class Interval {
 
-public class AvailableDateTime {
+    private LocalTime startTime;
+    private LocalTime endTime;
 
-    private LocalDate date;
-
-    private List<Interval> intervals;
 }
-

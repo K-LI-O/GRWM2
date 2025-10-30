@@ -15,5 +15,5 @@ public interface TeamScheduleRepository extends JpaRepository<TeamSchedule, Long
     // 플래너와 카테고리 객체로 스케줄 리스트 찾기
     List<TeamSchedule> findByTeamPlannerAndCategory(TeamPlanner planner, TeamCategory category);
 
-    List<TeamSchedule> findByTeamPlannerAndStartTimeBetweenOrderByStartTimeAsc(TeamPlanner planner, LocalDateTime startTime, LocalDateTime finishTime);
+    List<TeamSchedule> findByTeamPlannerIdAndStartTimeBetweenOrderByStartTimeAsc(Long plannerId, LocalDateTime startTime, LocalDateTime finishTime);
 }

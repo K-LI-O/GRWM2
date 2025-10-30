@@ -1,8 +1,16 @@
 package GRWM.backend.controller.teamplanner;
 
+import GRWM.backend.dto.teamPlanner.AvailableDateTimeDto;
+import GRWM.backend.dto.teamPlanner.TimeVoteBriefDto;
+import GRWM.backend.dto.teamPlanner.TimeVoteCreateDto;
+import GRWM.backend.dto.teamPlanner.TimeVoteDetailDto;
+import GRWM.backend.entity.user.CustomUserDetails;
 import GRWM.backend.service.teamplanner.TimeVoteService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -14,45 +22,67 @@ public class TimeVoteController {
     name : createTimeVote
     POST/api/team-planner/{plannerId}/time-vote
     param : Long plannerId
-{ TimeVoteCreateDto
-String title,
-List<LocalDate> voteRange, (투표 범위 5일(떨어진 날짜 가능))
-LocalDateTime finishTime, (마감 기한}
-List<Long> memberIds (투표에 참여하는 사람들의 id 목록)
-}
+    TimeVoteCreateDto
     return value : Long voteId
-    */
+     */
+    @PostMapping("/api/team-planner/{plannerId}/time-vote")
+    public Long createTimeVote(@PathVariable Long plannerId, @RequestBody TimeVoteCreateDto dto){
+        return timeVoteService.createTimeVote(plannerId, dto);
+    }
 
     /*
     name : vote
     POST /api/team-planner/{plannerId}/time-vote/{voteId}
     param : Long plannerId, Long voteId
     List<AvailableDateTimeDto>
-    return value : VoteResponseDto
+    return value : TimeVoteDetailDto
     * 마감 기한 이후에는 투표 불가
     */
+    @PostMapping("")
+    public TimeVoteDetailDto vote(@PathVariable Long plannerId, @PathVariable Long voteId,
+                                  @RequestBody List<AvailableDateTimeDto> dtoList,
+                                  @AuthenticationPrincipal CustomUserDetails userDetails){
+        return timeVoteService.vote(plannerId, voteId, dtoList, userDetails.getUserId());
+    }
+
+
 
     /*
-    name : 시간 재투표(업데이트)
+    name : updateTimeVote
     PUT /api/team-planner/{plannerId}/time-vote/{voteId}
     param : Long plannerId, Long voteId
     List<AvailableDateTimeDto>
-    return value : VoteResponseDto
+    return value : TimeVoteDetailDto
     */
+    @PutMapping("/api/team-planner/{plannerId}/time-vote/{voteId}")
+    public TimeVoteDetailDto updateTimeVote(@PathVariable Long plannerId, @PathVariable Long voteId,
+                                            @RequestBody List<AvailableDateTimeDto> dtoList,
+                                            @AuthenticationPrincipal CustomUserDetails userDetails){
+        return timeVoteService.updateTimeVote(plannerId, voteId, dtoList, userDetails.getUserId());
+    }
 
     /*
-    name : colorTimeTable
+    name : showTimeVoteList
+    GET /api/team-planner/{plannerId}/time-vote
+    param : Long plannerId
+    return value : List<TimeVoteBriefDto>
+    */
+    @GetMapping("/api/team-planner/{plannerId}/time-vote")
+    public List<TimeVoteBriefDto> showTimeVoteList(@PathVariable Long plannerId){
+        return timeVoteService.getTimeVoteList(plannerId);
+    }
+
+
+    /*
+    name : showTimeVoteDetail
     GET /api/team-planner/{plannerId}/time-vote/{voteId}
     param : Long plannerId, Long voteId
-    return value : TimeVoteDto
-List<
-{
-LocalDate date,
-LocalTime slotStart,
-LocalTime slotEnd,
-int overlapCount,
-double overlapPercentage,
-}
->
+    return value : TimeVoteDetailDto
      */
+    @GetMapping("/api/team-planner/{plannerId}/time-vote/{voteId}")
+    public TimeVoteDetailDto showTimeVoteDetail(@PathVariable Long plannerId, @PathVariable Long voteId){
+        return timeVoteService.showTimeVoteDetail(plannerId, voteId);
+    }
+
 }
+
