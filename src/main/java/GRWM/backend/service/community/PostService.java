@@ -95,13 +95,15 @@ public class PostService {
         // 포스트 수정하기
         post.setContent(dto.getContent().getText());
         post.setImageLink(dto.getContent().getImages());
-        post.setPostHashtagList(new ArrayList<>());
         post.setVisibility(dto.getVisibility());
         post.setEdited(true);
-        post.setPostHashtagList(null);
+        List<PostHashtag> existingHashtags = post.getPostHashtagList();
+        existingHashtags.clear();
+        postHashtagRepository.saveAll(existingHashtags);
 
         // 포스트 저장하기
         Post savedPost = postRepository.save(post);
+
 
         saveHashtag(savedPost, dto.getHashtags());
         // 이미 존재하는 해시태그인지 확인,
@@ -468,6 +470,8 @@ public class PostService {
     }
 
     private void saveHashtag(Post savedPost, List<String> hashtags){
+
+
         // 이미 존재하는 해시태그인지 확인,
         if(hashtags != null) {
             List<PostHashtag> phtagList = new ArrayList<>();
