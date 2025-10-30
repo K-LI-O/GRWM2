@@ -14,6 +14,15 @@ import java.util.UUID;
 @Service
 public class FileService {
     private final Path fileStorageLocation; // 저장 디렉토리 경로;
+    private static final String WEB_ACCESS_PREFIX = "/images/";
+    private final String domain = "http://localhost:8080"; // 실제 배포 시에는 도메인 주소를 사용
+
+    // [예시] 파일명(DB 저장값)을 받아 완전한 URL로 변환하여 DTO에 설정합니다.
+    public String getImageUrl(String savedFileName) {
+        // http://localhost:8080/images/a1b2c3d4-....jpg 와 같은 URL을 반환
+        return domain + WEB_ACCESS_PREFIX + savedFileName;
+    }
+
 
     public FileService(FileStorageConfig fileStorageConfig) {
         // 설정에서 읽은 디렉토리를 Path 객체로 초기화
@@ -48,10 +57,13 @@ public class FileService {
             // 3. 파일 저장 (덮어쓰기 옵션으로)
             Files.copy(file.getInputStream(), targetLocation, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
 
-            return fileName; // 고유 파일 이름 반환
+            return getImageUrl(fileName); // 고유 파일 이름 반환
 
         } catch (IOException ex) {
             throw new RuntimeException("파일 저장에 실패했습니다.", ex);
         }
     }
+
+
+
 }

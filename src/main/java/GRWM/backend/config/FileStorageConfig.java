@@ -13,4 +13,6 @@ import org.springframework.stereotype.Component;
 public class FileStorageConfig {
     private String dir; // ${user.home}/project-files/profile-images
 
+
+
 }

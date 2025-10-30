@@ -40,6 +40,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/chat-room/create").permitAll() // 임시 테스트용
                         .requestMatchers("/api/auth/**").permitAll() // 로그인, 회원가입 경로는 허용
                         .requestMatchers("/h2-console/**").permitAll()
+                        .requestMatchers("/images/**").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated() // 나머지 요청은 JWT 인증 필요
 
