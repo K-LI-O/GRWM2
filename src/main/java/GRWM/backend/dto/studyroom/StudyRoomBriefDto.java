@@ -9,6 +9,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 public class StudyRoomBriefDto {
+    Long id;
     String name;
     CommunityUserBriefDto creator;
     String category;

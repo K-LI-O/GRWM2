@@ -1,17 +1,31 @@
 package GRWM.backend.controller.studyroom;
 
+import GRWM.backend.dto.studyroom.StudyRoomCreateDto;
+import GRWM.backend.dto.studyroom.StudyRoomListDto;
+import GRWM.backend.entity.user.CustomUserDetails;
+import GRWM.backend.service.studyroom.StudyRoomService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 public class StudyRoomController {
+
+    private final StudyRoomService studyRoomService;
     /*
     name : createStudyRoom
     URL: POST /api/study-rooms
     param : StudyRoomCreateDto, UserDetails
     return value : Long studyRoomId
     */
+    @PostMapping("/api/study-rooms")
+    public Long createStudyRoom(@RequestBody StudyRoomCreateDto dto,
+                           @AuthenticationPrincipal CustomUserDetails userDetails){
+        return studyRoomService.createStudyRoom(dto, userDetails.getCommunityUserId());
+    }
 
 
     /*
@@ -26,6 +40,10 @@ int currentPage; 페이징 시 현재 보내는 페이지
 int totalPages; 전체 페이지 개수 (페이징 관련 파라미터)
 }
     */
+    @GetMapping("/api/study-rooms")
+    public StudyRoomListDto getStudyRoomList(@RequestParam int page, @RequestParam int limit){
+        return studyRoomService.getStudyRoomList(page, limit);
+    }
 
 
     /*
@@ -44,8 +62,12 @@ currentUserStatus: "joined" | "owner";
     URL: POST /api/study-rooms/{studyRoomId}/join
     param : Long studyRoomId;
     return value : ResponseEntity<Boolean>
-
     */
+    @PostMapping("/api/study-rooms/{studyRoomId}/join")
+    public ResponseEntity<Boolean> joinStudyRoom(@PathVariable Long studyRoomId,
+                                                 @AuthenticationPrincipal CustomUserDetails userDetails){
+        return ResponseEntity.ok(studyRoomService.joinStudyRoom(studyRoomId, userDetails.getCommunityUserId()));
+    }
 
     /*
     name : GoOutStudyRoom

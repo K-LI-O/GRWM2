@@ -1,14 +1,16 @@
 package GRWM.backend.entity.studyroom;
 
+import GRWM.backend.entity.user.CommunityUser;
 import GRWM.backend.entity.user.Member;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class StudyRoomMember {
 
     @Id
@@ -18,7 +20,7 @@ public class StudyRoomMember {
     Long id;
 
     @ManyToOne
-    Member member;
+    CommunityUser user;
 
     @ManyToOne
     StudyRoom studyRoom;

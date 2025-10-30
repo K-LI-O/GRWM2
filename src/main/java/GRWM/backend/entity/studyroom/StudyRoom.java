@@ -44,13 +44,16 @@ int extensionCount; // 최대 n회 연장 가능하며, 해당 방이 몇 회나
     private CommunityUser creator;
     private String category;
     private String description;
+
+    @Builder.Default
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StudyRoomMember> members = new ArrayList<>();
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<StudyRoomTodo> todoList = new ArrayList<>(); //스터디룸에서 작성하는 투두리스트.
 
     private int duration;// 지속 시간(분 단위)
     private int extensionTime; //연장 시 몇 분 연장되는지
     private int extensionCount; // 최대 n회 연장 가능하며, 해당 방이 몇 회나 연장했는지의 count;
-    private boolean isAvailable; // 조회할 때 유효한 걸 가져와야 하니까...
+    private boolean isActive; // 조회할 때 유효한 걸 가져와야 하니까...
 }
