@@ -3,10 +3,7 @@ package GRWM.backend.entity.teamplanner;
 import jakarta.persistence.Converter;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embeddable;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -16,8 +13,8 @@ import java.util.List;
 @Getter
 @Embeddable
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
-
 public class AvailableDateTime {
 
     private LocalDate date;
