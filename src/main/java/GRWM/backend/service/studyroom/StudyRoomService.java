@@ -112,8 +112,11 @@ int totalPages; 전체 페이지 개수 (페이징 관련 파라미터)
                 .studyRoom(studyRoom)
                 .user(extractOptionalUser(communityId))
                 .build();
-
         studyRoomMemberRepository.save(studyRoomMember);
+        // 참여한 멤버 수 + 1;
+        studyRoom.setMemberCount(studyRoom.getMemberCount() + 1);
+        studyRoomRepository.save(studyRoom);
+
         return true;
     }
 
@@ -173,8 +176,13 @@ currentUserStatus: "joined" | "owner";
         // 스터디룸 객체 가져오기
         StudyRoom studyRoom = extractOptionalRoom(studyRoomId);
         for(StudyRoomMember sm : studyRoom.getMembers()){
-            if(sm.getUser().getId().equals(communityId)){
+            if(sm.getUser().getId().equals(communityId)) {
                 studyRoomMemberRepository.delete(sm);
+
+                if(studyRoom.getMembers().isEmpty()) {
+                    studyRoom.setActive(false);
+                    studyRoomRepository.save(studyRoom);
+                }
                 return true;
             }
         }
@@ -185,12 +193,12 @@ currentUserStatus: "joined" | "owner";
 
     private CommunityUser extractOptionalUser(Long communityId){
         Optional<CommunityUser> communityUser = communityUserRepository.findById(communityId);
-        return communityUser.orElse(null);
+        return communityUser.orElseThrow();
     }
 
     private StudyRoom extractOptionalRoom(Long studyRoomId){
         Optional<StudyRoom> studyRoom = studyRoomRepository.findById(studyRoomId);
-        return studyRoom.orElse(null);
+        return studyRoom.orElseThrow();
     }
 
     private List<StudyRoomBriefDto> getStudyRoomDtoList(List<StudyRoom> studyRooms){
