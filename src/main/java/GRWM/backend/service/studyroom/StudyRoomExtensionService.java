@@ -116,6 +116,8 @@ boolean result; (결과; 투표가 완료되기 전에는 사용하지 말 것)
     public ExtensionDto extendStudyRoom(Long studyRoomId) {
         // 1. DB 처리: 스터디룸 정보를 newEndTime으로 업데이트 및 저장
         StudyRoom room = studyRoomRepository.findById(studyRoomId).orElseThrow();
+        room.setExtensionCount(1);
+        studyRoomRepository.save(room);
 
         // 2. 알림 발송 시점 계산 (예: 만료 1분 전 연장)
         LocalDateTime notificationDateTime = room.getCreatedAt().plusMinutes(room.getDuration() - 1);
@@ -154,7 +156,8 @@ boolean result; (결과; 투표가 완료되기 전에는 사용하지 말 것)
         StudyRoom room = studyRoomRepository.findById(studyRoomId).orElseThrow();
 
         // 2. 알림 발송 시점 계산 (예: 만료 5분 전 알림)
-        LocalDateTime notificationDateTime = room.getCreatedAt().plusMinutes(room.getDuration() + room.getExtensionTime() + 1);
+        int range = room.getExtensionCount() == 1 ? room.getDuration() + room.getExtensionTime() : room.getDuration();
+        LocalDateTime notificationDateTime = room.getCreatedAt().plusMinutes(range);
 
         // 3. LocalDateTime을 TaskScheduler가 요구하는 java.util.Date 객체로 변환
         Instant instant = notificationDateTime.atZone(ZoneId.systemDefault()).toInstant();
