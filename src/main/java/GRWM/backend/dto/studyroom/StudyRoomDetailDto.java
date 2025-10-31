@@ -9,7 +9,8 @@ import java.time.LocalTime;
 @Builder
 @NoArgsConstructor
 public class StudyRoomDetailDto {
-    LocalTime extendedEndTime; // 연장된 종료 시간
-    int extendedCount; // 지금까지 연장한 횟수
+    StudyRoomDto studyRoom;
+    String currentUserStatus; // "joined" | "owner";
+
 
 }

@@ -1,11 +1,11 @@
 package GRWM.backend.service.studyroom;
 
 import GRWM.backend.dto.community.CommunityUserBriefDto;
-import GRWM.backend.dto.studyroom.StudyRoomBriefDto;
-import GRWM.backend.dto.studyroom.StudyRoomCreateDto;
-import GRWM.backend.dto.studyroom.StudyRoomListDto;
+import GRWM.backend.dto.studyroom.*;
+import GRWM.backend.entity.studyroom.Reaction;
 import GRWM.backend.entity.studyroom.StudyRoom;
 import GRWM.backend.entity.studyroom.StudyRoomMember;
+import GRWM.backend.entity.studyroom.StudyRoomTodo;
 import GRWM.backend.entity.user.CommunityUser;
 import GRWM.backend.repository.studyroom.StudyRoomMemberRepository;
 import GRWM.backend.repository.studyroom.StudyRoomRepository;
@@ -39,7 +39,7 @@ public class StudyRoomService {
 
     public Long createStudyRoom(StudyRoomCreateDto dto, Long communityId){
         // 스터디룸 및 객체 생성
-        // 스터디룸멤버 객체 생성
+        // 스터디룸 멤버 객체 생성
 
         StudyRoom studyRoom = StudyRoom.builder()
                 .name(dto.getName())
@@ -128,7 +128,40 @@ StudyRoomDto studyRoom;
 currentUserStatus: "joined" | "owner";
 }
     */
+    public StudyRoomDetailDto getStudyRoomDetail(Long studyRoomId, Long communityId){
+        // 스터디룸 객체 불러오기 및 isActive 확인
+        StudyRoom studyRoom = extractOptionalRoom(studyRoomId);
 
+        // 사용자 owner | joined 확인
+        String currentUserState;
+        if(studyRoom.getCreator().getId().equals(communityId)) currentUserState = "owner";
+        else currentUserState = "joined";
+
+        List<CommunityUserBriefDto> users = new ArrayList<>();
+        for(StudyRoomMember sm : studyRoom.getMembers()){
+            users.add(userToDto(sm.getUser()));
+        }
+
+        // 스터디룸 DTO 생성
+        StudyRoomDto studyRoomDto = StudyRoomDto.builder()
+                .name(studyRoom.getName())
+                .creator(userToDto(studyRoom.getCreator()))
+                .category(studyRoom.getCategory())
+                .description(studyRoom.getDescription())
+                .users(users)
+                .duration(studyRoom.getDuration())
+                .extensionTime(studyRoom.getExtensionTime())
+                .todoList(todoToDtoList(studyRoom.getTodoList()))
+                .extensionCount(studyRoom.getExtensionCount())
+                .build();
+
+        StudyRoomDetailDto dto = StudyRoomDetailDto.builder()
+                .studyRoom(studyRoomDto)
+                .currentUserStatus(currentUserState)
+                .build();
+
+        return dto;
+    }
 
     /*
     name : GoOutStudyRoom
@@ -136,6 +169,15 @@ currentUserStatus: "joined" | "owner";
     param : Long studyRoomId;
     return value : ResponseEntity<Boolean>
      */
+    public void goOutStudyRoom(Long studyRoomId, Long communityId){
+        // 스터디룸 객체 가져오기
+        StudyRoom studyRoom = extractOptionalRoom(studyRoomId);
+        for(StudyRoomMember sm : studyRoom.getMembers()){
+            if(sm.getUser().getId().equals(communityId)){
+                studyRoomMemberRepository.delete(sm);
+            }
+        }
+    }
 
     // ======= private logics ======= //
 
@@ -172,4 +214,33 @@ currentUserStatus: "joined" | "owner";
         return result;
     }
 
+    private CommunityUserBriefDto userToDto(CommunityUser user) {
+        CommunityUserBriefDto newDto = new CommunityUserBriefDto(
+                user.getId(),
+                user.getNickname(),
+                user.getProfileImage()
+        );
+        return newDto;
+    }
+
+    private List<StudyRoomTodoDto> todoToDtoList(List<StudyRoomTodo> todos){
+        List<StudyRoomTodoDto> result = new ArrayList<>();
+        for(StudyRoomTodo st : todos){
+            List<String> reactions = new ArrayList<>();
+            for(Reaction r : st.getReactions()){
+                reactions.add(r.getReaction());
+            }
+
+            StudyRoomTodoDto todoDto = StudyRoomTodoDto.builder()
+                    .todoId(st.getId())
+                    .creatorId(st.getCreator().getId())
+                    .title(st.getTitle())
+                    .description(st.getDescription())
+                    .isCompleted(st.isCompleted())
+                    .reactions(reactions)
+                    .build();
+            result.add(todoDto);
+        }
+        return result;
+    }
 }
