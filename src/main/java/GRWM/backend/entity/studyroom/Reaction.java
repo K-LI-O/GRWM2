@@ -16,6 +16,7 @@ public class Reaction {
     @Column(name = "todo_reaction_id")
     @Setter(AccessLevel.NONE)
     private Long id;
+
     @OneToOne
     private CommunityUser reactor;
     private String reaction;

@@ -169,14 +169,16 @@ currentUserStatus: "joined" | "owner";
     param : Long studyRoomId;
     return value : ResponseEntity<Boolean>
      */
-    public void goOutStudyRoom(Long studyRoomId, Long communityId){
+    public boolean goOutStudyRoom(Long studyRoomId, Long communityId){
         // 스터디룸 객체 가져오기
         StudyRoom studyRoom = extractOptionalRoom(studyRoomId);
         for(StudyRoomMember sm : studyRoom.getMembers()){
             if(sm.getUser().getId().equals(communityId)){
                 studyRoomMemberRepository.delete(sm);
+                return true;
             }
         }
+        return false;
     }
 
     // ======= private logics ======= //

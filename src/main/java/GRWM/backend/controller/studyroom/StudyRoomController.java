@@ -1,6 +1,7 @@
 package GRWM.backend.controller.studyroom;
 
 import GRWM.backend.dto.studyroom.StudyRoomCreateDto;
+import GRWM.backend.dto.studyroom.StudyRoomDetailDto;
 import GRWM.backend.dto.studyroom.StudyRoomListDto;
 import GRWM.backend.entity.user.CustomUserDetails;
 import GRWM.backend.service.studyroom.StudyRoomService;
@@ -56,6 +57,11 @@ StudyRoomDto studyRoom;
 currentUserStatus: "joined" | "owner";
 }
     */
+    @GetMapping("/api/study-rooms/{studyRoomId}")
+    public StudyRoomDetailDto getStudyRoomDetail(@PathVariable Long studyRoomId,
+                                                 @AuthenticationPrincipal CustomUserDetails userDetails){
+        return studyRoomService.getStudyRoomDetail(studyRoomId, userDetails.getCommunityUserId());
+    }
 
     /*
     name : joinStudyRoom
@@ -75,4 +81,9 @@ currentUserStatus: "joined" | "owner";
     param : Long studyRoomId;
     return value : ResponseEntity<Boolean>
      */
+    @DeleteMapping("/api/study-rooms/{studyRoomId}/leave")
+    public ResponseEntity<Boolean> goOutStudyRoom(@PathVariable Long studyRoomId,
+                                                  @AuthenticationPrincipal CustomUserDetails userDetails){
+        return ResponseEntity.ok(studyRoomService.goOutStudyRoom(studyRoomId, userDetails.getCommunityUserId()));
+    }
 }
