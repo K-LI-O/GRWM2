@@ -60,13 +60,17 @@ int extensionCount; // 최대 n회 연장 가능하며, 해당 방이 몇 회나
     private LocalDateTime createdAt;
 
     private int duration;// 지속 시간(분 단위)
+    @Builder.Default
     private int extensionTime = 0; //연장 시 몇 분 연장되는지
     private int extensionCount; // 최대 n회 연장 가능하며, 해당 방이 몇 회나 연장했는지의 count;
     private boolean isActive; // 조회할 때 유효한 걸 가져와야 하니까...
 
     // =========== //
 
+    @Builder.Default
     int memberCount = 0; //(전체 멤버 수)
+    @Builder.Default
     int voteCount = 0; // 투표한 (현재 멤버 수)
+    @Builder.Default
     int agreedCount = 0;
 }

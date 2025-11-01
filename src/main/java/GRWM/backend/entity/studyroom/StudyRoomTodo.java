@@ -5,6 +5,7 @@ import GRWM.backend.entity.user.CommunityUser;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -29,6 +30,7 @@ public class StudyRoomTodo {
     private String description;
     private boolean isCompleted;
     @OneToMany(mappedBy = "todo")
+    @Builder.Default
     private List<Reaction> reactions = new ArrayList<>(); //스터디룸에서 작성하는 투두리스트.
  // 각 투두 항목에 붙는 리액션 이모지 목록
 
