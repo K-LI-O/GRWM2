@@ -29,6 +29,7 @@ public class StudyRoomTodo {
     private String description;
     private boolean isCompleted;
     @OneToMany(mappedBy = "todo")
-    private List<Reaction> reactions; // 각 투두 항목에 붙는 리액션 이모지 목록
+    private List<Reaction> reactions = new ArrayList<>(); //스터디룸에서 작성하는 투두리스트.
+ // 각 투두 항목에 붙는 리액션 이모지 목록
 
 }
