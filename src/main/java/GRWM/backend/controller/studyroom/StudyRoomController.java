@@ -81,7 +81,7 @@ currentUserStatus: "joined" | "owner";
     param : Long studyRoomId;
     return value : ResponseEntity<Boolean>
      */
-    @DeleteMapping("/api/study-rooms/{studyRoomId}/leave")
+    @PostMapping("/api/study-rooms/{studyRoomId}/leave")
     public ResponseEntity<Boolean> goOutStudyRoom(@PathVariable Long studyRoomId,
                                                   @AuthenticationPrincipal CustomUserDetails userDetails){
         return ResponseEntity.ok(studyRoomService.goOutStudyRoom(studyRoomId, userDetails.getCommunityUserId()));
