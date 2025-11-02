@@ -52,8 +52,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         // STOMP WebSocket 연결을 위한 엔드포인트 등록
         // 클라이언트는 ws://localhost:8080/ws/chatroom 로 연결
         // setAllowedOrigins("*")는 개발 시 CORS 문제 방지 (운영 시에는 특정 도메인으로 제한 권장)
-        registry.addEndpoint("/ws/chatroom").setAllowedOriginPatterns("*").withSockJS(); // SockJS는 웹소켓 미지원 브라우저 호환성 제공
-        registry.addEndpoint("/ws/chatroom").setAllowedOriginPatterns("*"); // SockJS는 웹소켓 미지원 브라우저 호환성 제공
+        registry.addEndpoint("/ws/").setAllowedOriginPatterns("*").withSockJS(); // SockJS는 웹소켓 미지원 브라우저 호환성 제공
+        registry.addEndpoint("/ws/").setAllowedOriginPatterns("*"); // SockJS는 웹소켓 미지원 브라우저 호환성 제공
         }
 
     @Override
