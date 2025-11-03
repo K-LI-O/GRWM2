@@ -266,8 +266,7 @@ currentUserStatus: "joined" | "owner";
             StudyRoomTodoDto todoDto = StudyRoomTodoDto.builder()
                     .todoId(st.getId())
                     .creatorId(st.getCreator().getId())
-                    .title(st.getTitle())
-                    .description(st.getDescription())
+                    .content(st.getContent())
                     .isCompleted(st.isCompleted())
                     .reactions(reactions)
                     .build();
