@@ -1,8 +1,6 @@
 package GRWM.backend.controller.studyroom;
 
-import GRWM.backend.dto.studyroom.StudyRoomCreateDto;
-import GRWM.backend.dto.studyroom.StudyRoomDetailDto;
-import GRWM.backend.dto.studyroom.StudyRoomListDto;
+import GRWM.backend.dto.studyroom.*;
 import GRWM.backend.entity.user.CustomUserDetails;
 import GRWM.backend.service.studyroom.StudyRoomService;
 import lombok.RequiredArgsConstructor;
@@ -71,7 +69,7 @@ currentUserStatus: "joined" | "owner";
     */
     @PostMapping("/api/study-rooms/{studyRoomId}/join")
     public ResponseEntity<Boolean> joinStudyRoom(@PathVariable Long studyRoomId,
-                                                 @AuthenticationPrincipal CustomUserDetails userDetails){
+                                                      @AuthenticationPrincipal CustomUserDetails userDetails){
         return ResponseEntity.ok(studyRoomService.joinStudyRoom(studyRoomId, userDetails.getCommunityUserId()));
     }
 
@@ -86,4 +84,18 @@ currentUserStatus: "joined" | "owner";
                                                   @AuthenticationPrincipal CustomUserDetails userDetails){
         return ResponseEntity.ok(studyRoomService.goOutStudyRoom(studyRoomId, userDetails.getCommunityUserId()));
     }
+
+
+
+        /*
+    name : findActivatedStudyRoom
+    URL: GET /api/study-rooms/joined
+    return value :  StudyRoomDto
+    */
+    @GetMapping("/api/study-rooms/joined")
+    public StudyRoomBriefDto findActivatedStudyRoom(@AuthenticationPrincipal CustomUserDetails userDetails){
+        return studyRoomService.findActivatedStudyRoom(userDetails.getCommunityUserId());
+    }
+
+
 }

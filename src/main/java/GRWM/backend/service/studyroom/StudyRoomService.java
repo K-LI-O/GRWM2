@@ -103,10 +103,10 @@ int totalPages; 전체 페이지 개수 (페이징 관련 파라미터)
         CommunityUser user = extractOptionalUser(communityId);
 
         // 스터디룸이 active 한지 검증.
-        if(!studyRoom.isActive()) return false;
+        if(!studyRoom.isActive()) throw new RuntimeException("스터디룸이 활동 가능 상태가 아닙니다.");
         // 이미 존재하는 멤버인지 검증
         for(StudyRoomMember sm : studyRoom.getMembers()){
-            if(sm.getUser().getId().equals(user.getId())) return false;
+            if(sm.getUser().getId().equals(user.getId())) throw new RuntimeException("스터디룸이 활동 가능 상태가 아닙니다.");
         }
 
         // 검증된 경우 멤버로 저장;
@@ -213,6 +213,39 @@ currentUserStatus: "joined" | "owner";
         }
         return false;
     }
+
+
+        /*
+    name : findActivatedStudyRoom
+    URL: GET /api/study-rooms/joined
+    return value :  StudyRoomDto
+    */
+    public StudyRoomBriefDto findActivatedStudyRoom(Long userId){
+        // 스터디룸 객체 가져오기
+        CommunityUser user = communityUserRepository.findById(userId).orElseThrow();
+        StudyRoom s = studyRoomRepository.findByCreatorAndIsActiveTrue(user);
+
+        // CommunityUserDto 만들기
+        CommunityUser creator = s.getCreator();
+        CommunityUserBriefDto creatorDto = CommunityUserBriefDto.builder()
+                .communityId(creator.getId())
+                .nickname(creator.getNickname())
+                .profileImage(creator.getProfileImage())
+                .build();
+
+        StudyRoomBriefDto dto = StudyRoomBriefDto.builder()
+                .id(s.getId())
+                .name(s.getName())
+                .creator(creatorDto)
+                .category(s.getCategory())
+                .description(s.getDescription())
+                .startTime(s.getCreatedAt().toLocalTime())
+                .endTime(s.getCreatedAt().toLocalTime().plusMinutes(s.getDuration()))
+                .build();
+
+        return dto;
+    }
+
 
     // ======= private logics ======= //
 
