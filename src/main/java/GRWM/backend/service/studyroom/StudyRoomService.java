@@ -221,9 +221,18 @@ currentUserStatus: "joined" | "owner";
     return value :  StudyRoomDto
     */
     public StudyRoomBriefDto findActivatedStudyRoom(Long userId){
-        // 스터디룸 객체 가져오기
+        // 사용자
         CommunityUser user = communityUserRepository.findById(userId).orElseThrow();
-        StudyRoom s = studyRoomRepository.findByCreatorAndIsActiveTrue(user);
+
+        // 스터디룸 멤버 가져오기
+        List<StudyRoomMember> members =  studyRoomMemberRepository.findByUser_Id(userId);
+        StudyRoom s = null;
+        for(StudyRoomMember m : members){
+            if(m.getStudyRoom().isActive()) s = m.getStudyRoom();
+        }
+        if(s == null) throw new RuntimeException("입장한 스터디룸이 유효하지 않습니다.");
+        // 이들 중 active 한 스터디룸 가져오기
+
 
         // CommunityUserDto 만들기
         CommunityUser creator = s.getCreator();
@@ -277,6 +286,7 @@ currentUserStatus: "joined" | "owner";
                     .category(s.getCategory())
                     .description(s.getDescription())
                     .startTime(s.getCreatedAt())
+
                     .endTime(s.getCreatedAt().plusMinutes(s.getDuration()))
                     .build();
             result.add(dto);
