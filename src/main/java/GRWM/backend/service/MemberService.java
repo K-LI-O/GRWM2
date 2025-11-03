@@ -62,7 +62,7 @@ public class MemberService {
     }
 
     /*
-    함수명 : findUsernameByLoginId
+    함수명 : findUserIdByLoginId
     기능 : 로그인 아이디로 사용자 이름 반환
     파라미터 : String loginId
     반환값 : String username

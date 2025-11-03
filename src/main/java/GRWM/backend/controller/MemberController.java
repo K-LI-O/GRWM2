@@ -1,6 +1,7 @@
 package GRWM.backend.controller;
 
 import GRWM.backend.repository.user.MemberRepository;
+import GRWM.backend.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,6 +12,7 @@ public class MemberController {
 
 
     private final MemberRepository memberRepository;
+    private final MemberService memberService;
 
     /*
     함수명 : getUserInfo
@@ -26,6 +28,17 @@ public class MemberController {
     매개변수 : userId
     반환값 : userId, username, loginId, email;
      */
+
+        /*
+    함수명 : findUserIdByLoginId
+    기능 : 로그인 아이디로 사용자 이름 반환
+    파라미터 : String loginId
+    반환값 : Long userId
+     */
+    @GetMapping("/api/users/find/{loginId}")
+    public Long findUserIdByLoginId(@PathVariable String loginId){
+        return memberService.findUserIdByLoginId(loginId);
+    }
 
 
 }
