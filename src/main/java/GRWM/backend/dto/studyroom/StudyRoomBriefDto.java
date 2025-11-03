@@ -3,6 +3,7 @@ package GRWM.backend.dto.studyroom;
 import GRWM.backend.dto.community.CommunityUserBriefDto;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Getter
@@ -17,6 +18,6 @@ public class StudyRoomBriefDto {
     String category;
     String description;
 
-    private LocalTime startTime;
-    private LocalTime endTime;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
 }

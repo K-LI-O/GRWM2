@@ -168,8 +168,8 @@ currentUserStatus: "joined" | "owner";
                 .todoList(todoToDtoList(studyRoom.getTodoList()))
                 .extensionCount(studyRoom.getExtensionCount())
 
-                .startTime(studyRoom.getCreatedAt().toLocalTime())
-                .endTime(studyRoom.getCreatedAt().toLocalTime().plusMinutes(studyRoom.getDuration()))
+                .startTime(studyRoom.getCreatedAt())
+                .endTime(studyRoom.getCreatedAt().plusMinutes(studyRoom.getDuration()))
                 .build();
 
         StudyRoomDetailDto dto = StudyRoomDetailDto.builder()
@@ -239,8 +239,8 @@ currentUserStatus: "joined" | "owner";
                 .creator(creatorDto)
                 .category(s.getCategory())
                 .description(s.getDescription())
-                .startTime(s.getCreatedAt().toLocalTime())
-                .endTime(s.getCreatedAt().toLocalTime().plusMinutes(s.getDuration()))
+                .startTime(s.getCreatedAt())
+                .endTime(s.getCreatedAt().plusMinutes(s.getDuration()))
                 .build();
 
         return dto;
@@ -276,8 +276,8 @@ currentUserStatus: "joined" | "owner";
                     .creator(creatorDto)
                     .category(s.getCategory())
                     .description(s.getDescription())
-                    .startTime(s.getCreatedAt().toLocalTime())
-                    .endTime(s.getCreatedAt().toLocalTime().plusMinutes(s.getDuration()))
+                    .startTime(s.getCreatedAt())
+                    .endTime(s.getCreatedAt().plusMinutes(s.getDuration()))
                     .build();
             result.add(dto);
         }

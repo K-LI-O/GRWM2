@@ -3,6 +3,7 @@ package GRWM.backend.dto.studyroom;
 import GRWM.backend.dto.community.CommunityUserBriefDto;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 @Getter
@@ -22,7 +23,7 @@ public class StudyRoomDto {
     private List<StudyRoomTodoDto> todoList; //(스터디룸에서 작성하는 투두리스트)
     private int extensionCount;
 
-    private LocalTime startTime;
-    private LocalTime endTime;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
 
 }
