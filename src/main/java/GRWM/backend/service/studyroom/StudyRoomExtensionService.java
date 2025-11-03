@@ -58,7 +58,7 @@ participants: User[]; ? }
             String destination =  "/topic/studyroom." + studyRoomId + ".extension";
             messagingTemplate.convertAndSend(destination, "스터디룸 연장 투표해주세요.");
 
-        }, scheduledDate);
+        }, instant);
     }
 
 
@@ -124,7 +124,6 @@ boolean result; (결과; 투표가 완료되기 전에는 사용하지 말 것)
 
         // 3. LocalDateTime을 TaskScheduler가 요구하는 java.util.Date 객체로 변환
         Instant instant = notificationDateTime.atZone(ZoneId.systemDefault()).toInstant();
-        Date scheduledDate = Date.from(instant);
 
         // 4. TaskScheduler를 사용하여 예약 작업 실행
         taskScheduler.schedule(() -> {
@@ -136,7 +135,7 @@ boolean result; (결과; 투표가 완료되기 전에는 사용하지 말 것)
             String destination =  "/topic/studyroom." + studyRoomId + ".extension";
             messagingTemplate.convertAndSend(destination, "스터디룸 시간이 " +room.getExtensionTime()+ "분 연장되었습니다.");
 
-        }, scheduledDate);
+        }, instant);
         return new ExtensionDto(
                 room.getCreatedAt().toLocalTime().plusMinutes(
                         room.getDuration() + room.getExtensionTime()), 1);
@@ -161,7 +160,6 @@ boolean result; (결과; 투표가 완료되기 전에는 사용하지 말 것)
 
         // 3. LocalDateTime을 TaskScheduler가 요구하는 java.util.Date 객체로 변환
         Instant instant = notificationDateTime.atZone(ZoneId.systemDefault()).toInstant();
-        Date scheduledDate = Date.from(instant);
 
         // 4. TaskScheduler를 사용하여 예약 작업 실행
         taskScheduler.schedule(() -> {
@@ -171,7 +169,7 @@ boolean result; (결과; 투표가 완료되기 전에는 사용하지 말 것)
             // 웹소켓으로 전파
             String destination = "/topic/studyroom." + studyRoomId + ".extension";
             messagingTemplate.convertAndSend(destination, "ROOM_CLOSED");
-        }, scheduledDate);
+        }, instant);
         return room.getId();
     }
 
