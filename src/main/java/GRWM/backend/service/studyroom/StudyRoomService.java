@@ -167,6 +167,9 @@ currentUserStatus: "joined" | "owner";
                 .extensionTime(studyRoom.getExtensionTime())
                 .todoList(todoToDtoList(studyRoom.getTodoList()))
                 .extensionCount(studyRoom.getExtensionCount())
+
+                .startTime(studyRoom.getCreatedAt().toLocalTime())
+                .endTime(studyRoom.getCreatedAt().toLocalTime().plusMinutes(studyRoom.getDuration()))
                 .build();
 
         StudyRoomDetailDto dto = StudyRoomDetailDto.builder()
