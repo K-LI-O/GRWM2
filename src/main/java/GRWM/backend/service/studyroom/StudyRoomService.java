@@ -240,6 +240,8 @@ currentUserStatus: "joined" | "owner";
                     .creator(creatorDto)
                     .category(s.getCategory())
                     .description(s.getDescription())
+                    .startTime(s.getCreatedAt().toLocalTime())
+                    .endTime(s.getCreatedAt().toLocalTime().plusMinutes(s.getDuration()))
                     .build();
             result.add(dto);
         }
