@@ -23,7 +23,7 @@ public class StudyRoomTodo {
     @ManyToOne(cascade = CascadeType.ALL)
     private StudyRoom studyRoom;
 
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private CommunityUser creator;
 
     private String content;

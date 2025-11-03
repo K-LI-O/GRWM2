@@ -90,7 +90,7 @@ currentUserStatus: "joined" | "owner";
         /*
     name : findActivatedStudyRoom
     URL: GET /api/study-rooms/joined
-    return value :  StudyRoomDto
+    return value :  StudyRoomBriefDto
     */
     @GetMapping("/api/study-rooms/joined")
     public StudyRoomBriefDto findActivatedStudyRoom(@AuthenticationPrincipal CustomUserDetails userDetails){
