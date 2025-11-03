@@ -183,7 +183,7 @@ public class TeamMemberService {
 
     public TeamMemberDto memberToDto(TeamMember member){
         TeamMemberDto dto = TeamMemberDto.builder()
-                .userId(member.getId())
+                .userId(member.getMember().getId())
                 .username(member.getMember().getUsername())
                 .nickname(member.getNickname())
                 .profileImage(member.getMember().getProfileImageLink())
