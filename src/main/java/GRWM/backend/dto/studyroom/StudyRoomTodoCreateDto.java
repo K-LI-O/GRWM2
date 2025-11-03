@@ -8,8 +8,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 public class StudyRoomTodoCreateDto {
-    private String title;
-    private String description;
+    private String content;
 
 
 }

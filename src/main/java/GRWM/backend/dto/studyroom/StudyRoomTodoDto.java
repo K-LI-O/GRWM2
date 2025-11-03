@@ -12,8 +12,7 @@ import java.util.List;
 public class StudyRoomTodoDto {
     Long todoId;
     Long creatorId; // (사용자의 커뮤니티 아이디)
-    String title;
-    String description;
+    String content;
     boolean isCompleted;
     List<String> reactions;
 

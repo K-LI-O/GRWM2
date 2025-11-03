@@ -55,8 +55,7 @@ public class StudyRoomTodoService {
         StudyRoomTodo todo = StudyRoomTodo.builder()
                 .studyRoom(studyRoom)
                 .creator(extractOptionalUser(communityId))
-                .title(dto.getTitle())
-                .description(dto.getDescription())
+                .content(dto.getContent())
                 .build();
         StudyRoomTodo savedTodo = studyRoomTodoRepository.save(todo);
 
@@ -81,8 +80,7 @@ public class StudyRoomTodoService {
 
         // 투두 가져오기
         StudyRoomTodo todo = extractOptionalTodo(todoId);
-        todo.setTitle(dto.getTitle());
-        todo.setDescription(dto.getDescription());
+        todo.setContent(dto.getContent());
         StudyRoomTodo savedTodo = studyRoomTodoRepository.save(todo);
 
         // dto 생성
@@ -200,8 +198,7 @@ public class StudyRoomTodoService {
             StudyRoomTodoDto todoDto = StudyRoomTodoDto.builder()
                     .todoId(st.getId())
                     .creatorId(st.getCreator().getId())
-                    .title(st.getTitle())
-                    .description(st.getDescription())
+                    .content(st.getContent())
                     .isCompleted(st.isCompleted())
                     .reactions(reactions)
                     .build();
@@ -218,7 +215,7 @@ public class StudyRoomTodoService {
         StudyRoomTodoDto todo = StudyRoomTodoDto.builder()
                 .todoId(savedTodo.getId())
                 .creatorId(savedTodo.getCreator().getId())
-                .description(savedTodo.getDescription())
+                .content(savedTodo.getContent())
                 .isCompleted(savedTodo.isCompleted())
                 .reactions(reactions)
                 .build();

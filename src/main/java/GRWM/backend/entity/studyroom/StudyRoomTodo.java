@@ -26,8 +26,7 @@ public class StudyRoomTodo {
     @OneToOne
     private CommunityUser creator;
 
-    private String title;
-    private String description;
+    private String content;
     private boolean isCompleted;
     @OneToMany(mappedBy = "todo")
     @Builder.Default
