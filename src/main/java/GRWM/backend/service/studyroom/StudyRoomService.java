@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +30,7 @@ public class StudyRoomService {
     private final StudyRoomRepository studyRoomRepository;
     private final CommunityUserRepository communityUserRepository;
     private final StudyRoomMemberRepository studyRoomMemberRepository;
+    private final SimpMessagingTemplate messagingTemplate; // 메시지 전파 도구
 
     /*
     name : createStudyRoom
@@ -117,6 +119,15 @@ int totalPages; 전체 페이지 개수 (페이징 관련 파라미터)
         studyRoom.setMemberCount(studyRoom.getMemberCount() + 1);
         studyRoomRepository.save(studyRoom);
 
+        CommunityUserBriefDto userDto = userToDto(user);
+        StudyRoomMemberDto result = StudyRoomMemberDto.builder()
+                .type("USER_JOINED")
+                .user(userDto)
+                .build();
+
+        String destination = "/topic/studyroom."+ studyRoomId +".presence";
+        messagingTemplate.convertAndSend(destination, result);
+
         return true;
     }
 
@@ -163,6 +174,8 @@ currentUserStatus: "joined" | "owner";
                 .currentUserStatus(currentUserState)
                 .build();
 
+
+
         return dto;
     }
 
@@ -183,6 +196,15 @@ currentUserStatus: "joined" | "owner";
                     studyRoom.setActive(false);
                     studyRoomRepository.save(studyRoom);
                 }
+
+                CommunityUserBriefDto userDto = userToDto(communityUserRepository.findById(communityId).orElseThrow());
+                StudyRoomMemberDto result = StudyRoomMemberDto.builder()
+                        .type("USER_LEFT")
+                        .user(userDto)
+                        .build();
+
+                String destination = "/topic/studyroom."+ studyRoomId +".presence";
+                messagingTemplate.convertAndSend(destination, result);
                 return true;
             }
         }

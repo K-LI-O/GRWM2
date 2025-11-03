@@ -169,8 +169,8 @@ boolean result; (결과; 투표가 완료되기 전에는 사용하지 말 것)
             room.setActive(false);
             studyRoomRepository.save(room);
             // 웹소켓으로 전파
-            String destination =  "/topic/studyroom." + studyRoomId + ".extension";
-            messagingTemplate.convertAndSend(destination, "스터디룸 시간이 만료되었습니다");
+            String destination = "/topic/studyroom." + studyRoomId + ".extension";
+            messagingTemplate.convertAndSend(destination, "ROOM_CLOSED");
         }, scheduledDate);
         return room.getId();
     }
