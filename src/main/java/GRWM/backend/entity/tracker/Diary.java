@@ -2,15 +2,21 @@ package GRWM.backend.entity.tracker;
 
 import GRWM.backend.entity.user.Member;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Setter;
+import lombok.*;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Getter
+@Setter
+@AllArgsConstructor
+@Builder
 @EntityListeners(AuditingEntityListener.class)
 public class Diary {
 
@@ -20,15 +26,20 @@ public class Diary {
     @Setter(AccessLevel.NONE)
     private Long id;
 
-    @OneToOne
+    @ManyToOne
     private Member member;
     @CreatedDate
     private LocalDateTime createAt;
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
+
+    private LocalDate date;
 
     private String category;
     private String title;
     private String content;
-    private List<String> tags;
+    @Builder.Default
+    private List<String> tags = new ArrayList<>();
     private Emotion emotion;
 
 
