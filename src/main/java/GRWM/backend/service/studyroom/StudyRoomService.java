@@ -287,7 +287,7 @@ currentUserStatus: "joined" | "owner";
                     .creator(creatorDto)
                     .category(s.getCategory())
                     .description(s.getDescription())
-                    .currentMember(s.getMemberCount())
+                    .currentMembers(s.getMemberCount())
                     .startTime(s.getCreatedAt())
 
                     .endTime(s.getCreatedAt().plusMinutes(s.getDuration()))
