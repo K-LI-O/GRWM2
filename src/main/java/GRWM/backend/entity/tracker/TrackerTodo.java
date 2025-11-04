@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Getter
@@ -27,9 +28,10 @@ public class TrackerTodo {
 
     private boolean isRecurring;
 
-    private Range repeatRange;
+    private String repeatRange;
+    int repeatInterval; // 며칠마다 };
+    List<Integer> weekly; // 요일 (0=일요일, 6=토요일)};
+    int monthly; // 몇 일에
     private boolean isActive;
-    private int activeCount;
-    private int totalCount;
 
 }

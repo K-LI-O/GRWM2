@@ -1,5 +1,6 @@
 package GRWM.backend.service.tracker;
 
+import GRWM.backend.dto.tracker.CreateRecurringTodoDto;
 import GRWM.backend.dto.tracker.RecurringTodoDto;
 import GRWM.backend.dto.tracker.RecurringTodoListDto;
 import GRWM.backend.dto.tracker.TodoDto;
@@ -31,21 +32,27 @@ List<RecurringTodo> recurringTodos;
 int activeCount;
 int totalCount; }
     */
-    public List<RecurringTodoDto> getRecurringTodoList(Long userId,
-                                                     String type, String status){
-        List<TrackerTodo> todoList = trackerTodoRepository.findByCreatorIdAndIsRecurringTrue(userId);
+    public RecurringTodoListDto getRecurringTodoList(Long userId,
+                                                     String type, boolean status){
+        List<TrackerTodo> todoList = trackerTodoRepository.findByCreatorIdAndIsRecurringTrueAndRepeatRangeAndIsActive(userId, type, status);
         List<RecurringTodoDto> todoDtos = new ArrayList<>();
+        int activeCount = 0;
         for(TrackerTodo t : todoList){
+            if(t.isActive()) activeCount++;
             RecurringTodoDto dto = RecurringTodoDto.builder()
-                            .todoDto(todoToDto(t))
-                    .totalCount(t.getTotalCount())
-                    .activeCount(t.getActiveCount())
+                    .todoDto(todoToDto(t))
                     .isActive(t.isActive())
                     .repeatRange(t.getRepeatRange().toString())
                     .build();
             todoDtos.add(dto);
         }
-        return todoDtos;
+        RecurringTodoListDto result = RecurringTodoListDto.builder()
+                .recurringTodos(todoDtos)
+                .activeCount(activeCount)
+                .totalCount(todoDtos.size())
+                .build();
+
+        return result;
 
     }
 
@@ -59,7 +66,7 @@ title: string; // To-Do 제목
 description: string; // To-Do 설명
 recurrenceType: "daily" | "weekly" | "monthly"; // 반복 타입
 recurrenceConfig: {
-daily?: { interval: number; // 며칠마다 };
+daily?: { repeatInterval: number; // 며칠마다 };
 weekly?: { daysOfWeek: number[]; // 요일 (0=일요일, 6=토요일)};
 monthly?: { dayOfMonth: number; // 몇 일에 };
 };
@@ -67,12 +74,44 @@ startDate: Date; // 시작일
 }
     return value : { recurringTodo: RecurringTodo}
     */
+    public RecurringTodoDto createRecurringTodo(Long userId, CreateRecurringTodoDto dto){
+        // 객체 생성
+        TrackerTodo todo = TrackerTodo.builder()
+                .creatorId(userId)
+                .title(dto.getTitle())
+                .description(dto.getDescription())
+                .date(dto.getStartDate())
+                .isRecurring(true)
+                .repeatRange(dto.getRecurrenceType())
+                .repeatInterval(dto.getRecurrenceType().equals("daily") ? dto.getRecurrenceConfig().getInterval() : 0)
+                .weekly(dto.getRecurrenceType().equals("weekly") ? dto.getRecurrenceConfig().getWeekly() : new ArrayList<>())
+                .monthly(dto.getRecurrenceType().equals("monthly") ? dto.getRecurrenceConfig().getMonthly() : 0)
+                .build();
+        // 객체 저장
+        TrackerTodo savedTodo = trackerTodoRepository.save(todo);
+
+        // 반환
+        RecurringTodoDto result = RecurringTodoDto
+                .builder()
+                .todoDto(todoToDto(savedTodo))
+                .repeatRange(savedTodo.getRepeatRange())
+                .isActive(savedTodo.isActive())
+                .build();
+        return result;
+    }
 
     /*
     name : updateRecurringTodo
     function : 반복 To-Do 수정
     URL: PUT /api/users/{userId}/recurring-todos/{recurringId}
     */
+    public RecurringTodoDto updateRecurringTodo(Long userId, Long recurringId, RecurringTodoDto dto){
+        TrackerTodo todo = trackerTodoRepository.findById(recurringId).orElseThrow();
+
+
+
+        return dto;
+    }
 
     /*
     name : deleteRecurringTodo

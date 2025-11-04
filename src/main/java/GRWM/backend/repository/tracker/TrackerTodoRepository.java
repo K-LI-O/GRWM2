@@ -10,5 +10,5 @@ import java.util.List;
 public interface TrackerTodoRepository extends JpaRepository<TrackerTodo, Long> {
     Page<TrackerTodo> findByCreatorId(Long creatorId, Pageable pageable);
 
-    List<TrackerTodo> findByCreatorIdAndIsRecurringTrue(Long creatorId);
+    List<TrackerTodo> findByCreatorIdAndIsRecurringTrueAndRepeatRangeAndIsActive(Long creatorId, String type, boolean status);
 }

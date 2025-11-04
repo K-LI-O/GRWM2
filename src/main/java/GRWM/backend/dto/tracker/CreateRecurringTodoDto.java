@@ -3,7 +3,7 @@ package GRWM.backend.dto.tracker;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.List;
+
 
 @Getter
 @Setter
@@ -18,10 +18,4 @@ public class CreateRecurringTodoDto {
     LocalDate startDate; // 시작일
 }
 
-@Setter
-@Getter
-class RecurrenceConfig {
-    String type; // daily|weekly|monthly
-    List<Integer> intervals;
 
-}

@@ -15,6 +15,4 @@ public class RecurringTodoDto {
 
     private String repeatRange;
     private boolean isActive;
-    private int activeCount;
-    private int totalCount;
 }

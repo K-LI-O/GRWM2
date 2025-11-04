@@ -32,7 +32,7 @@ title: string; // To-Do 제목
 description: string; // To-Do 설명
 recurrenceType: "daily" | "weekly" | "monthly"; // 반복 타입
 recurrenceConfig: {
-daily?: { interval: number; // 며칠마다 };
+daily?: { repeatInterval: number; // 며칠마다 };
 weekly?: { daysOfWeek: number[]; // 요일 (0=일요일, 6=토요일)};
 monthly?: { dayOfMonth: number; // 몇 일에 };
 };
@@ -54,7 +54,7 @@ startDate: Date; // 시작일
     */
 
     /*
-    name : creat
+    name : create
 2.5반복 To-Do 자동 생성 (시스템 호출)
 URL: POST /api/users/{userId}/recurring-todos/generate
 Request: Long userId;

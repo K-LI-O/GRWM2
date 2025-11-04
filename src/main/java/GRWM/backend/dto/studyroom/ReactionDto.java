@@ -11,4 +11,5 @@ public class ReactionDto {
     Long reactionId;
     Long todoId;
     Long creatorId;
+    String type;
 }
