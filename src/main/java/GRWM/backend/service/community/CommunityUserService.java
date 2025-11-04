@@ -250,15 +250,17 @@ public class CommunityUserService {
 
     public void blockUser(Long communityUserId, Long targetId) {
 
-        if(followingRepository.findByFollowingAndFollower(
+        Following following = followingRepository.findByFollowingAndFollower(
                 extractOptionalUser(targetId),
-                extractOptionalUser(communityUserId)) != null){
-            followingRepository.delete(
-                    followingRepository.findByFollowingAndFollower(
-                    extractOptionalUser(targetId),
-                    extractOptionalUser(communityUserId)
-                    )
-            );
+                extractOptionalUser(communityUserId));
+        Following reversefollowing = followingRepository.findByFollowingAndFollower(
+                extractOptionalUser(communityUserId), extractOptionalUser(targetId));
+
+        if(following != null){
+            followingRepository.delete(following);
+        }
+        if(reversefollowing != null){
+            followingRepository.delete(reversefollowing);
         }
 
         // 블락 리스트의 새 칼럼 생성
