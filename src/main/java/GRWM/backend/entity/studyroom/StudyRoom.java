@@ -50,7 +50,7 @@ int extensionCount; // 최대 n회 연장 가능하며, 해당 방이 몇 회나
     private String description;
 
     @Builder.Default
-    @OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "studyRoom", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StudyRoomMember> members = new ArrayList<>();
     @OneToMany(mappedBy = "studyRoom", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
