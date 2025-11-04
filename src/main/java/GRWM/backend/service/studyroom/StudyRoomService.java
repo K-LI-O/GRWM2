@@ -168,6 +168,7 @@ currentUserStatus: "joined" | "owner";
                 .todoList(todoToDtoList(studyRoom.getTodoList()))
                 .extensionCount(studyRoom.getExtensionCount())
 
+                .currentMembers(studyRoom.getMemberCount())
                 .startTime(studyRoom.getCreatedAt())
                 .endTime(studyRoom.getCreatedAt().plusMinutes(studyRoom.getDuration()))
                 .build();
@@ -194,6 +195,7 @@ currentUserStatus: "joined" | "owner";
         for(StudyRoomMember sm : studyRoom.getMembers()){
             if(sm.getUser().getId().equals(communityId)) {
                 studyRoomMemberRepository.delete(sm);
+                studyRoom.setMemberCount(studyRoom.getMemberCount() - 1);
 
                 if(studyRoom.getMembers().isEmpty()) {
                     studyRoom.setActive(false);
@@ -285,6 +287,7 @@ currentUserStatus: "joined" | "owner";
                     .creator(creatorDto)
                     .category(s.getCategory())
                     .description(s.getDescription())
+                    .currentMember(s.getMemberCount())
                     .startTime(s.getCreatedAt())
 
                     .endTime(s.getCreatedAt().plusMinutes(s.getDuration()))

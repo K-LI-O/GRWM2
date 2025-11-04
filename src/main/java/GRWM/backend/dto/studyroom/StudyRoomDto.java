@@ -24,6 +24,7 @@ public class StudyRoomDto {
     private int extensionCount;
     @Builder.Default
     private int maxMembers = 8;
+    private int currentMembers;
 
     private LocalDateTime startTime;
     private LocalDateTime endTime;
