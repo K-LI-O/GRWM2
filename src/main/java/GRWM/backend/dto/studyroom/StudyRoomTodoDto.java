@@ -15,5 +15,6 @@ public class StudyRoomTodoDto {
     String content;
     boolean isCompleted;
     List<String> reactions;
+    String type;
 
 }

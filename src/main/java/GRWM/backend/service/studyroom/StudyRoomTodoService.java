@@ -60,7 +60,7 @@ public class StudyRoomTodoService {
         StudyRoomTodo savedTodo = studyRoomTodoRepository.save(todo);
 
         // dto 생성
-        StudyRoomTodoDto result = todoToDto(savedTodo);
+        StudyRoomTodoDto result = todoToDto(savedTodo, "TODO_CREATED");
 
         // 웹소켓으로 전파
         String destination = "/topic/studyroom."+ studyRoomId +".todo";
@@ -84,7 +84,7 @@ public class StudyRoomTodoService {
         StudyRoomTodo savedTodo = studyRoomTodoRepository.save(todo);
 
         // dto 생성
-        StudyRoomTodoDto result = todoToDto(savedTodo);
+        StudyRoomTodoDto result = todoToDto(savedTodo, "TODO_UPDATED");
         // 웹소켓으로 전파
         String destination = "/topic/studyroom."+ studyRoomId +".todo";
         messagingTemplate.convertAndSend(destination, result);
@@ -101,6 +101,9 @@ public class StudyRoomTodoService {
         StudyRoom studyRoom = extractOptionalRoom(studyRoomId);
         StudyRoomTodo todo = extractOptionalTodo(todoId);
 
+        StudyRoomTodoDto result = todoToDto(todo, " TODO_DELETED");
+        String destination = "/topic/studyroom."+ studyRoomId +".todo";
+        messagingTemplate.convertAndSend(destination, result);
         // 투두 삭제
         studyRoomTodoRepository.delete(todo);
     }
@@ -120,7 +123,7 @@ public class StudyRoomTodoService {
         StudyRoomTodo savedTodo = studyRoomTodoRepository.save(todo);
 
         // dto 생성
-        StudyRoomTodoDto result = todoToDto(savedTodo);
+        StudyRoomTodoDto result = todoToDto(savedTodo, "TODO_COMPLETED");
         // 웹소켓으로 전파
         String destination = "/topic/studyroom."+ studyRoomId +".todo";
         messagingTemplate.convertAndSend(destination, result);
@@ -149,6 +152,7 @@ public class StudyRoomTodoService {
                 .reactionId(savedReaction.getId())
                 .creatorId(savedReaction.getReactor().getId())
                 .todoId(todo.getId())
+                .type("REACTION_ADDED")
                 .build();
 
         String destination = "/topic/studyroom."+ studyRoomId +".reaction";
@@ -177,6 +181,7 @@ public class StudyRoomTodoService {
                 .reactionId(reactionId)
                 .creatorId(null)
                 .todoId(null)
+                .type("REACTION_DELETED")
                 .build();
 
         String destination = "/topic/studyroom."+ studyRoomId +".reaction";
@@ -207,7 +212,7 @@ public class StudyRoomTodoService {
         return result;
     }
 
-    private StudyRoomTodoDto todoToDto(StudyRoomTodo savedTodo){
+    private StudyRoomTodoDto todoToDto(StudyRoomTodo savedTodo, String type){
         List<String> reactions = new ArrayList<>();
         for(Reaction r : savedTodo.getReactions()){
             reactions.add(r.getReaction());
@@ -218,6 +223,7 @@ public class StudyRoomTodoService {
                 .content(savedTodo.getContent())
                 .isCompleted(savedTodo.isCompleted())
                 .reactions(reactions)
+                .type(type)
                 .build();
         return todo;
     }
