@@ -131,14 +131,22 @@ boolean result; (결과; 투표가 완료되기 전에는 사용하지 말 것)
             // 웹소켓/웹푸시 발송 로직은 이 람다식(Lambda) 내에서,
             room.setExtensionTime(room.getExtensionTime());
             studyRoomRepository.save(room);
+
+            // 반환할 dto 생성
+            ExtensionDto result = new ExtensionDto(
+                    room.getCreatedAt().toLocalTime().plusMinutes(
+                            room.getDuration() + room.getExtensionTime()),
+                    1, "ROOM_EXTENDED");
+
             // 웹소켓으로 전파
             String destination =  "/topic/studyroom." + studyRoomId + ".extension";
-            messagingTemplate.convertAndSend(destination, "스터디룸 시간이 " +room.getExtensionTime()+ "분 연장되었습니다.");
+            messagingTemplate.convertAndSend(destination, result);
 
         }, instant);
         return new ExtensionDto(
                 room.getCreatedAt().toLocalTime().plusMinutes(
-                        room.getDuration() + room.getExtensionTime()), 1);
+                        room.getDuration() + room.getExtensionTime()),
+                1, "ROOM_EXTENDED");
     }
 
 
@@ -156,9 +164,8 @@ boolean result; (결과; 투표가 완료되기 전에는 사용하지 말 것)
 
         // 2. 알림 발송 시점 계산 (예: 만료 5분 전 알림)
         int range = room.getExtensionCount() == 1 ? room.getDuration() + room.getExtensionTime() : room.getDuration();
-        LocalDateTime notificationDateTime = room.getCreatedAt().plusMinutes(range);
 
-        // 3. LocalDateTime을 TaskScheduler가 요구하는 java.util.Date 객체로 변환
+        LocalDateTime notificationDateTime = room.getCreatedAt().plusMinutes(range);
         Instant instant = notificationDateTime.atZone(ZoneId.systemDefault()).toInstant();
 
         // 4. TaskScheduler를 사용하여 예약 작업 실행
@@ -166,9 +173,15 @@ boolean result; (결과; 투표가 완료되기 전에는 사용하지 말 것)
             // 예약된 시간에 실행될 핵심 로직 (알림 발송 Service 메서드 호출)
             room.setActive(false);
             studyRoomRepository.save(room);
+
+            // 반환할 dto 생성
+            ExtensionDto result = new ExtensionDto(
+                    room.getCreatedAt().toLocalTime().plusMinutes(range),
+                    1, "ROOM_CLOSED");
+
             // 웹소켓으로 전파
             String destination = "/topic/studyroom." + studyRoomId + ".extension";
-            messagingTemplate.convertAndSend(destination, "ROOM_CLOSED");
+            messagingTemplate.convertAndSend(destination, result);
         }, instant);
         return room.getId();
     }

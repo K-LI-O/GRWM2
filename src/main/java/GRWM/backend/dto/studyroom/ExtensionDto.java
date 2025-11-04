@@ -11,5 +11,5 @@ import java.time.LocalTime;
 public class ExtensionDto {
     private LocalTime extendedEndTime; // 연장된 종료 시간
     private int extendedCount; // 지금까지 연장한 횟수
-
+    String type;
 }
