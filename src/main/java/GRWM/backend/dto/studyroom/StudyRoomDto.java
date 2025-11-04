@@ -22,6 +22,8 @@ public class StudyRoomDto {
     private int extensionTime;// (연장시 몇 분 연장되는지)
     private List<StudyRoomTodoDto> todoList; //(스터디룸에서 작성하는 투두리스트)
     private int extensionCount;
+    @Builder.Default
+    private int maxMembers = 8;
 
     private LocalDateTime startTime;
     private LocalDateTime endTime;

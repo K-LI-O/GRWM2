@@ -17,6 +17,8 @@ public class StudyRoomBriefDto {
     CommunityUserBriefDto creator;
     String category;
     String description;
+    @Builder.Default
+    private int maxMember = 8;
 
     private LocalDateTime startTime;
     private LocalDateTime endTime;
