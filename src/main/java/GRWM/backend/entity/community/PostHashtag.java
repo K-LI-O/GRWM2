@@ -1,15 +1,15 @@
 package GRWM.backend.entity.community;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.web.config.HateoasAwareSpringDataWebConfiguration;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -26,6 +26,10 @@ public class PostHashtag {
 
     @ManyToOne
     Hashtag hashtag;
+
+    @CreatedDate
+    @Column(updatable = false)
+    LocalDateTime createdAt;
 
     public PostHashtag(Post post, Hashtag hashtag){
         this.post = post;

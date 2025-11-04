@@ -330,6 +330,10 @@ public class PostService {
 
         // 포스트 dto 목록 반환
         List<PostDto> dtoList = new ArrayList<>();
+        if (phList.isEmpty()) {
+            return new PostListDto(dtoList, false);
+        }
+
         for(PostHashtag t : phList){
             if(checkVisibility(t.getId(), readerId)){
             dtoList.add(postToDto(t.getPost()));
