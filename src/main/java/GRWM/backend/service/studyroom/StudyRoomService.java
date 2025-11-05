@@ -52,7 +52,7 @@ public class StudyRoomService {
                 .extensionTime(dto.getExtensionTime())
                 .isActive(true)
                 .build();
-        StudyRoom savedRoom = studyRoomRepository.save(studyRoom);
+        StudyRoom savedRoom = studyRoomRepository.saveAndFlush(studyRoom);
         return savedRoom.getId();
     }
 

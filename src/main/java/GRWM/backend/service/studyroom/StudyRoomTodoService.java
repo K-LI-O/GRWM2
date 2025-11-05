@@ -37,6 +37,7 @@ public class StudyRoomTodoService {
     param: Long studyRoomId
     return value : List<StudyRoomTodoDto> todos
     */
+    @Transactional(readOnly = true)
     public List<StudyRoomTodoDto> getTodoList(Long studyRoomId){
         StudyRoom studyRoom = studyRoomRepository.findById(studyRoomId).orElseThrow();
         return todoToDtoList(studyRoom.getTodoList());
