@@ -110,7 +110,7 @@ int totalPages; 전체 페이지 개수 (페이징 관련 파라미터)
         studyRoomMemberRepository.save(studyRoomMember);
         // 참여한 멤버 수 + 1;
         studyRoom.setMemberCount(studyRoom.getMemberCount() + 1);
-        studyRoomRepository.save(studyRoom);
+        studyRoomRepository.saveAndFlush(studyRoom);
 
         CommunityUserBriefDto userDto = userToDto(user);
         StudyRoomMemberDto result = StudyRoomMemberDto.builder()
@@ -182,13 +182,16 @@ currentUserStatus: "joined" | "owner";
     param : Long studyRoomId;
     return value : ResponseEntity<Boolean>
      */
+    @Transactional
     public boolean goOutStudyRoom(Long studyRoomId, Long communityId){
         // 스터디룸 객체 가져오기
         StudyRoom studyRoom = extractOptionalRoom(studyRoomId);
         for(StudyRoomMember sm : studyRoom.getMembers()){
             if(sm.getUser().getId().equals(communityId)) {
+                studyRoom.getMembers().remove(sm);
                 studyRoomMemberRepository.delete(sm);
                 studyRoom.setMemberCount(studyRoom.getMemberCount() - 1);
+                studyRoomRepository.save(studyRoom);
 
                 if(studyRoom.getMembers().isEmpty()) {
                     studyRoom.setActive(false);
@@ -225,7 +228,7 @@ currentUserStatus: "joined" | "owner";
         for(StudyRoomMember m : members){
             if(m.getStudyRoom().isActive()) s = m.getStudyRoom();
         }
-        if(s == null) throw new RuntimeException("입장한 스터디룸이 유효하지 않습니다.");
+        if(s == null) return StudyRoomBriefDto.builder().build();
         // 이들 중 active 한 스터디룸 가져오기
 
 
