@@ -11,7 +11,6 @@ import GRWM.backend.repository.studyroom.ReactionRepository;
 import GRWM.backend.repository.studyroom.StudyRoomRepository;
 import GRWM.backend.repository.studyroom.StudyRoomTodoRepository;
 import GRWM.backend.repository.user.CommunityUserRepository;
-import jakarta.transaction.TransactionScoped;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -39,7 +38,7 @@ public class StudyRoomTodoService {
     return value : List<StudyRoomTodoDto> todos
     */
     public List<StudyRoomTodoDto> getTodoList(Long studyRoomId){
-        StudyRoom studyRoom = extractOptionalRoom(studyRoomId);
+        StudyRoom studyRoom = studyRoomRepository.findById(studyRoomId).orElseThrow();
         return todoToDtoList(studyRoom.getTodoList());
     }
 
