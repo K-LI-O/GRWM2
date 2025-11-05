@@ -53,13 +53,6 @@ public class StudyRoomService {
                 .isActive(true)
                 .build();
         StudyRoom savedRoom = studyRoomRepository.save(studyRoom);
-
-        StudyRoomMember studyRoomMember = StudyRoomMember.builder()
-                .studyRoom(savedRoom)
-                .user(extractOptionalUser(communityId))
-                .build();
-        studyRoomMemberRepository.save(studyRoomMember);
-
         return savedRoom.getId();
     }
 
