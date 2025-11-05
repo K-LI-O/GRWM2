@@ -2,14 +2,17 @@ package GRWM.backend.entity.tracker;
 
 import GRWM.backend.entity.user.Member;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
+@Getter
+@Setter
+@AllArgsConstructor
+@Builder
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 public class TomorrowMessage {

@@ -1,6 +1,7 @@
 package GRWM.backend.entity.user;
 
 import GRWM.backend.entity.chatroom.ChatRoomMember;
+import GRWM.backend.entity.notification.PushToken;
 import GRWM.backend.entity.teamplanner.TeamMember;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -39,7 +40,9 @@ public class Member {
     private String email;
     private String profileImageLink;
 
-    // 개인 플래너
+    @OneToOne(mappedBy = "member")
+    private PushToken pushToken;
+
 
     // 단체 플래너
     @OneToMany(mappedBy = "member")

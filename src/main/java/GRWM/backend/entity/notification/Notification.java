@@ -10,6 +10,7 @@ import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Getter
@@ -26,7 +27,15 @@ public class Notification {
     private Long senderId;
     private NotificationType type; // comment, like, follow, forMeTomorrow, Schedule
     private String content;
+    // private String receiverToken;
     private boolean isRead;
+
+    String title; // 	String	알림 제목 ("팔로우 알림")
+    String body; //	String	알림 내용 (Content)
+    Timestamp scheduledTime; //	알림 발송 예정 시간 (가장 중요)
+    @Builder.Default
+    boolean isSent = false; //	Boolean	발송 완료 여부 (false로 초기화)
+
     @CreatedDate
     private LocalDateTime createdAt;
 

@@ -19,7 +19,7 @@ public class PushTokenService {
         // 사용자 불러오기,
 
         PushToken pushToken = PushToken.builder()
-                .member(extractOptionalUser(userId))
+                .member(memberRepository.findById(userId).orElseThrow())
                 .fcmToken(token)
                 .deviceType("web")
                 .build();
@@ -27,18 +27,12 @@ public class PushTokenService {
         pushTokenRepository.save(pushToken);
     }
 
+    public String getToken(Long userId){
+        return pushTokenRepository.findByMember_Id(userId).getFcmToken();
 
-
-    private Member extractOptionalUser(Long userId){
-
-
-        if(memberRepository.findById(userId).isPresent()){
-            return memberRepository.findById(userId).get();
-        }
-        else{
-            throw new RuntimeException(" 존재하지 않는 사용자입니다.");
-        }
     }
+
+
 
 
 }
