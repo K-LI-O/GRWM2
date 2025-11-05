@@ -5,6 +5,7 @@ import GRWM.backend.dto.studyroom.StudyRoomTodoDto;
 import GRWM.backend.entity.user.CustomUserDetails;
 import GRWM.backend.service.studyroom.StudyRoomTodoService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -58,8 +59,9 @@ public class StudyRoomTodoController {
     return value : ResponseEntity 204
     */
     @DeleteMapping("/api/study-rooms/{studyRoomId}/todos/{todoId}")
-    public void deleteTodo(@PathVariable Long studyRoomId, @PathVariable Long todoId){
+    public ResponseEntity<Void> deleteTodo(@PathVariable Long studyRoomId, @PathVariable Long todoId){
         service.deleteTodo(studyRoomId, todoId);
+        return ResponseEntity.noContent().build();
     }
 
     /*

@@ -20,7 +20,7 @@ public class StudyRoomTodo {
     @Column(name = "study_room_todo_id")
     @Setter(AccessLevel.NONE)
     private Long id;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     private StudyRoom studyRoom;
 
     @ManyToOne(fetch = FetchType.LAZY)

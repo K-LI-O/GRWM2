@@ -52,7 +52,7 @@ int extensionCount; // 최대 n회 연장 가능하며, 해당 방이 몇 회나
     @Builder.Default
     @OneToMany(mappedBy = "studyRoom", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StudyRoomMember> members = new ArrayList<>();
-    @OneToMany(mappedBy = "studyRoom", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "studyRoom", cascade = CascadeType.ALL)
     @Builder.Default
     private List<StudyRoomTodo> todoList = new ArrayList<>(); //스터디룸에서 작성하는 투두리스트.
 

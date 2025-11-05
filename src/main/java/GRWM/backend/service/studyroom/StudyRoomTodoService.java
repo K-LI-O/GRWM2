@@ -106,6 +106,8 @@ public class StudyRoomTodoService {
         messagingTemplate.convertAndSend(destination, result);
         // 투두 삭제
         studyRoom.getTodoList().remove(todo);
+        studyRoomTodoRepository.delete(todo);
+        studyRoomRepository.saveAndFlush(studyRoom);
     }
 
     /*
