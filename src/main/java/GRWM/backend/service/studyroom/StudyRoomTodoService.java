@@ -57,7 +57,7 @@ public class StudyRoomTodoService {
                 .creator(extractOptionalUser(communityId))
                 .content(dto.getContent())
                 .build();
-        StudyRoomTodo savedTodo = studyRoomTodoRepository.save(todo);
+        StudyRoomTodo savedTodo = studyRoomTodoRepository.saveAndFlush(todo);
 
         // dto 생성
         StudyRoomTodoDto result = todoToDto(savedTodo, "TODO_CREATED");
