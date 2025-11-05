@@ -15,16 +15,24 @@ public class PushTokenService {
     private final MemberRepository memberRepository;
 
     public void saveToken(Long userId, String token){
+        Member member = memberRepository.findById(userId).orElseThrow();
+        PushToken existingToken = pushTokenRepository.findByMemberAndDeviceType(
+                member, "web");
 
-        // 사용자 불러오기,
-
-        PushToken pushToken = PushToken.builder()
-                .member(memberRepository.findById(userId).orElseThrow())
-                .fcmToken(token)
-                .deviceType("web")
-                .build();
-
-        pushTokenRepository.save(pushToken);
+        if (existingToken != null) {
+            // 2. 기존 토큰이 있다면 새 토큰으로 업데이트 (UPDATE)
+            if (!existingToken.getFcmToken().equals(token)) {
+                existingToken.setFcmToken(token);
+                pushTokenRepository.save(existingToken);
+            }
+        } else {
+            // 3. 기존 토큰이 없다면 새로 생성 (INSERT)
+            PushToken newPushToken = PushToken.builder()
+                    .member(member)
+                    .fcmToken(token)
+                    .build();
+            pushTokenRepository.save(newPushToken);
+        }
     }
 
     public String getToken(Long userId){

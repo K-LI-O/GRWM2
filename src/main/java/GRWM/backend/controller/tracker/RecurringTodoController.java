@@ -1,12 +1,19 @@
 package GRWM.backend.controller.tracker;
 
+import GRWM.backend.dto.tracker.CreateRecurringTodoDto;
+import GRWM.backend.dto.tracker.RecurringTodoDto;
+import GRWM.backend.dto.tracker.RecurringTodoListDto;
+import GRWM.backend.dto.tracker.TodoDto;
+import GRWM.backend.service.tracker.RecurringTodoService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
 public class RecurringTodoController {
 
+    private final RecurringTodoService service;
     /*
     name : getRecurringTodoList
     function : 반복 To-Do 목록 조회
@@ -21,6 +28,12 @@ List<RecurringTodo> recurringTodos;
 int activeCount;
 int totalCount; }
     */
+    @GetMapping("/api/users/{userId}/recurring-todos")
+    public RecurringTodoListDto getRecurringTodoList(@PathVariable Long userId,
+                                                     @RequestParam String type,
+                                                     @RequestParam String status){
+        return service.getRecurringTodoList(userId, type, status);
+    }
 
     /*
     name : createRecurringTodo
@@ -40,28 +53,33 @@ startDate: Date; // 시작일
 }
     return value : { recurringTodo: RecurringTodo}
     */
-
+    @PostMapping("/api/users/{userId}/recurring-todos")
+    public RecurringTodoDto createRecurringTodo(@PathVariable Long userId,
+                                                @RequestBody CreateRecurringTodoDto dto){
+        return service.createRecurringTodo(userId, dto);
+    }
     /*
     name : updateRecurringTodo
     function : 반복 To-Do 수정
     URL: PUT /api/users/{userId}/recurring-todos/{recurringId}
     */
+    @PutMapping("/api/users/{userId}/recurring-todos/{recurringId}")
+    public RecurringTodoDto updateRecurringTodo(@PathVariable Long userId,
+                                                @PathVariable Long recurringId,
+                                                @RequestBody RecurringTodoDto dto){
+        return service.updateRecurringTodo(userId, recurringId, dto);
+    }
 
     /*
     name : deleteRecurringTodo
     function :반복 To-Do 삭제
     URL: DELETE /api/users/{userId}/recurring-todos/{recurringId}
     */
+    @DeleteMapping("/api/users/{userId}/recurring-todos/{recurringId}")
+    public ResponseEntity<Void> deleteRecurringTodo(@PathVariable Long userId,
+                                                    @PathVariable Long recurringId){
+        service.deleteRecurringTodo(userId, recurringId);
+        return ResponseEntity.noContent().build();
+    }
 
-    /*
-    name : create
-2.5반복 To-Do 자동 생성 (시스템 호출)
-URL: POST /api/users/{userId}/recurring-todos/generate
-Request: Long userId;
-Request Body: { targetDate?: Date; // 생성 대상 날짜 (기본값: 오늘)
-}
-Response: { generatedTodos: Todo[]; targetDate: Date; }
-+ 그냥 반복 todo 생성 시에 일단 만들어서 DB에 넣어두어도 괜찮을 듯(생성 개수 limit을 정해서).
-
-     */
 }

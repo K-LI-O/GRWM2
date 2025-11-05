@@ -2,10 +2,7 @@ package GRWM.backend.entity.notification;
 
 import GRWM.backend.entity.user.Member;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
@@ -16,6 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@Setter
 @Builder
 @EntityListeners(EnableJpaAuditing.class)
 public class PushToken {
@@ -36,7 +34,9 @@ updated_at (Timestamp, 토큰 갱신 시점)
     private Member member;
 
     private String fcmToken;
-    private String deviceType; // WEB IOS ANDROID
+
+    @Builder.Default
+    private String deviceType = "web"; // WEB
 
     @CreatedDate
     private LocalDateTime createdAt;
