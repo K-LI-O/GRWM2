@@ -103,10 +103,10 @@ int totalPages; 전체 페이지 개수 (페이징 관련 파라미터)
         CommunityUser user = extractOptionalUser(communityId);
 
         // 스터디룸이 active 한지 검증.
-        if(!studyRoom.isActive()) throw new RuntimeException("스터디룸이 활동 가능 상태가 아닙니다.");
+        if(studyRoom.isActive() == false) throw new RuntimeException("스터디룸이 활동 가능 상태가 아닙니다.");
         // 이미 존재하는 멤버인지 검증
         for(StudyRoomMember sm : studyRoom.getMembers()){
-            if(sm.getUser().getId().equals(user.getId())) throw new RuntimeException("스터디룸이 활동 가능 상태가 아닙니다.");
+            if(sm.getUser().getId().equals(user.getId())) throw new RuntimeException("이미 입장한 스터디룸입니다.");
         }
 
         // 검증된 경우 멤버로 저장;

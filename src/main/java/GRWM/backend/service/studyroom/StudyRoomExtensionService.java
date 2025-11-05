@@ -42,10 +42,7 @@ participants: User[]; ? }
 
         // 2. 알림 발송 시점 계산 (예: 만료 10분 전 연장 투표 알림)
         LocalDateTime notificationDateTime = room.getCreatedAt().plusMinutes(room.getDuration() - 10);
-
-        // 3. LocalDateTime을 TaskScheduler가 요구하는 java.util.Date 객체로 변환
         Instant instant = notificationDateTime.atZone(ZoneId.systemDefault()).toInstant();
-        Date scheduledDate = Date.from(instant);
 
         // 4. TaskScheduler를 사용하여 예약 작업 실행
         taskScheduler.schedule(() -> {
