@@ -34,7 +34,7 @@ public class PersonalPlannerService {
     public Long createPersonalPlanner(PersonalPlannerCreateRequestDto dto){
 
         Member creator = memberRepository.getReferenceById(dto.getCreatorId());
-        PersonalPlanner pp = new PersonalPlanner(creator, dto.getTitle(), dto.getExplanation(), dto.getProfileImageLink());
+        PersonalPlanner pp = new PersonalPlanner(creator, dto.getTitle(), dto.getExplanation(), dto.getProfileImage());
 
         PersonalPlanner savedPlanner = ppRepository.save(pp);
 
@@ -97,7 +97,7 @@ public class PersonalPlannerService {
             planner = optionalPlanner.get();
             planner.setName(dto.getTitle());
             planner.setExplanation(dto.getExplanation());
-            planner.setProfileImage(dto.getProfileImageLink());
+            planner.setProfileImage(dto.getProfileImage());
         }
         else {
             // 플래너를 찾지 못했을 때의 로직
