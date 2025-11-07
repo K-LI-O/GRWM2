@@ -55,27 +55,28 @@ public class NotificationService {
 
     // 당장 보내
     @Transactional
-    public void createTimeVoteNotification(Member member, TeamPlanner planner, TimeVote timeVote) throws Exception{
+    public void createTimeVoteNotification(List<Member> members, TeamPlanner planner, TimeVote timeVote) throws Exception{
 
         // 1. 알림 내용 생성 (예: 보낸 사람 이름 조회)
         String title = planner.getTitle() + " 플래너에 새 시간투표 등록!";
         String content = "시간 투표에 "+ timeVote.getFinishTime() + "까지 투표해주세요.";
 
         // 2. 알림을 db에 저장.
-        Notification not = Notification.builder()
-                .receiverId(member.getId())
-                .senderId(member.getId())
-                .type(NotificationType.SCHEDULE)
-                .content(content)
-                .title(title)
-                .build();
-        notificationRepository.save(not);
+        for(Member m : members) {
+            Notification not = Notification.builder()
+                    .receiverId(m.getId())
+                    .senderId(m.getId())
+                    .type(NotificationType.SCHEDULE)
+                    .content(content)
+                    .title(title)
+                    .build();
+            notificationRepository.save(not);
 
-        // 알림 전송
-        pushService.send(member.getPushToken().getFcmToken(), not.getTitle(), not.getTitle(),
-                NotificationType.SCHEDULE.toString());
-        not.setSent(true);
-
+            // 알림 전송
+            pushService.send(m.getPushToken().getFcmToken(), not.getTitle(), not.getTitle(),
+                    NotificationType.SCHEDULE.toString());
+            not.setSent(true);
+        }
     }
 
     // 예약 알림

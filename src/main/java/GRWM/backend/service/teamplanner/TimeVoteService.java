@@ -9,6 +9,7 @@ import GRWM.backend.repository.teamplanner.TeamPlannerRepository;
 import GRWM.backend.repository.teamplanner.TimeVoteRepository;
 import GRWM.backend.repository.teamplanner.VoteResponseRepository;
 import GRWM.backend.repository.user.MemberRepository;
+import GRWM.backend.service.notification.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +30,7 @@ public class TimeVoteService {
 
     private final TimeVoteRepository timeVoteRepository;
     private final VoteResponseRepository voteResponseRepository;
+    private final NotificationService notificationService;
     private final MemberRepository memberRepository;
     private final TeamMemberRepository teamMemberRepository;
     private final TeamPlannerRepository teamPlannerRepository;
@@ -48,7 +49,7 @@ List<Long> memberIds (투표에 참여하는 사람들의 id 목록)
 }
     return value : Long voteId
     */
-    public Long createTimeVote(Long plannerId, TimeVoteCreateDto dto){
+    public Long createTimeVote(Long plannerId, TimeVoteCreateDto dto) throws Exception {
         TimeVote timeVote = TimeVote.builder()
                 .title(dto.getTitle())
                 .voteRange(dto.getVoteRange())
@@ -56,7 +57,17 @@ List<Long> memberIds (투표에 참여하는 사람들의 id 목록)
                 .memberIds(dto.getMemberIds())
                 .build();
 
+        List<Member> members = new ArrayList<>();
+
+
         TimeVote savedVote = timeVoteRepository.save(timeVote);
+        for(Long id : dto.getMemberIds()){
+            members.add(memberRepository.findById(id).orElseThrow());
+        }
+//        notificationService.createTimeVoteNotification(
+//                members,
+//                teamPlannerRepository.findById(plannerId).orElseThrow(),
+//                savedVote);
         return savedVote.getId();
     }
 

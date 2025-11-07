@@ -13,6 +13,9 @@ import GRWM.backend.entity.user.CommunityUser;
 import GRWM.backend.repository.community.BlockListRepository;
 import GRWM.backend.repository.community.FollowingRepository;
 import GRWM.backend.repository.user.CommunityUserRepository;
+import GRWM.backend.repository.user.MemberRepository;
+import GRWM.backend.service.MemberService;
+import GRWM.backend.service.notification.NotificationService;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.*;
@@ -31,6 +34,8 @@ public class CommunityUserService {
     private final CommunityUserRepository communityUserRepository;
     private final FollowingRepository followingRepository;
     private final BlockListRepository blockListRepository;
+    private final NotificationService notificationService;
+    private final MemberRepository memberRepository;
 
 
         /*
@@ -151,7 +156,7 @@ public class CommunityUserService {
     반환값 : int
      */
 
-    public int followUser(Long communityId, Long targetId) {
+    public int followUser(Long communityId, Long targetId) throws Exception {
 
         if(followingRepository.existsByFollowingAndFollower(
                 extractOptionalUser(targetId),
@@ -166,6 +171,9 @@ public class CommunityUserService {
                 extractOptionalUser(targetId),
                 extractOptionalUser(communityId)
         );
+
+        // 팔로우 대상자에게 팔로우 알림 보내기
+        // notificationService.createFollowNotification(memberRepository.findById(targetId).orElseThrow(), communityId, targetId);
 
         // 저장
         followingRepository.save(following);

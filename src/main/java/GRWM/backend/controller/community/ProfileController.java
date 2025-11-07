@@ -74,7 +74,7 @@ public class ProfileController {
 
     @PostMapping("/{targetId}/follow")
     public ResponseEntity<Boolean> followUser(@PathVariable Long targetId,
-                                           @AuthenticationPrincipal CustomUserDetails userDetails){
+                                           @AuthenticationPrincipal CustomUserDetails userDetails) throws Exception{
 
         communityUserService.followUser(userDetails.getCommunityUserId(), targetId);
         return ResponseEntity.ok(true);

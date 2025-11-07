@@ -26,7 +26,7 @@ public class TimeVoteController {
     return value : Long voteId
      */
     @PostMapping("/api/team-planner/{plannerId}/time-vote")
-    public Long createTimeVote(@PathVariable Long plannerId, @RequestBody TimeVoteCreateDto dto){
+    public Long createTimeVote(@PathVariable Long plannerId, @RequestBody TimeVoteCreateDto dto) throws Exception {
         return timeVoteService.createTimeVote(plannerId, dto);
     }
 
