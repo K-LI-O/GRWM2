@@ -66,6 +66,7 @@ limit?: number; // 페이지당 개수
         TrackerTodo todo = TrackerTodo.builder()
                 .creatorId(userId)
                 .title(dto.getTitle())
+                .date(dto.getDate())
                 .description(dto.getDescription())
                 .build();
         TrackerTodo savedTodo = trackerTodoRepository.save(todo);
