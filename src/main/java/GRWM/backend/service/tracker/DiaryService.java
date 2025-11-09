@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -46,16 +45,18 @@ int currentPage;
 int totalPages;
 }
 + 예시로 쓰고 있는 감정들... 좀 더 정리해도 될 듯!
-희로애락만 한다거나  기쁨(Happy)  평온(Relieved)  기본(Default)  우울(Depressed)  분노(Angry)  슬픔(Sad), 개분노(Furious) –
+희로애락만 한다거나  기쁨(Happy)  평온(Relieved)  생각(Thinking)  우울(Depressed)  분노(Angry)  슬픔(Sad) –
 
 */
     public DiaryListDto getDiaryList(LocalDate date, String category, String emotion, String keyword,
                                      int page, int limit){
         Pageable pageable = PageRequest.of(page, limit);
-
         Page<Diary> diaryPage = diaryRepository.findByDateAndCategoryAndEmotionAndKeyword(date, category, Emotion.valueOf(emotion), keyword, pageable);
         List<Diary> diaryList = diaryPage.getContent();
         List<DiaryDto> dtoList = new ArrayList<>();
+        if(diaryList.isEmpty())
+            return new DiaryListDto(dtoList, diaryPage.getTotalElements(),
+                diaryPage.getNumber(), diaryPage.getTotalPages());
         for(Diary d : diaryList){
             DiaryDto dto = DiaryDto.builder()
                     .id(d.getId())
@@ -72,11 +73,7 @@ int totalPages;
 
         return new DiaryListDto(dtoList, diaryPage.getTotalElements(),
                 diaryPage.getNumber(), diaryPage.getTotalPages());
-                /*
-                    int totalCount;
-    int currentPage;
-    int totalPages;
-                 */
+
     }
 
 /*

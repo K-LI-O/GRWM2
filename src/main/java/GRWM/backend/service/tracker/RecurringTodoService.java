@@ -1,6 +1,5 @@
 package GRWM.backend.service.tracker;
 
-import GRWM.backend.dto.studyroom.ExtensionDto;
 import GRWM.backend.dto.tracker.CreateRecurringTodoDto;
 import GRWM.backend.dto.tracker.RecurringTodoDto;
 import GRWM.backend.dto.tracker.RecurringTodoListDto;
