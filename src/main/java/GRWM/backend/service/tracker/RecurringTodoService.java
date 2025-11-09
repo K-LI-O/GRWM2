@@ -89,7 +89,7 @@ startDate: Date; // 시작일
                 .description(dto.getDescription())
                 .date(dto.getStartDate())
                 .isRecurring(true)
-                .isActive(dto.isActive())
+                .isActive(true)
                 .repeatRange(dto.getRecurrenceType())
                 .repeatInterval(dto.getRecurrenceType().equals("daily") ? dto.getRecurrenceConfig().getInterval() : 0)
                 .weekly(dto.getRecurrenceType().equals("weekly") ? dto.getRecurrenceConfig().getWeekly() : new ArrayList<>())
