@@ -89,6 +89,7 @@ startDate: Date; // 시작일
                 .description(dto.getDescription())
                 .date(dto.getStartDate())
                 .isRecurring(true)
+                .isActive(dto.isActive())
                 .repeatRange(dto.getRecurrenceType())
                 .repeatInterval(dto.getRecurrenceType().equals("daily") ? dto.getRecurrenceConfig().getInterval() : 0)
                 .weekly(dto.getRecurrenceType().equals("weekly") ? dto.getRecurrenceConfig().getWeekly() : new ArrayList<>())
@@ -96,7 +97,7 @@ startDate: Date; // 시작일
                 .build();
         // 객체 저장
         TrackerTodo savedTodo = trackerTodoRepository.save(todo);
-
+        System.out.println(savedTodo.isActive() + "\n");
         // 나머지 한달 동안의 어쩌구 생성.
         if(savedTodo.isActive()) {
             generateSchedule(savedTodo);

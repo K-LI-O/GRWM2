@@ -16,6 +16,7 @@ public class CreateRecurringTodoDto {
     String recurrenceType; // : "daily" | "weekly" | "monthly"; // 반복 타입
     RecurrenceConfig recurrenceConfig;
     LocalDate startDate; // 시작일
+    boolean isActive;
 }
 
 
