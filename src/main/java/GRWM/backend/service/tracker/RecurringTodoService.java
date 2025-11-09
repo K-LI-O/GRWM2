@@ -120,11 +120,18 @@ startDate: Date; // 시작일
     */
     public RecurringTodoDto updateRecurringTodo(Long userId, Long recurringId, RecurringTodoDto dto){
         TrackerTodo todo = trackerTodoRepository.findById(recurringId).orElseThrow();
-
+        boolean oldActive = todo.isActive();
         todo.setTitle(dto.getTodoDto().getTitle());
         todo.setDescription(dto.getTodoDto().getDescription());
         todo.setRepeatRange(dto.getRepeatRange());
         todo.setActive(dto.isActive());
+
+        TrackerTodo savedTodo = trackerTodoRepository.save(todo);
+
+        if(!oldActive && savedTodo.isActive()) // 새로운 로직 생성;
+            generateSchedule(savedTodo);
+
+
 
         return dto;
     }
@@ -172,79 +179,59 @@ Response: { generatedTodos: Todo[]; targetDate: Date; }
             }
 
         } else if(tt.getRepeatRange().equals("weekly")) {// 위클리인 경우
-            LocalDate today = LocalDate.now();
-            int startDay = today.getDayOfMonth() != 1 ? today.getDayOfMonth() : 1;
-            int maxDay = today.lengthOfMonth();
-            // 이번 달 1일을 기준으로 한 LocalDate 객체 (withDayOfMonth() 호출을 위해 사용)
-            LocalDate baseDate = today.withDayOfMonth(1);
+            createWeeklyTodo(tt);
 
-            List<Integer> weeks = tt.getWeekly();
-            for (int day = startDay; day <= maxDay; day++) {
-                // 현재 순회 중인 날짜 객체 생성
-                LocalDate targetDate = baseDate.withDayOfMonth(day);
-                // 해당 날짜의 요일
-                DayOfWeek dayOfWeek = targetDate.getDayOfWeek();
-
-                // 템플릿에 설정된 반복 요일에 현재 날짜의 요일이 포함되는지 확인
-                if (weeks.contains(dayOfWeek.getValue())) {
-                    TrackerTodo todo = TrackerTodo.builder()
-                            .creatorId(tt.getCreatorId())
-                            .title(tt.getTitle())
-                            .description(tt.getDescription())
-                            .date(targetDate)
-                            .isCompleted(false)
-                            .isPostponed(false)
-                            .isRecurring(false)
-                            .build();
-                    trackerTodoRepository.save(todo);
-                }
-            }
         } else { // 날별 반복인 경우
-            // 1. 기준 날짜 및 반복 정보 설정
-            LocalDate today = LocalDate.now();
-            // 현재 달의 마지막 날을 순회 종료 기준으로 설정
-            LocalDate currentMonthEnd = today.withDayOfMonth(today.lengthOfMonth());
+            createDailyTodo(tt);
 
-            LocalDate initialStartDate = tt.getDate(); // 템플릿의 최초 시작일
-            int repeatInterval = tt.getRepeatInterval();   // N일 간격 (예: 3일);
+        }
+    }
 
-            // 3. 최초 시작점 찾기 (이번 달에 생성될 첫 번째 투두 날짜)
+    private void createDailyTodo(TrackerTodo tt){
+        // 1. 기준 날짜 및 반복 정보 설정
+        LocalDate today = LocalDate.now();
+        // 현재 달의 마지막 날을 순회 종료 기준으로 설정
+        LocalDate currentMonthEnd = today.withDayOfMonth(today.lengthOfMonth());
 
-            // today와 initialStartDate 사이의 일(Day) 차이 계산
-            long daysFromInitial = ChronoUnit.DAYS.between(initialStartDate, today);
-            // repeatInterval로 나누었을 때의 나머지
-            long remainder = daysFromInitial % repeatInterval;
+        LocalDate initialStartDate = tt.getDate(); // 템플릿의 최초 시작일
+        int repeatInterval = tt.getRepeatInterval();   // N일 간격 (예: 3일);
 
-            // 이번 달에 생성될 투두의 첫 번째 날짜 (initialStartDate 기준 N일 간격으로 계산됨)
-            LocalDate nextScheduleDate;
-            if (remainder == 0) {
-                // A. 오늘(today)이 N일 간격에 정확히 걸리는 날짜임 (today 자체가 생성일)
-                nextScheduleDate = today;
-            } else {
-                // B. 오늘 이후 다음 간격의 날짜를 찾음
-                // 다음 간격까지 남은 일 수: (repeatInterval - remainder)
-                nextScheduleDate = today.plusDays(repeatInterval - remainder);
-            }
+        // 3. 최초 시작점 찾기 (이번 달에 생성될 첫 번째 투두 날짜)
+
+        // today와 initialStartDate 사이의 일(Day) 차이 계산
+        long daysFromInitial = ChronoUnit.DAYS.between(initialStartDate, today);
+        // repeatInterval로 나누었을 때의 나머지
+        long remainder = daysFromInitial % repeatInterval;
+
+        // 이번 달에 생성될 투두의 첫 번째 날짜 (initialStartDate 기준 N일 간격으로 계산됨)
+        LocalDate nextScheduleDate;
+        if (remainder == 0) {
+            // A. 오늘(today)이 N일 간격에 정확히 걸리는 날짜임 (today 자체가 생성일)
+            nextScheduleDate = today;
+        } else {
+            // B. 오늘 이후 다음 간격의 날짜를 찾음
+            // 다음 간격까지 남은 일 수: (repeatInterval - remainder)
+            nextScheduleDate = today.plusDays(repeatInterval - remainder);
+        }
 
 
-            // 3. 투두 생성 및 순회 (오늘 이후 월말까지)
-            while (!nextScheduleDate.isAfter(currentMonthEnd)) {
+        // 3. 투두 생성 및 순회 (오늘 이후 월말까지)
+        while (!nextScheduleDate.isAfter(currentMonthEnd)) {
 
-                // ⭐️ 투두 생성 및 저장 로직 실행
-                TrackerTodo todo = TrackerTodo.builder()
-                        .creatorId(tt.getCreatorId())
-                        .title(tt.getTitle())
-                        .description(tt.getDescription())
-                        .date(nextScheduleDate)
-                        .isCompleted(false)
-                        .isPostponed(false)
-                        .isRecurring(false)
-                        .build();
-                trackerTodoRepository.save(todo);
+            // ⭐️ 투두 생성 및 저장 로직 실행
+            TrackerTodo todo = TrackerTodo.builder()
+                    .creatorId(tt.getCreatorId())
+                    .title(tt.getTitle())
+                    .description(tt.getDescription())
+                    .date(nextScheduleDate)
+                    .isCompleted(false)
+                    .isPostponed(false)
+                    .isRecurring(false)
+                    .build();
+            trackerTodoRepository.save(todo);
 
-                // 다음 생성 예정일로 N일만큼 이동
-                nextScheduleDate = nextScheduleDate.plusDays(repeatInterval);
-            }
+            // 다음 생성 예정일로 N일만큼 이동
+            nextScheduleDate = nextScheduleDate.plusDays(repeatInterval);
         }
     }
 
@@ -308,5 +295,34 @@ Response: { generatedTodos: Todo[]; targetDate: Date; }
         trackerTodoRepository.save(todo);
     }
 
+    private void createWeeklyTodo(TrackerTodo tt){
+        LocalDate today = LocalDate.now();
+        int startDay = today.getDayOfMonth() != 1 ? today.getDayOfMonth() : 1;
+        int maxDay = today.lengthOfMonth();
+        // 이번 달 1일을 기준으로 한 LocalDate 객체 (withDayOfMonth() 호출을 위해 사용)
+        LocalDate baseDate = today.withDayOfMonth(1);
+
+        List<Integer> weeks = tt.getWeekly();
+        for (int day = startDay; day <= maxDay; day++) {
+            // 현재 순회 중인 날짜 객체 생성
+            LocalDate targetDate = baseDate.withDayOfMonth(day);
+            // 해당 날짜의 요일
+            DayOfWeek dayOfWeek = targetDate.getDayOfWeek();
+
+            // 템플릿에 설정된 반복 요일에 현재 날짜의 요일이 포함되는지 확인
+            if (weeks.contains(dayOfWeek.getValue())) {
+                TrackerTodo todo = TrackerTodo.builder()
+                        .creatorId(tt.getCreatorId())
+                        .title(tt.getTitle())
+                        .description(tt.getDescription())
+                        .date(targetDate)
+                        .isCompleted(false)
+                        .isPostponed(false)
+                        .isRecurring(false)
+                        .build();
+                trackerTodoRepository.save(todo);
+            }
+        }
+    }
 
 }
