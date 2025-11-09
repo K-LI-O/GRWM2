@@ -48,6 +48,7 @@ limit?: number; // 페이지당 개수
                     .date(t.getDate())
                     .isCompleted(t.isCompleted())
                     .isPostponed(t.isPostponed())
+                    .isRecurring(false)
                     .build();
             result.add(dto);
         }
@@ -68,6 +69,7 @@ limit?: number; // 페이지당 개수
                 .title(dto.getTitle())
                 .date(dto.getDate())
                 .description(dto.getDescription())
+                .isRecurring(false)
                 .build();
         TrackerTodo savedTodo = trackerTodoRepository.save(todo);
 
@@ -134,6 +136,7 @@ limit?: number; // 페이지당 개수
                 .date(t.getDate())
                 .isCompleted(t.isCompleted())
                 .isPostponed(t.isPostponed())
+                .isRecurring(t.isRecurring())
                 .build();
         return dto;
     }

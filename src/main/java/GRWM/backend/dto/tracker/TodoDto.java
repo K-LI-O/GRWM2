@@ -18,4 +18,5 @@ public class TodoDto {
     LocalDate date;
     boolean isCompleted;
     boolean isPostponed;
+    boolean isRecurring;
 }

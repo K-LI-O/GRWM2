@@ -12,7 +12,7 @@ import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import javax.sound.midi.Track;
+
 import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -276,6 +276,7 @@ Response: { generatedTodos: Todo[]; targetDate: Date; }
                 .date(t.getDate())
                 .isCompleted(t.isCompleted())
                 .isPostponed(t.isPostponed())
+                .isRecurring(t.isRecurring())
                 .build();
         return dto;
     }
