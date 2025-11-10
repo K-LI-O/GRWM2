@@ -30,9 +30,8 @@ int totalCount; }
     */
     @GetMapping("/api/users/{userId}/recurring-todos")
     public RecurringTodoListDto getRecurringTodoList(@PathVariable Long userId,
-                                                     @RequestParam String type,
                                                      @RequestParam String status){
-        return service.getRecurringTodoList(userId, type, status);
+        return service.getRecurringTodoList(userId, status);
     }
 
     /*

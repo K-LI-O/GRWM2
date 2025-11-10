@@ -38,10 +38,9 @@ List<RecurringTodo> recurringTodos;
 int activeCount;
 int totalCount; }
     */
-    public RecurringTodoListDto getRecurringTodoList(Long userId,
-                                                     String type, String status){
+    public RecurringTodoListDto getRecurringTodoList(Long userId, String status){
         boolean isActive = status.equals("active");
-        List<TrackerTodo> todoList = trackerTodoRepository.findByCreatorIdAndIsRecurringTrueAndRepeatRangeAndIsActive(userId, type, isActive);
+        List<TrackerTodo> todoList = trackerTodoRepository.findByCreatorIdAndIsRecurringTrueAndIsActive(userId, isActive);
         List<RecurringTodoDto> todoDtos = new ArrayList<>();
         int activeCount = 0;
         for(TrackerTodo t : todoList){

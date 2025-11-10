@@ -35,7 +35,7 @@ limit?: number; // 페이지당 개수
     public List<TodoDto> getTodoList(Long userId, LocalDate date, String status,
                                int page, int limit){
         Pageable pageable = PageRequest.of(page, limit);
-        Page<TrackerTodo> todoPage = trackerTodoRepository.findByCreatorId(userId, pageable);
+        Page<TrackerTodo> todoPage = trackerTodoRepository.findByCreatorIdAndIsRecurring(userId, false, pageable);
         List<TrackerTodo> todoList = todoPage.getContent();
 
         List<TodoDto> result = new ArrayList<>();
