@@ -47,7 +47,7 @@ int totalPages;
                                      @RequestParam String keyword,
                                      @RequestParam int page,
                                      @RequestParam int limit){
-        return diaryService.getDiaryList(date, category, emotion, keyword, page, limit);
+        return diaryService.getDiaryList(userId, date, category, emotion, keyword, page, limit);
     }
 
 /*

@@ -48,10 +48,10 @@ int totalPages;
 희로애락만 한다거나  기쁨(Happy)  평온(Relieved)  생각(Thinking)  우울(Depressed)  분노(Angry)  슬픔(Sad) –
 
 */
-    public DiaryListDto getDiaryList(LocalDate date, String category, String emotion, String keyword,
+    public DiaryListDto getDiaryList(Long userId, LocalDate date, String category, String emotion, String keyword,
                                      int page, int limit){
         Pageable pageable = PageRequest.of(page, limit);
-        Page<Diary> diaryPage = diaryRepository.findByDateAndCategoryAndEmotionAndKeyword(date, category, Emotion.valueOf(emotion), keyword, pageable);
+        Page<Diary> diaryPage = diaryRepository.findByMember_IdAndDateAndCategoryAndEmotionAndKeyword(userId, date, category, Emotion.valueOf(emotion), keyword, pageable);
         List<Diary> diaryList = diaryPage.getContent();
         List<DiaryDto> dtoList = new ArrayList<>();
         if(diaryList.isEmpty())
