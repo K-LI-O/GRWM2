@@ -106,7 +106,7 @@ int totalPages;
                 .content(dto.getContent())
                 .member(memberRepository.findById(userId).orElseThrow())
                 .category(dto.getCategory())
-                // .emotion(dto.getEmotion())
+                .emotion(Emotion.valueOf(dto.getEmotion()))
                 .tags(dto.getTags())
                 .date(dto.getDate())
                 .build();
@@ -134,7 +134,7 @@ int totalPages;
         diary.setTitle(dto.getTitle());
         diary.setContent(dto.getContent());
         diary.setTags(dto.getTags());
-        //diary.setEmotion();
+        diary.setEmotion(Emotion.valueOf(dto.getEmotion()));
 
         // 저장하기
         Diary savedDiary = diaryRepository.save(diary);
