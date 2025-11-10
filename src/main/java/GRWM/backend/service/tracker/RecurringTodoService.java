@@ -156,7 +156,14 @@ startDate: Date; // 시작일
         }
 
         dto.setRecurringId(savedTodo.getId());
-        return dto;
+        RecurringTodoDto result = RecurringTodoDto.builder()
+                .recurringId(savedTodo.getId())
+                .todoDto(todoToDto(savedTodo))
+                .repeatRange(savedTodo.getRepeatRange())
+                .isActive(savedTodo.isActive())
+                .build();
+
+        return result;
     }
 
     /*
@@ -226,6 +233,11 @@ Response: { generatedTodos: Todo[]; targetDate: Date; }
     // 이 점은 수정 필요 해당 어쩌구가 들어올 때 이미 실행.
 
     private void generateSchedule(TrackerTodo tt){
+        if (tt.getDate() == null) {
+            // Log the error or throw a specific exception if necessary
+            System.err.println("반복 투두 ID " + tt.getId() + "에 시작 날짜(Date)가 설정되지 않았습니다.");
+            return; // 생성 로직 중단
+        }
         // 먼슬리인 경우
         if(tt.getRepeatRange().equals("monthly")){
             LocalDate scheduledDateThisMonth = getMonthlySchedule(tt);
