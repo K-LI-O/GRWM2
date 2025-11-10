@@ -7,9 +7,9 @@ import GRWM.backend.dto.tracker.TodoDto;
 import GRWM.backend.entity.tracker.TrackerTodo;
 import GRWM.backend.repository.tracker.TrackerTodoRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import java.time.*;
@@ -19,10 +19,11 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class RecurringTodoService {
 
     private final TrackerTodoRepository trackerTodoRepository;
-    private final TaskScheduler taskScheduler;
+    private final TrackerTodoService trackerTodoService;
 
     /*
     name : getRecurringTodoList
@@ -121,19 +122,74 @@ startDate: Date; // 시작일
     */
     public RecurringTodoDto updateRecurringTodo(Long userId, Long recurringId, RecurringTodoDto dto){
         TrackerTodo todo = trackerTodoRepository.findById(recurringId).orElseThrow();
+
+        String oldRepeatRange = todo.getRepeatRange();
+        LocalDate oldDate = todo.getDate();
         boolean oldActive = todo.isActive();
+
         todo.setTitle(dto.getTodoDto().getTitle());
         todo.setDescription(dto.getTodoDto().getDescription());
+        todo.setDate(dto.getTodoDto().getDate());
         todo.setRepeatRange(dto.getRepeatRange());
-        todo.setActive(dto.isActive());
-
         TrackerTodo savedTodo = trackerTodoRepository.save(todo);
 
-        if(!oldActive && savedTodo.isActive()) // 새로운 로직 생성;
+        // 오늘 및 이후에 예정된 일반 투두의 제목과 설명 바꾸기
+        updateTitleAndDescription(todo, dto.getTodoDto().getTitle(), dto.getTodoDto().getDescription());
+
+        boolean dateOrRepeatChanged = !oldRepeatRange.equals(dto.getRepeatRange()) || !oldDate.equals(dto.getTodoDto().getDate());
+        boolean wasActive = oldActive;
+        boolean isActiveNow = savedTodo.isActive();
+
+// 4. 삭제 로직
+// A. 주기/날짜가 변했거나 (활성화 상태였든 아니었든),
+// B. 기존에 활성화 상태였는데 지금 비활성화 된 경우
+        if (dateOrRepeatChanged || (wasActive && !isActiveNow)) {
+            deleteFutureSchedule(savedTodo.getGeneratedTodos());
+        }
+
+// 5. 생성 로직
+// A. 주기/날짜가 변했고 (삭제했으므로 새로 생성),
+// B. 비활성화 상태였다가 활성화된 경우 (새로운 일정 필요),
+// C. (선택) 활성 상태를 유지하면서 주기/날짜만 변한 경우
+        if (isActiveNow && (dateOrRepeatChanged || !wasActive)) {
             generateSchedule(savedTodo);
+        }
 
         dto.setRecurringId(savedTodo.getId());
         return dto;
+    }
+
+    /*
+    name : isActiveChange
+    function : 반복 투두 활성화 및 비활성화
+    param : Long userId
+            Long recurringTodoId
+    return value : void
+    URL: PATCH /api/users/{userId}/recurring-todos/{recurringId}
+     */
+    public void isActiveChange(Long userId, Long recurringId){
+        TrackerTodo todo = trackerTodoRepository.findById(recurringId).orElseThrow();
+        boolean oldActive = todo.isActive();
+        todo.setActive(!todo.isActive());
+        TrackerTodo savedTodo = trackerTodoRepository.save(todo);
+
+        // isActive 가 바뀐 경우
+        if(!oldActive && savedTodo.isActive()) // 새로운 로직 생성;
+            generateSchedule(savedTodo);
+        else { // 기존 로직 삭제
+            LocalDate today = LocalDate.now();
+            List<Long> generatedTodos = todo.getGeneratedTodos();
+            for(Long todoId : generatedTodos){
+                trackerTodoRepository.findById(todoId)
+                        .ifPresent(td -> {
+                            // today와 같거나 이후의 투두만 삭제
+                            if (td.getDate().isEqual(today) || td.getDate().isAfter(today)) {
+                                trackerTodoRepository.delete(td);
+                            }
+                        });
+            }
+
+        }
     }
 
     /*
@@ -173,9 +229,9 @@ Response: { generatedTodos: Todo[]; targetDate: Date; }
         // 먼슬리인 경우
         if(tt.getRepeatRange().equals("monthly")){
             LocalDate scheduledDateThisMonth = getMonthlySchedule(tt);
-
+            List<Long> todos = tt.getGeneratedTodos();
             if (!scheduledDateThisMonth.isBefore(LocalDate.now())) {
-                createAndSaveTodo(tt, scheduledDateThisMonth);
+                todos.add(createAndSaveTodo(tt, scheduledDateThisMonth));
             }
 
         } else if(tt.getRepeatRange().equals("weekly")) {// 위클리인 경우
@@ -183,8 +239,8 @@ Response: { generatedTodos: Todo[]; targetDate: Date; }
 
         } else { // 날별 반복인 경우
             createDailyTodo(tt);
-
         }
+        trackerTodoRepository.save(tt);
     }
 
     private void createDailyTodo(TrackerTodo tt){
@@ -214,11 +270,11 @@ Response: { generatedTodos: Todo[]; targetDate: Date; }
             nextScheduleDate = today.plusDays(repeatInterval - remainder);
         }
 
-
+        List<Long> todos = tt.getGeneratedTodos();
         // 3. 투두 생성 및 순회 (오늘 이후 월말까지)
         while (!nextScheduleDate.isAfter(currentMonthEnd)) {
 
-            // ⭐️ 투두 생성 및 저장 로직 실행
+            // 투두 생성 및 저장 로직 실행
             TrackerTodo todo = TrackerTodo.builder()
                     .creatorId(tt.getCreatorId())
                     .title(tt.getTitle())
@@ -228,11 +284,12 @@ Response: { generatedTodos: Todo[]; targetDate: Date; }
                     .isPostponed(false)
                     .isRecurring(false)
                     .build();
-            trackerTodoRepository.save(todo);
+            todos.add(trackerTodoRepository.save(todo).getId());
 
             // 다음 생성 예정일로 N일만큼 이동
             nextScheduleDate = nextScheduleDate.plusDays(repeatInterval);
         }
+        tt.setGeneratedTodos(todos);
     }
 
     // 먼슬리 로직에 사용할 날짜 조정 로직
@@ -282,7 +339,7 @@ Response: { generatedTodos: Todo[]; targetDate: Date; }
     }
 
     // 투두를 생성하고 저장하는 재사용 가능한 로직
-    private void createAndSaveTodo(TrackerTodo tt, LocalDate dateToCreate) {
+    private Long createAndSaveTodo(TrackerTodo tt, LocalDate dateToCreate) {
         TrackerTodo todo = TrackerTodo.builder()
                 .creatorId(tt.getCreatorId())
                 .title(tt.getTitle())
@@ -292,7 +349,7 @@ Response: { generatedTodos: Todo[]; targetDate: Date; }
                 .isPostponed(false)
                 .isRecurring(false) // 생성된 개별 투두는 반복이 아닙니다.
                 .build();
-        trackerTodoRepository.save(todo);
+        return trackerTodoRepository.save(todo).getId();
     }
 
     private void createWeeklyTodo(TrackerTodo tt){
@@ -303,6 +360,7 @@ Response: { generatedTodos: Todo[]; targetDate: Date; }
         LocalDate baseDate = today.withDayOfMonth(1);
 
         List<Integer> weeks = tt.getWeekly();
+        List<Long> todos = tt.getGeneratedTodos();
         for (int day = startDay; day <= maxDay; day++) {
             // 현재 순회 중인 날짜 객체 생성
             LocalDate targetDate = baseDate.withDayOfMonth(day);
@@ -320,8 +378,38 @@ Response: { generatedTodos: Todo[]; targetDate: Date; }
                         .isPostponed(false)
                         .isRecurring(false)
                         .build();
-                trackerTodoRepository.save(todo);
+                todos.add(trackerTodoRepository.save(todo).getId());
             }
+        }
+        tt.setGeneratedTodos(todos);
+    }
+
+    private void updateTitleAndDescription(TrackerTodo todo, String title, String description){
+        List<Long> generatedTodos = todo.getGeneratedTodos();
+        for(Long todoId : generatedTodos){
+            TrackerTodo td = trackerTodoRepository.findById(todoId).orElseThrow();
+            if(td.getDate().isEqual(LocalDate.now()) || td.getDate().isAfter(LocalDate.now())){
+                td.setTitle(title);
+                td.setDescription(description);
+                trackerTodoRepository.save(td);
+            }
+        }
+    }
+
+    private void deleteFutureSchedule(List<Long> generatedTodos) {
+        if (generatedTodos == null) return;
+
+        LocalDate today = LocalDate.now();
+        for (Long todoId : generatedTodos) {
+            trackerTodoRepository.findById(todoId)
+                    .ifPresent(td -> {
+                        // today와 같거나 이후의 투두만 삭제
+                        if (td.getDate().isEqual(today) || td.getDate().isAfter(today)) {
+                            trackerTodoRepository.delete(td);
+                        }
+                    });
+            // 주의: isPresent 를 사용하여 orElseThrow() 오류를 방지
+            // 이미 삭제된 ID는 그냥 건너뜀
         }
     }
 
