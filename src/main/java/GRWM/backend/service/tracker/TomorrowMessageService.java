@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class TomorrowMessageService {
@@ -29,7 +31,12 @@ public class TomorrowMessageService {
     */
     public TomorrowMessageDto getTomorrowMessage(Long userId, Long messageId){
         // 객체 찾기 및 반환
-        return messageToDto(repository.findById(messageId).orElseThrow());
+        Optional<TomorrowMessage> messageOptional = repository.findById(messageId);
+        if (messageOptional.isPresent()) {
+            return messageToDto(messageOptional.get());
+        } else {
+            return TomorrowMessageDto.builder().build();
+        }
     }
 
     /*
