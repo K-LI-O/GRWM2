@@ -70,6 +70,18 @@ startDate: Date; // 시작일
     }
 
     /*
+    name : updateRecurringTodoActive
+    function : 반복 To-Do 활성화 및 비활성화 조정
+    URL: PATCH /api/users/{userId}/recurring-todos/{recurringId}/active
+    */
+    @PatchMapping("/api/users/{userId}/recurring-todos/{recurringId}/active")
+    public void updateRecurringTodoActive(@PathVariable Long userId,
+                                          @PathVariable Long recurringId){
+        service.isActiveChange(userId, recurringId);
+    }
+
+
+    /*
     name : deleteRecurringTodo
     function :반복 To-Do 삭제
     URL: DELETE /api/users/{userId}/recurring-todos/{recurringId}
@@ -80,5 +92,8 @@ startDate: Date; // 시작일
         service.deleteRecurringTodo(userId, recurringId);
         return ResponseEntity.noContent().build();
     }
+
+
+
 
 }

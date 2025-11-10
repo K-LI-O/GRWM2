@@ -3,6 +3,7 @@ package GRWM.backend.service.tracker;
 import GRWM.backend.dto.tracker.TomorrowMessageCreateDto;
 import GRWM.backend.dto.tracker.TomorrowMessageDto;
 import GRWM.backend.entity.tracker.TomorrowMessage;
+import GRWM.backend.entity.user.Member;
 import GRWM.backend.repository.tracker.TomorrowMessageRepository;
 import GRWM.backend.repository.user.MemberRepository;
 import GRWM.backend.service.notification.NotificationService;
@@ -21,7 +22,6 @@ public class TomorrowMessageService {
 
     private final TomorrowMessageRepository repository;
     private final MemberRepository memberRepository;
-    private final TaskScheduler taskScheduler;
     private final NotificationService notificationService;
 
     /*
@@ -53,18 +53,21 @@ LocalDateTime scheduledTime;
 }
 Response: FutureMessageDto;
     */
+    @Transactional
     public TomorrowMessageDto createTomorrowMessage(Long userId, TomorrowMessageCreateDto dto) throws Exception{
         // 객체 생성
+        Member member = memberRepository.findById(userId).orElseThrow();
         TomorrowMessage message = TomorrowMessage.builder()
-                .creator(memberRepository.findById(userId).orElseThrow())
+                .creator(member)
                 .scheduledTime(dto.getScheduledTime())
                 .content(dto.getContent())
                 .build();
+        TomorrowMessage savedMessage = repository.save(message);
 
-        notificationService.createFutureMessageNotification(memberRepository.findById(userId).orElseThrow(),
-                message);
+        notificationService.createFutureMessageNotification(member, savedMessage);
+        System.out.println("저장 완료!!");
         // 반환
-        return messageToDto(repository.save(message));
+        return messageToDto(savedMessage);
     }
 
     /*
@@ -79,8 +82,9 @@ Response: FutureMessageDto;
         TomorrowMessage message = repository.findById(dto.getMessageId()).orElseThrow();
 
         // Notification 객체 조회 및 수정(저장은 호출된 메서드 내에서)
-        notificationService.updateNotification(notificationService.getNotificationForFutureMessage(
-                userId, "FOR_ME_TOMORROW", message.getId()), dto.getScheduledTime());
+        notificationService.updateNotification(
+                notificationService.getNotificationForFutureMessage(
+                        userId, message.getId()), dto.getScheduledTime());
 
         // 메시지 수정
         message.setContent(dto.getContent());

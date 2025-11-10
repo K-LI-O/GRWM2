@@ -23,6 +23,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class NotificationService {
 
     private final CommunityUserRepository communityUserRepository;
@@ -94,7 +95,8 @@ public class NotificationService {
                 .messageId(message.getId())
                 .content(content)
                 .build();
-        notificationRepository.save(not);
+        System.out.println("저장 완료.");
+        System.out.println(notificationRepository.save(not).getMessageId());
 
     }
 
@@ -112,14 +114,15 @@ public class NotificationService {
     }
 
     // 내일 메시지 수정용 어쩌구
-    public Notification getNotificationForFutureMessage(Long receiverId, String type, Long messageId){
-        return notificationRepository.findByReceiverIdAndTypeAndMessageId(
-                receiverId,
-                NotificationType.valueOf(type),
+    @Transactional(readOnly = true)
+    public Notification getNotificationForFutureMessage(Long userId, Long messageId){
+        return notificationRepository.findByReceiverIdAndMessageId(
+                userId,
                 messageId
-                );
+                ).orElseThrow();
     }
 
+    @Transactional
     public void updateNotification(Notification not, LocalDateTime updatedTime){
         not.setScheduledTime(Timestamp.valueOf(updatedTime));
         notificationRepository.saveAndFlush(not);

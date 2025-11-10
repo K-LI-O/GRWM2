@@ -4,9 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
@@ -16,6 +14,8 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @EntityListeners(EnableJpaAuditing.class)
 public class Notification {
@@ -34,7 +34,7 @@ public class Notification {
     String body; //	String	알림 내용 (Content)
     Timestamp scheduledTime; //	알림 발송 예정 시간 (가장 중요)
     @Builder.Default
-    boolean isSent = false; //	Boolean	발송 완료 여부 (false로 초기화)
+    boolean isSent = false; //	Boolean	발송 완료 여부 (false 로 초기화)
 
     @CreatedDate
     private LocalDateTime createdAt;
