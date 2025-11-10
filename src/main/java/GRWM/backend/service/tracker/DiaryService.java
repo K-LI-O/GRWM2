@@ -76,6 +76,47 @@ int totalPages;
 
     }
 
+    /*
+    name : getDiaryList
+    function : 일기 목록 조회
+    URL: GET /api/users/{userId}/diaries
+    param : Long userId
+    Diary diaries;
+int totalCount;
+int currentPage;
+int totalPages;
+
+     */
+
+    public DiaryListDto getDiaryBasicList(Long userId, int page, int limit){
+        Pageable pageable = PageRequest.of(page, limit);
+        Page<Diary> diaryPage = diaryRepository.findByMember_Id(userId);
+        List<Diary> diaryList = diaryPage.getContent();
+        List<DiaryDto> dtoList = new ArrayList<>();
+        if(diaryList.isEmpty())
+            return new DiaryListDto(dtoList, diaryPage.getTotalElements(),
+                    diaryPage.getNumber(), diaryPage.getTotalPages());
+        for(Diary d : diaryList){
+            DiaryDto dto = DiaryDto.builder()
+                    .id(d.getId())
+                    .createdAt(d.getCreateAt())
+                    .updatedAt(d.getUpdatedAt())
+                    .category(d.getCategory())
+                    .title(d.getTitle())
+                    .content(d.getContent())
+                    .tags(d.getTags())
+                    .emotion(d.getEmotion().toString())
+                    .build();
+            dtoList.add(dto);
+        }
+
+        return new DiaryListDto(dtoList, diaryPage.getTotalElements(),
+                diaryPage.getNumber(), diaryPage.getTotalPages());
+
+    }
+
+
+
 /*
     name : getDiaryDetail
     function : 일기 상세 조회

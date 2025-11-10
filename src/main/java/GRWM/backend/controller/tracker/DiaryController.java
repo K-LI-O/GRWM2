@@ -50,6 +50,23 @@ int totalPages;
         return diaryService.getDiaryList(userId, date, category, emotion, keyword, page, limit);
     }
 
+        /*
+    name : getDiaryList
+    function : 일기 목록 조회
+    URL: GET /api/users/{userId}/diaries/default
+    param : Long userId
+    Diary diaries;
+int totalCount;
+int currentPage;
+int totalPages;
+     */
+    @GetMapping("/api/users/{userId}/diaries/default")
+    public DiaryListDto getDiaryBasicList(@PathVariable Long userId,
+                                          @RequestParam int page,
+                                          @RequestParam int limit){
+        return diaryService.getDiaryBasicList(userId, page, limit);
+    }
+
 /*
     name : getDiaryDetail
     function : 일기 상세 조회
