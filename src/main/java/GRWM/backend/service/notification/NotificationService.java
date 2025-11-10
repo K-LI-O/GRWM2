@@ -91,6 +91,7 @@ public class NotificationService {
                 .receiverId(member.getId())
                 .senderId(member.getId())
                 .type(NotificationType.FOR_ME_TOMORROW)
+                .messageId(message.getId())
                 .content(content)
                 .build();
         notificationRepository.save(not);
@@ -111,11 +112,12 @@ public class NotificationService {
     }
 
     // 내일 메시지 수정용 어쩌구
-    public Notification getNotificationForFutureMessage(Long receiverId, String type, LocalDateTime scheduledTime){
-        return notificationRepository.findByReceiverIdAndTypeAndScheduledTime(
+    public Notification getNotificationForFutureMessage(Long receiverId, String type, Long messageId){
+        return notificationRepository.findByReceiverIdAndTypeAndMessageId(
                 receiverId,
                 NotificationType.valueOf(type),
-                Timestamp.valueOf(scheduledTime));
+                messageId
+                );
     }
 
     public void updateNotification(Notification not, LocalDateTime updatedTime){

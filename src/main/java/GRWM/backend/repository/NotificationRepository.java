@@ -12,5 +12,5 @@ import java.util.List;
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
 
     List<Notification> findByIsSentFalseAndScheduledTimeBefore(Timestamp timestamp);
-    Notification findByReceiverIdAndTypeAndScheduledTime(Long id, NotificationType type, Timestamp scheduledTime);
+    Notification findByReceiverIdAndTypeAndMessageId(Long id, NotificationType type, Long messageId);
 }

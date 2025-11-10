@@ -80,7 +80,7 @@ Response: FutureMessageDto;
 
         // Notification 객체 조회 및 수정(저장은 호출된 메서드 내에서)
         notificationService.updateNotification(notificationService.getNotificationForFutureMessage(
-                userId, "TOMORROW_MESSAGE", message.getScheduledTime()), dto.getScheduledTime());
+                userId, "TOMORROW_MESSAGE", message.getId()), dto.getScheduledTime());
 
         // 메시지 수정
         message.setContent(dto.getContent());

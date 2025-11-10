@@ -47,6 +47,7 @@ int totalCount; }
         for(TrackerTodo t : todoList){
             if(t.isActive()) activeCount++;
             RecurringTodoDto dto = RecurringTodoDto.builder()
+                    .recurringId(t.getId())
                     .todoDto(todoToDto(t))
                     .isActive(t.isActive())
                     .repeatRange(t.getRepeatRange().toString())
@@ -106,6 +107,7 @@ startDate: Date; // 시작일
         // 반환
         RecurringTodoDto result = RecurringTodoDto
                 .builder()
+                .recurringId(savedTodo.getId())
                 .todoDto(todoToDto(savedTodo))
                 .repeatRange(savedTodo.getRepeatRange())
                 .isActive(savedTodo.isActive())
@@ -131,8 +133,7 @@ startDate: Date; // 시작일
         if(!oldActive && savedTodo.isActive()) // 새로운 로직 생성;
             generateSchedule(savedTodo);
 
-
-
+        dto.setRecurringId(savedTodo.getId());
         return dto;
     }
 
