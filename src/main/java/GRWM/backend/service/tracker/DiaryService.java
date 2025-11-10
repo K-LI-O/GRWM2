@@ -90,7 +90,7 @@ int totalPages;
 
     public DiaryListDto getDiaryBasicList(Long userId, int page, int limit){
         Pageable pageable = PageRequest.of(page, limit);
-        Page<Diary> diaryPage = diaryRepository.findByMember_Id(userId);
+        Page<Diary> diaryPage = diaryRepository.findByMember_Id(userId, pageable);
         List<Diary> diaryList = diaryPage.getContent();
         List<DiaryDto> dtoList = new ArrayList<>();
         if(diaryList.isEmpty())

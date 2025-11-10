@@ -21,5 +21,5 @@ public interface DiaryRepository extends JpaRepository<Diary, Long> {
             "(:keyword IS NULL OR d.content LIKE %:keyword% OR d.title LIKE %:keyword%)")
     Page<Diary> findByMember_IdAndDateAndCategoryAndEmotionAndKeyword(Long userId, LocalDate date, String category, Emotion emotion, String keyword, Pageable pageable);
 
-    Page<Diary> findByMember_Id(Long userId);
+    Page<Diary> findByMember_Id(Long userId, Pageable pageable);
 }
