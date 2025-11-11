@@ -13,6 +13,7 @@ import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -31,9 +32,9 @@ public class TomorrowMessageService {
     param: Long userId, Long messagedId
     Response: FutureMessageDto;
     */
-    public TomorrowMessageDto getTomorrowMessage(Long userId, Long messageId){
+    public TomorrowMessageDto getTomorrowMessage(Long userId){
         // 객체 찾기 및 반환
-        Optional<TomorrowMessage> messageOptional = repository.findById(messageId);
+        Optional<TomorrowMessage> messageOptional = repository.findByCreator_IdAndScheduledTimeAfter(userId, LocalDateTime.now());
         if (messageOptional.isPresent()) {
             return messageToDto(messageOptional.get());
         } else {

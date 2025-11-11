@@ -20,9 +20,9 @@ public class TomorrowMessageController {
     param: Long userId, Long messagedId
     Response: FutureMessageDto;
     */
-    @GetMapping("/api/users/{userId}/future-message/{messageId}")
-    public TomorrowMessageDto getTomorrowMessage(@PathVariable Long userId, @PathVariable Long messageId){
-        return service.getTomorrowMessage(userId, messageId);
+    @GetMapping("/api/users/{userId}/future-message")
+    public TomorrowMessageDto getTomorrowMessage(@PathVariable Long userId){
+        return service.getTomorrowMessage(userId);
     }
 
     /*
