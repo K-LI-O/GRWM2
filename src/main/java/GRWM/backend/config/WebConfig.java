@@ -1,11 +1,17 @@
 package GRWM.backend.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
+@RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
+
+    private final FileStorageConfig fileStorageConfig;
+
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
@@ -18,6 +24,15 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowCredentials(true) // 5. 클라이언트가 자격 증명(쿠키, HTTP 인증)을 포함한 요청을 보낼지 여부
                 .maxAge(3600); // 6. Pre-flight 요청 결과를 캐싱할 시간 (초 단위)
         //    이 시간 동안 브라우저는 동일한 Pre-flight 요청을 다시 보내지 않습니다.
+    }
+
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // 클라이언트 요청 경로: /api/files/**
+        registry.addResourceHandler("/api/files/**")
+                // 로컬 파일 시스템 경로: file:///[설정된 저장 경로]/
+                .addResourceLocations("file:" + fileStorageConfig.getDir() + "/");
     }
 
 

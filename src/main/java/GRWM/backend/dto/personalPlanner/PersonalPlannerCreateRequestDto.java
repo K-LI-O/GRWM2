@@ -1,10 +1,14 @@
 package GRWM.backend.dto.personalPlanner;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class PersonalPlannerCreateRequestDto {
 
     private Long creatorId;
@@ -13,20 +17,7 @@ public class PersonalPlannerCreateRequestDto {
 
     private String explanation;
 
-    private String profileImageLink;
-
-
-    public PersonalPlannerCreateRequestDto() {}
-
-    public PersonalPlannerCreateRequestDto(Long creatorId, String title, String explanation, String profileImageLink) {
-        this.creatorId = creatorId;
-        this.title = title;
-        this.explanation = explanation;
-        this.profileImageLink = profileImageLink;
-
-
-    }
-
+    private String profileImage;
 
 }
 

@@ -33,7 +33,14 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void configureMessageBroker(MessageBrokerRegistry config) {
         // 클라이언트에게 메시지를 발행할 때 사용할 prefix
         // "/topic"으로 시작하는 메시지는 메시지 브로커가 처리하여 구독자에게 전달
-        config.enableSimpleBroker("/topic", "/user");
+        config.enableStompBrokerRelay("/topic", "/user").
+                setRelayHost("localhost").setRelayPort(61613).
+                setClientLogin("guest").setClientPasscode("guest").
+                setSystemLogin("guest").setSystemPasscode("guest").
+                setSystemHeartbeatSendInterval(10000).
+                // 서버가 클라이언트로부터 하트비트를 받기를 기대하는 주기 (10000ms = 10초)
+                setSystemHeartbeatReceiveInterval(10000);
+
 
         // 애플리케이션으로 들어오는 메시지의 destination prefix
         // "/app"으로 시작하는 메시지는 @MessageMapping 어노테이션이 붙은 컨트롤러 메서드로 라우팅
@@ -45,9 +52,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         // STOMP WebSocket 연결을 위한 엔드포인트 등록
         // 클라이언트는 ws://localhost:8080/ws/chatroom 로 연결
         // setAllowedOrigins("*")는 개발 시 CORS 문제 방지 (운영 시에는 특정 도메인으로 제한 권장)
-        registry.addEndpoint("/ws/chatroom").setAllowedOriginPatterns("*").withSockJS(); // SockJS는 웹소켓 미지원 브라우저 호환성 제공
-        registry.addEndpoint("/ws/chatroom").setAllowedOriginPatterns("*"); // SockJS는 웹소켓 미지원 브라우저 호환성 제공
-    }
+                registry.addEndpoint("/ws/").setAllowedOriginPatterns("*"); // SockJS는 웹소켓 미지원 브라우저 호환성 제공
+        }
 
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {

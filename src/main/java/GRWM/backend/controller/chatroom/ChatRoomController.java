@@ -1,12 +1,14 @@
 package GRWM.backend.controller.chatroom;
 
-
 import GRWM.backend.config.ChatRoomManager;
-import GRWM.backend.dto.chatRoom.*;
-import GRWM.backend.service.ChatRoomService;
+import GRWM.backend.dto.chatroom.*;
+import GRWM.backend.dto.community.CommunityUserBriefDto;
+import GRWM.backend.entity.user.CustomUserDetails;
+import GRWM.backend.service.chatroom.ChatRoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -123,10 +125,12 @@ public class ChatRoomController {
 
     @PostMapping("/{chatRoomId}/join")
     public ResponseEntity<Void> joinChatRoom(@PathVariable Long chatRoomId,
-                                             @RequestBody ChatRoomJoinDto dto){
+                                             @RequestBody ChatRoomJoinDto dto,
+                                             @AuthenticationPrincipal CustomUserDetails userDetails){
+
 
         try{
-            chatRoomService.joinChatRoom(dto.getUserId(), chatRoomId, dto.getChatName());
+            chatRoomService.joinChatRoom(userDetails.getCommunityUserId(), chatRoomId, dto);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -135,17 +139,18 @@ public class ChatRoomController {
 
 
 
-     /* POST
+     /* Delete
     함수명 : leaveChatRoom
     기능 : 멤버가 채팅방에서 퇴장
     매개 변수 : path variable userId, path variable chatRoomId
     반환값 : ResponseEntity<Void>
      */
 
-    @PostMapping("/{chatRoomId}/{userId}/leave")
+    @DeleteMapping("/{chatRoomId}/leave")
     public ResponseEntity<Void> joinChatRoom(@PathVariable Long chatRoomId,
-                                             @PathVariable Long userId){
-        chatRoomService.leaveChatRoom(userId, chatRoomId);
+                                                                                         @AuthenticationPrincipal CustomUserDetails userDetails
+                                            ){
+        chatRoomService.leaveChatRoom(userDetails.getCommunityUserId(), chatRoomId);
         return ResponseEntity.noContent().build();
     }
 
@@ -159,8 +164,9 @@ public class ChatRoomController {
      */
 
     @GetMapping("/show/{chatRoomId}")
-    public ChatRoomShowDto showChatRoomInfo(@PathVariable Long chatRoomId){
-        return chatRoomService.showChatRoomInfo(chatRoomId);
+    public ChatRoomShowDto showChatRoomInfo(@PathVariable Long chatRoomId,
+                                            @AuthenticationPrincipal CustomUserDetails userDetails){
+        return chatRoomService.showChatRoomInfo(chatRoomId, userDetails.getCommunityUserId());
     }
 
 
@@ -173,25 +179,39 @@ public class ChatRoomController {
      */
 
     @GetMapping("/show/{userId}/joinlist")
-    public List<ChatRoomShowDto> showJoinedChatRoomListInfo(@PathVariable Long userId){
-        return chatRoomService.showJoinedChatRoomListDto(userId);
+    public List<ChatRoomShowDto> showJoinedChatRoomListInfo(@PathVariable Long userId,
+                                                            @AuthenticationPrincipal CustomUserDetails userDetails){
+        return chatRoomService.showJoinedChatRoomListDto(userDetails.getCommunityUserId());
+
+    }
+
+        /*
+    함수명 : showChatRoomListInfo
+    기능 : 모든 채팅방들의 정보를 전달한다
+    매개변수 : xx
+    반환값 : Dto; 채팅방명, description, isPrivate, 최대 인원, 현재 입장한 사람들;
+     */
+
+    @GetMapping("/show")
+    public List<ChatRoomShowDto> showChatRoomListInfo(@AuthenticationPrincipal CustomUserDetails userDetails){
+        return chatRoomService.showChatRoomListInfo(userDetails.getCommunityUserId());
 
     }
 
 
 
     /*
-    함수명 : 채팅방 검색
-    기능 : 키워드로 채팅방을 검색한다.
-    매개변수 : path variable String tag
-    반환값 : Dto; String chatRoomName, String description, Bool isPrivate, int maxMembers int currentMembers;
-//     */
-//
-//    @GetMapping("search/{tag}")
-//    public List<ChatRoomShowDto> searchChatRoomListByTag(@PathVariable String tag){
-//
-//    }
+    함수명 : getChatroomUsers
+    기능 : 특정 채팅방의 사용자 목록을 제공한다.
+    매개변수 : Long chatRoomId
+    반환값 : List<CommunityUserBriefDto>}
 
+     */
+
+    @GetMapping("/{chatRoomId}/users")
+    public List<CommunityUserBriefDto> getChatroomUsers(@PathVariable Long chatRoomId){
+        return chatRoomService.getChatRoomUsers(chatRoomId);
+    }
 
     /*
     함수명 : createAnnouncement

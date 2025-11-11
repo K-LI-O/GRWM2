@@ -17,6 +17,6 @@ public class PersonalPlannerDto {
 
     private String explanation;
 
-    private String profileImageLink;
+    private String profileImage;
 
 }

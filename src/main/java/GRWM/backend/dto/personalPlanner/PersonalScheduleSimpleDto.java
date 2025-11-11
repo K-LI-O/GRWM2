@@ -17,8 +17,7 @@ public class PersonalScheduleSimpleDto {
 
     private String title;
 
-    private String categoryName; //카테고리명 반환; 없으면 null
-    private String categoryColor; // 카테고리 색상 반환; 없으면 null
+    CategoryInfoDto category; // 카테고리 색상 반환; 없으면 null
 
     private LocalDateTime startDateTime;
 
