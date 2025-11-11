@@ -21,7 +21,7 @@ public class Reaction {
     private CommunityUser reactor;
     private String reaction;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     private StudyRoomTodo todo;
 
 

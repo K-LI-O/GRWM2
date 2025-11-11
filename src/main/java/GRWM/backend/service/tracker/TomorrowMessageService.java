@@ -98,13 +98,21 @@ Response: FutureMessageDto;
     /*
     name : deleteTomorrowMessage
     function : 미래 메시지 삭제
-    URL: DELETE /api/users/{userId}/future-message/{messageId}
+    URL: DELETE /api/users/{userId}/future-message
     param : Long userId, Long messageId
     return value : -
     */
-    public void deleteTomorrowMessage(Long userId, Long messageId){
-        // 객체 삭제
-        repository.deleteById(messageId);
+    public void deleteTomorrowMessage(Long userId){
+        Optional<TomorrowMessage> messageOptional = repository.findByCreator_IdAndScheduledTimeAfter(userId, LocalDateTime.now());
+
+        if (messageOptional.isPresent()) {
+            // 알림 삭제
+            notificationService.deleteFutureMessageNotification(userId, messageOptional.get().getId());
+            repository.delete(messageOptional.get());
+        }else{
+            throw new RuntimeException("원본 메시지가 존재하지 않습니다.");
+        }
+
 
     }
 

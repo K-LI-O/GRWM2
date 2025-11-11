@@ -63,10 +63,9 @@ Response: FutureMessageDto;
     param : Long userId, Long messageId
     return value : -
     */
-    @DeleteMapping("/api/users/{userId}/future-message/{messageId}")
-    public ResponseEntity<Void> deleteTomorrowMessage(@PathVariable Long userId,
-                                                      @PathVariable Long messageId){
-        service.deleteTomorrowMessage(userId, messageId);
+    @DeleteMapping("/api/users/{userId}/future-message")
+    public ResponseEntity<Void> deleteTomorrowMessage(@PathVariable Long userId){
+        service.deleteTomorrowMessage(userId);
         return ResponseEntity.noContent().build();
     }
 

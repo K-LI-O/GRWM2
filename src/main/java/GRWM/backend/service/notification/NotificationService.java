@@ -128,5 +128,13 @@ public class NotificationService {
         notificationRepository.saveAndFlush(not);
     }
 
+    @Transactional
+    public void deleteFutureMessageNotification(Long userId, Long messageId){
+        notificationRepository.delete(notificationRepository.findByReceiverIdAndMessageId(
+                userId,
+                messageId
+        ).orElseThrow());
+    }
+
 
 }
