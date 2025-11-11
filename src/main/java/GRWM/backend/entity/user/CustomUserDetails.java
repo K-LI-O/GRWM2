@@ -5,28 +5,55 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.Collection;
 import java.util.List;
-
+import java.util.Map;
 
 
 @Getter
 @Setter
 @NoArgsConstructor(force = true)
-public class CustomUserDetails implements UserDetails {
+public class CustomUserDetails implements UserDetails, OAuth2User {
 
     private Long userId;
     private Long communityUserId;
     private String username;
+    private String communityUserNickname;
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
+    private Map<String, Object> attributes; // OAuth2User를 위한 Google 속성
 
     private boolean enabled;
     private boolean accountNonExpired;
     private boolean accountNonLocked;
     private boolean credentialsNonExpired;
 
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public Long getCommunityUserId() {
+        return communityUserId;
+    }
+
+    public String getCommunityUserNickname() {
+        return communityUserNickname;
+    }
+
+
+    @Override
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
+
+    @Override
+    public String getName() {
+        // OAuth2User의 고유 식별자 반환 (일반적으로 'sub' 또는 이메일)
+        return String.valueOf(attributes.get("sub"));
+    }
 
 
     @Override
@@ -58,6 +85,7 @@ public class CustomUserDetails implements UserDetails {
     public String getUsername() {
         return this.username;
     }
+
 
 
     /*
@@ -113,10 +141,11 @@ public class CustomUserDetails implements UserDetails {
 
 
 
-    public CustomUserDetails(Long userId, Long communityId, String username, String password, Collection<? extends GrantedAuthority> authorities) {
+    public CustomUserDetails(Long userId, Long communityId, String username, String password, String communityUserNickname, Collection<? extends GrantedAuthority> authorities) {
 
         this.userId = userId;
         this.communityUserId = communityId;
+        this.communityUserNickname = communityUserNickname;
         this.username = username;
         this.password = password;
         this.authorities = authorities;
@@ -124,17 +153,25 @@ public class CustomUserDetails implements UserDetails {
         // 혹은 실제 DB에서 가져온 사용자 정보를 기반으로 설정
     }
 
-    public CustomUserDetails(Long userId, Long communityId, String username, Collection<? extends GrantedAuthority> authorities) {
+    public CustomUserDetails(Long userId, Long communityId, String username, String communityUserNickname, Collection<? extends GrantedAuthority> authorities) {
 
         this.userId = userId;
         this.communityUserId = communityId;
         this.username = username;
+        this.communityUserNickname = communityUserNickname;
         this.password = "";
         this.authorities = authorities;
         // 계정 상태는 기본적으로 true로 설정하거나, 필요시 토큰 클레임에 추가하여 사용
         // 혹은 실제 DB에서 가져온 사용자 정보를 기반으로 설정
     }
 
-
+    public CustomUserDetails(Member member, String communityUserNickname, Map<String, Object> attributes) {
+        this.userId = member.getId();
+        communityUserId = member.getId();
+        this.communityUserNickname = communityUserNickname;
+        username = member.getUsername();
+        password = "";
+        this.attributes = attributes;
+    }
 
 }

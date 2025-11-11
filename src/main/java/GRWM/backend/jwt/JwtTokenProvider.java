@@ -27,6 +27,7 @@ public class JwtTokenProvider {
     private final Key key; // JWT 서명에 사용할 키
     private final long accessTokenExpirationTime; // 액세스 토큰 만료 시간 (밀리초)
 
+
     // application.yml/properties에서 JWT Secret Key와 만료 시간을 주입받습니다.
     public JwtTokenProvider(
             @Value("${jwt.secret}") String secretKey,
@@ -60,6 +61,7 @@ public class JwtTokenProvider {
         return Jwts.builder()
                 .setSubject(authentication.getName()) // subject: 사용자 ID (username)
                 .claim("userId", userDetails.getUserId()) // userId 추가
+                .claim("communityUserNickname", userDetails.getCommunityUserNickname()) // userId 추가
                 .claim("communityUserId", userDetails.getCommunityUserId()) // communityUserId 추가
                 .claim("auth", authorities) // "auth" 클레임에 권한 정보 저장
                 .setIssuedAt(new Date()) // 토큰 발행 시간
@@ -67,6 +69,45 @@ public class JwtTokenProvider {
                 .signWith(key, SignatureAlgorithm.HS256) // 사용할 서명 키와 알고리즘 설정 (HS256 권장)
                 .compact(); // JWT 문자열로 압축
     }
+
+    /*
+    name :
+    function :
+    param : CustomUserDetails, Authentication
+    return value : String
+     */
+    /**
+     * Authentication 객체를 받아서 Access Token을 생성합니다.
+     * @param authentication 인증된 Authentication 객체 (인증 후 UserDetails 정보 포함)
+     * @return 생성된 JWT Access Token 문자열
+     */
+    public String generateTokenWithCUD(CustomUserDetails userDetails, Authentication authentication) {
+        // 1. 권한 정보 가져오기
+
+        String authorities = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(",")); // 콤마로 구분된 문자열로 변환 (예: "ROLE_USER,ROLE_ADMIN")
+
+        // 2. 토큰 만료 시간 설정
+        long now = (new Date()).getTime();
+        Date validity = new Date(now + this.accessTokenExpirationTime);
+
+        // 3. JWT 토큰 생성
+        return Jwts.builder()
+                .setSubject(authentication.getName()) // subject: 사용자 ID (username)
+                .claim("userId", userDetails.getUserId()) // userId 추가
+                .claim("communityUserNickname", userDetails.getCommunityUserNickname()) // userId 추가
+                .claim("communityUserId", userDetails.getCommunityUserId()) // communityUserId 추가
+                .claim("auth", authorities) // "auth" 클레임에 권한 정보 저장
+                .setIssuedAt(new Date()) // 토큰 발행 시간
+                .setExpiration(validity) // 토큰 만료 시간
+                .signWith(key, SignatureAlgorithm.HS256) // 사용할 서명 키와 알고리즘 설정 (HS256 권장)
+                .compact(); // JWT 문자열로 압축
+    }
+
+
+
+
 
     /**
      * JWT 토큰으로부터 인증 정보를 가져옵니다.
@@ -84,6 +125,7 @@ public class JwtTokenProvider {
         String username = claims.getSubject();
         Long userId = claims.get("userId", Long.class);
         Long communityUserId = claims.get("communityUserId", Long.class);
+        String communityUserNickname = claims.get("communityUserNickname", String.class);
 
 
         String authClaim = claims.get("auth", String.class);
@@ -101,7 +143,7 @@ public class JwtTokenProvider {
         }
 
         // 3. CustomUserDetails 인스턴스 생성
-        CustomUserDetails principal = new CustomUserDetails(userId, communityUserId, username, authorities);
+        CustomUserDetails principal = new CustomUserDetails(userId, communityUserId, username, communityUserNickname, authorities);
         // 비밀번호는 이미 인증이 완료되었으므로 빈 문자열("") 또는 null을 전달
 
         // 4. Authentication 객체 반환

@@ -4,10 +4,7 @@ import GRWM.backend.entity.chatroom.ChatRoomMember;
 import GRWM.backend.entity.notification.PushToken;
 import GRWM.backend.entity.teamplanner.TeamMember;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +40,8 @@ public class Member {
     @OneToOne(mappedBy = "member")
     private PushToken pushToken;
 
+    private String googleId;
+
 
     // 단체 플래너
     @OneToMany(mappedBy = "member")
@@ -74,6 +73,15 @@ public class Member {
         this.loginId = loginId;
         this.password = password;
         this.email = email;
+    }
+    // 구글 회원가입 용도
+    public Member(String username, String sub, String email){
+        this.loginId = sub;
+        this.username = username;
+        this.googleId = sub;
+        this.email = email;
+        this.password = "";
+
     }
 
 }
