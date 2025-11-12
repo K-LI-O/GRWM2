@@ -14,6 +14,6 @@ public class RecurringTodoDto {
     private Long recurringId;
     private TodoDto todoDto;
     private String repeatRange;
-    private boolean isActive;
     private RecurrenceConfig recurrenceConfig;
+    private boolean isActive;
 }

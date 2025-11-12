@@ -49,8 +49,8 @@ int totalCount; }
                     .recurringId(t.getId())
                     .todoDto(todoToDto(t))
                     .isActive(t.isActive())
+                    .repeatRange(t.getRepeatRange())
                     .recurrenceConfig(getReccurenceConfig(t))
-                    .repeatRange(t.getRepeatRange().toString())
                     .build();
             todoDtos.add(dto);
         }
@@ -82,6 +82,7 @@ startDate: Date; // 시작일
 }
     return value : { recurringTodo: RecurringTodo}
     */
+    @Transactional
     public RecurringTodoDto createRecurringTodo(Long userId, CreateRecurringTodoDto dto){
         // 객체 생성
         TrackerTodo todo = TrackerTodo.builder()
@@ -98,15 +99,13 @@ startDate: Date; // 시작일
                 .build();
         // 객체 저장
         TrackerTodo savedTodo = trackerTodoRepository.save(todo);
-        System.out.println(savedTodo.isActive() + "\n");
         // 나머지 한달 동안의 어쩌구 생성.
         if(savedTodo.isActive()) {
             generateSchedule(savedTodo);
         }
 
         // 반환
-        RecurringTodoDto result = RecurringTodoDto
-                .builder()
+        RecurringTodoDto result = RecurringTodoDto.builder()
                 .recurringId(savedTodo.getId())
                 .todoDto(todoToDto(savedTodo))
                 .repeatRange(savedTodo.getRepeatRange())
@@ -121,23 +120,23 @@ startDate: Date; // 시작일
     function : 반복 To-Do 수정
     URL: PUT /api/users/{userId}/recurring-todos/{recurringId}
     */
-    public RecurringTodoDto updateRecurringTodo(Long userId, Long recurringId, RecurringTodoDto dto){
+    public RecurringTodoDto updateRecurringTodo(Long userId, Long recurringId, RecurringTodoUpdateDto dto){
         TrackerTodo todo = trackerTodoRepository.findById(recurringId).orElseThrow();
 
         String oldRepeatRange = todo.getRepeatRange();
         LocalDate oldDate = todo.getDate();
         boolean oldActive = todo.isActive();
 
-        todo.setTitle(dto.getTodoDto().getTitle());
-        todo.setDescription(dto.getTodoDto().getDescription());
-        todo.setDate(dto.getTodoDto().getDate());
+        todo.setTitle(dto.getTitle());
+        todo.setDescription(dto.getDescription());
+        todo.setDate(dto.getStartDate());
         todo.setRepeatRange(dto.getRepeatRange());
         TrackerTodo savedTodo = trackerTodoRepository.save(todo);
 
         // 오늘 및 이후에 예정된 일반 투두의 제목과 설명 바꾸기
-        updateTitleAndDescription(todo, dto.getTodoDto().getTitle(), dto.getTodoDto().getDescription());
+        updateTitleAndDescription(todo, dto.getTitle(), dto.getDescription());
 
-        boolean dateOrRepeatChanged = !oldRepeatRange.equals(dto.getRepeatRange()) || !oldDate.equals(dto.getTodoDto().getDate());
+        boolean dateOrRepeatChanged = !oldRepeatRange.equals(dto.getRepeatRange()) || !oldDate.equals(dto.getStartDate());
         boolean wasActive = oldActive;
         boolean isActiveNow = savedTodo.isActive();
 
@@ -156,7 +155,6 @@ startDate: Date; // 시작일
             generateSchedule(savedTodo);
         }
 
-        dto.setRecurringId(savedTodo.getId());
         RecurringTodoDto result = RecurringTodoDto.builder()
                 .recurringId(savedTodo.getId())
                 .todoDto(todoToDto(savedTodo))
@@ -164,7 +162,6 @@ startDate: Date; // 시작일
                 .recurrenceConfig(getReccurenceConfig(savedTodo))
                 .isActive(savedTodo.isActive())
                 .build();
-
         return result;
     }
 
