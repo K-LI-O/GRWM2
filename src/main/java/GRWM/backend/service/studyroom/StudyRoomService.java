@@ -1,5 +1,6 @@
 package GRWM.backend.service.studyroom;
 
+import GRWM.backend.dto.StudyRoomJoinDto;
 import GRWM.backend.dto.community.CommunityUserBriefDto;
 import GRWM.backend.dto.studyroom.*;
 import GRWM.backend.entity.studyroom.Reaction;
@@ -51,6 +52,8 @@ public class StudyRoomService {
                 .duration(dto.getDuration())
                 .extensionTime(dto.getExtensionTime())
                 .isActive(true)
+                .isPrivate(dto.isPrivate())
+                .password(dto.getPassword())
                 .build();
         StudyRoom savedRoom = studyRoomRepository.saveAndFlush(studyRoom);
         return savedRoom.getId();
@@ -91,7 +94,7 @@ int totalPages; 전체 페이지 개수 (페이징 관련 파라미터)
     param : Long studyRoomId;
     return value : ResponseEntity<Boolean>
     */
-    public boolean joinStudyRoom(Long studyRoomId, Long communityId){
+    public boolean joinStudyRoom(Long studyRoomId, Long communityId, StudyRoomJoinDto dto){
         StudyRoom studyRoom = extractOptionalRoom(studyRoomId);
         CommunityUser user = extractOptionalUser(communityId);
 
@@ -100,6 +103,10 @@ int totalPages; 전체 페이지 개수 (페이징 관련 파라미터)
         // 이미 존재하는 멤버인지 검증
         for(StudyRoomMember sm : studyRoom.getMembers()){
             if(sm.getUser().getId().equals(user.getId())) throw new RuntimeException("이미 입장한 스터디룸입니다.");
+        }
+
+        if(studyRoom.isPrivate() && !studyRoom.getPassword().equals(dto.getPassword())){
+            throw new RuntimeException("틀린 비밀번호입니다.");
         }
 
         // 검증된 경우 멤버로 저장;
@@ -160,6 +167,7 @@ currentUserStatus: "joined" | "owner";
                 .extensionTime(studyRoom.getExtensionTime())
                 .todoList(todoToDtoList(studyRoom.getTodoList()))
                 .extensionCount(studyRoom.getExtensionCount())
+                .isPrivate(studyRoom.isPrivate())
 
                 .currentMembers(studyRoom.getMemberCount())
                 .startTime(studyRoom.getCreatedAt())
@@ -245,6 +253,7 @@ currentUserStatus: "joined" | "owner";
                 .name(s.getName())
                 .creator(creatorDto)
                 .category(s.getCategory())
+                .isPrivate(s.isPrivate())
                 .description(s.getDescription())
                 .startTime(s.getCreatedAt())
                 .endTime(s.getCreatedAt().plusMinutes(s.getDuration()))
@@ -284,8 +293,8 @@ currentUserStatus: "joined" | "owner";
                     .category(s.getCategory())
                     .description(s.getDescription())
                     .currentMembers(s.getMemberCount())
+                    .isPrivate(s.isPrivate())
                     .startTime(s.getCreatedAt())
-
                     .endTime(s.getCreatedAt().plusMinutes(s.getDuration()))
                     .build();
             result.add(dto);

@@ -21,5 +21,7 @@ boolean isPrivate; 공개 여부 (isPublic 이었는데 private으로 다른 파
     private String description;
     private int duration;
     private int extensionTime;
-    boolean isPrivate;
+    private boolean isPrivate;
+    private String password;
+
 }

@@ -1,5 +1,6 @@
 package GRWM.backend.controller.studyroom;
 
+import GRWM.backend.dto.StudyRoomJoinDto;
 import GRWM.backend.dto.studyroom.*;
 import GRWM.backend.entity.user.CustomUserDetails;
 import GRWM.backend.service.studyroom.StudyRoomService;
@@ -69,8 +70,8 @@ currentUserStatus: "joined" | "owner";
     */
     @PostMapping("/api/study-rooms/{studyRoomId}/join")
     public ResponseEntity<Boolean> joinStudyRoom(@PathVariable Long studyRoomId,
-                                                      @AuthenticationPrincipal CustomUserDetails userDetails){
-        return ResponseEntity.ok(studyRoomService.joinStudyRoom(studyRoomId, userDetails.getCommunityUserId()));
+                                                      @AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody StudyRoomJoinDto dto){
+        return ResponseEntity.ok(studyRoomService.joinStudyRoom(studyRoomId, userDetails.getCommunityUserId(), dto));
     }
 
     /*

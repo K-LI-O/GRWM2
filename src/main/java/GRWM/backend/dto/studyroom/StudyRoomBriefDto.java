@@ -20,6 +20,7 @@ public class StudyRoomBriefDto {
     @Builder.Default
     private int maxMember = 8;
     private int currentMembers;
+    private boolean isPrivate;
 
     private LocalDateTime startTime;
     private LocalDateTime endTime;

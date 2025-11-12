@@ -49,6 +49,9 @@ int extensionCount; // 최대 n회 연장 가능하며, 해당 방이 몇 회나
     private String category;
     private String description;
 
+    private boolean isPrivate;
+    private String password;
+
     @Builder.Default
     @OneToMany(mappedBy = "studyRoom", cascade = CascadeType.ALL)
     private List<StudyRoomMember> members = new ArrayList<>();
