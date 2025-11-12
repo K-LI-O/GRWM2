@@ -89,12 +89,19 @@ boolean result; (결과; 투표가 완료되기 전에는 사용하지 말 것)
                 .votedCount(studyRoom.getVoteCount())
                 .totalParticipants(studyRoom.getMemberCount())
                 .isCompleted(((double) studyRoom.getVoteCount() / studyRoom.getMemberCount() >= (double) 2 / 3))
+                .type("VOTE_UPDATED")
                 .result(voteCompletion(
                         studyRoom.getAgreedCount(),
                         studyRoom.getVoteCount(),
                         studyRoom.getMemberCount())
                 )
                 .build();
+        if(result.isCompleted() && result.isResult()) extendStudyRoom(studyRoomId);
+
+        // 웹소켓 전파
+        String destination = "/topic/studyroom." + studyRoomId + ".extension";
+        messagingTemplate.convertAndSend(destination, result);
+
         return result;
     }
 
