@@ -264,6 +264,7 @@ String editorRange,
                     .category(getCategoryDto(t))
                     .startDateTime(t.getStartTime())
                     .finishDateTime(t.getFinishTime())
+                    .location(t.getLocation())
                     .build();
             result.add(dto);
         }
@@ -314,6 +315,7 @@ String editorRange,
                     .category(getCategoryDto(t))
                     .startDateTime(t.getStartTime())
                     .finishDateTime(t.getFinishTime())
+                    .location(t.getLocation())
                     .build();
             result.add(dto);
         }
@@ -353,6 +355,7 @@ String editorRange,
                     .category(getCategoryDto(t))
                     .startDateTime(t.getStartTime())
                     .finishDateTime(t.getFinishTime())
+                    .location(t.getLocation())
                     .build();
             result.add(dto);
         }

@@ -26,6 +26,7 @@ LocalDateTime finishDateTime,
     private TeamCategoryDto category;
     private LocalDateTime startDateTime;
     private LocalDateTime finishDateTime;
+    private String location;
 
 
 }

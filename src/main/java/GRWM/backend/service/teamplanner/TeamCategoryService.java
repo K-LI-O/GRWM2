@@ -10,7 +10,6 @@ import GRWM.backend.dto.teamPlanner.TeamScheduleBriefDto;
 import GRWM.backend.entity.teamplanner.TeamCategory;
 import GRWM.backend.entity.teamplanner.TeamPlanner;
 import GRWM.backend.entity.teamplanner.TeamSchedule;
-import GRWM.backend.entity.user.CommunityUser;
 import GRWM.backend.repository.teamplanner.TeamCategoryRepository;
 import GRWM.backend.repository.teamplanner.TeamMemberRepository;
 import GRWM.backend.repository.teamplanner.TeamPlannerRepository;
