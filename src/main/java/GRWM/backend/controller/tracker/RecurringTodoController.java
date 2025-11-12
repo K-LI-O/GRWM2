@@ -1,9 +1,6 @@
 package GRWM.backend.controller.tracker;
 
-import GRWM.backend.dto.tracker.CreateRecurringTodoDto;
-import GRWM.backend.dto.tracker.RecurringTodoDto;
-import GRWM.backend.dto.tracker.RecurringTodoListDto;
-import GRWM.backend.dto.tracker.TodoDto;
+import GRWM.backend.dto.tracker.*;
 import GRWM.backend.service.tracker.RecurringTodoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -65,7 +62,7 @@ startDate: Date; // 시작일
     @PutMapping("/api/users/{userId}/recurring-todos/{recurringId}")
     public RecurringTodoDto updateRecurringTodo(@PathVariable Long userId,
                                                 @PathVariable Long recurringId,
-                                                @RequestBody RecurringTodoDto dto){
+                                                @RequestBody RecurringTodoUpdateDto dto){
         return service.updateRecurringTodo(userId, recurringId, dto);
     }
 
