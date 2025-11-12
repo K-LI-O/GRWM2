@@ -1,9 +1,6 @@
 package GRWM.backend.service.tracker;
 
-import GRWM.backend.dto.tracker.CreateRecurringTodoDto;
-import GRWM.backend.dto.tracker.RecurringTodoDto;
-import GRWM.backend.dto.tracker.RecurringTodoListDto;
-import GRWM.backend.dto.tracker.TodoDto;
+import GRWM.backend.dto.tracker.*;
 import GRWM.backend.entity.tracker.TrackerTodo;
 import GRWM.backend.repository.tracker.TrackerTodoRepository;
 import lombok.RequiredArgsConstructor;
@@ -46,10 +43,13 @@ int totalCount; }
         int activeCount = 0;
         for(TrackerTodo t : todoList){
             if(t.isActive()) activeCount++;
+
+
             RecurringTodoDto dto = RecurringTodoDto.builder()
                     .recurringId(t.getId())
                     .todoDto(todoToDto(t))
                     .isActive(t.isActive())
+                    .recurrenceConfig(getReccurenceConfig(t))
                     .repeatRange(t.getRepeatRange().toString())
                     .build();
             todoDtos.add(dto);
@@ -110,6 +110,7 @@ startDate: Date; // 시작일
                 .recurringId(savedTodo.getId())
                 .todoDto(todoToDto(savedTodo))
                 .repeatRange(savedTodo.getRepeatRange())
+                .recurrenceConfig(getReccurenceConfig(savedTodo))
                 .isActive(savedTodo.isActive())
                 .build();
         return result;
@@ -160,6 +161,7 @@ startDate: Date; // 시작일
                 .recurringId(savedTodo.getId())
                 .todoDto(todoToDto(savedTodo))
                 .repeatRange(savedTodo.getRepeatRange())
+                .recurrenceConfig(getReccurenceConfig(savedTodo))
                 .isActive(savedTodo.isActive())
                 .build();
 
@@ -423,6 +425,18 @@ Response: { generatedTodos: Todo[]; targetDate: Date; }
             // 주의: isPresent 를 사용하여 orElseThrow() 오류를 방지
             // 이미 삭제된 ID는 그냥 건너뜀
         }
+    }
+
+    private RecurrenceConfig getReccurenceConfig(TrackerTodo t){
+        RecurrenceConfig config = RecurrenceConfig.builder().build();
+        if(t.getRepeatRange().equals("daily")){
+            config.setInterval(t.getRepeatInterval());
+        } else if(t.getRepeatRange().equals("weekly")){
+            config.setWeekly(t.getWeekly());
+        } else{
+            config.setMonthly(t.getMonthly());
+        }
+        return config;
     }
 
 }
