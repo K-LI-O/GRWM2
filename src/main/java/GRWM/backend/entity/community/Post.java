@@ -28,7 +28,7 @@ public class Post {
 
     private String content;
 
-    private String visibility;
+    private String visibility; //모두 / 친구 / 나만
 
     @CreatedDate
     private LocalDateTime createdAt;
@@ -38,7 +38,7 @@ public class Post {
 
     private boolean isEdited = false;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     private CommunityUser user;
 

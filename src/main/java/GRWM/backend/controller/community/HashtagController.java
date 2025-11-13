@@ -6,6 +6,8 @@ import GRWM.backend.entity.user.CustomUserDetails;
 import GRWM.backend.service.community.HashtagService;
 import GRWM.backend.service.community.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -100,8 +102,9 @@ public class HashtagController {
      */
 
     @GetMapping("/users/subscribed-hashtags/posts")
-    public List<PostDto> getSubscribedHashtagPosts(@AuthenticationPrincipal CustomUserDetails userDetails){
-        return postService.getSubscribedHashtagPostList(userDetails.getCommunityUserId());
+    public List<PostDto> getSubscribedHashtagPosts(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                   @PageableDefault(size = 20) Pageable pageable){
+        return postService.getSubscribedHashtagPostList(userDetails.getCommunityUserId(), pageable);
 
     }
 

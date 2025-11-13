@@ -4,14 +4,12 @@ import GRWM.backend.dto.community.CommunityUseListDto;
 import GRWM.backend.dto.community.CommunityUserBriefDto;
 import GRWM.backend.dto.community.CommunityUserFullInfoDto;
 import GRWM.backend.dto.community.ProfileUpdateDto;
-import GRWM.backend.entity.community.BlockList;
-import GRWM.backend.entity.community.Following;
-import GRWM.backend.entity.community.Post;
-import GRWM.backend.entity.community.UserBadge;
+import GRWM.backend.entity.community.*;
 import GRWM.backend.entity.user.CommunityUser;
 
 import GRWM.backend.repository.community.BlockListRepository;
 import GRWM.backend.repository.community.FollowingRepository;
+import GRWM.backend.repository.community.FriendShipRepository;
 import GRWM.backend.repository.user.CommunityUserRepository;
 import GRWM.backend.repository.user.MemberRepository;
 import GRWM.backend.service.MemberService;
@@ -34,9 +32,7 @@ public class CommunityUserService {
     private final CommunityUserRepository communityUserRepository;
     private final FollowingRepository followingRepository;
     private final BlockListRepository blockListRepository;
-    private final NotificationService notificationService;
-    private final MemberRepository memberRepository;
-
+    private final FriendShipRepository friendShipRepository;
 
         /*
     함수명 : showUserProfile
@@ -157,11 +153,9 @@ public class CommunityUserService {
      */
 
     public int followUser(Long communityId, Long targetId) throws Exception {
-
-        if(followingRepository.existsByFollowingAndFollower(
-                extractOptionalUser(targetId),
-                extractOptionalUser(communityId))
-        ){
+        CommunityUser user = extractOptionalUser(communityId);
+        CommunityUser targetUser = extractOptionalUser(targetId);
+        if(followingRepository.existsByFollowingAndFollower(targetUser, user)) {
             // 팔로잉 관계 데이터가 이미 존재한다면
             throw new RuntimeException("이미 팔로우한 사용자입니다.");
         }
@@ -174,6 +168,15 @@ public class CommunityUserService {
 
         // 팔로우 대상자에게 팔로우 알림 보내기
         // notificationService.createFollowNotification(memberRepository.findById(targetId).orElseThrow(), communityId, targetId);
+
+        // 상대방이 나를 이미 팔로우하고 있었다면 맞팔로우 테이블 생성;
+        if(followingRepository.existsByFollowingAndFollower(user, targetUser)){
+            Friendship friendship = Friendship.builder()
+                    .user1(user)
+                    .user2(targetUser)
+                    .build();
+            followingRepository.save(following);
+        }
 
         // 저장
         followingRepository.save(following);
@@ -189,15 +192,20 @@ public class CommunityUserService {
      */
 
     public int unfollowUser(Long communityId, Long followingId) {
-
-        // Id로 커뮤니티 객체 불러오기;
-
+        // Id로 커뮤니티 객체 불러오기
+        CommunityUser user = extractOptionalUser(communityId);
+        CommunityUser targetUser = extractOptionalUser(followingId);
 
         Following following = followingRepository.findByFollowingAndFollower(
 
                 extractOptionalUser(followingId),
                 extractOptionalUser(communityId)
         );
+        // 맞팔로우 관계가 존재한다면 테이블 삭제
+        if(friendShipRepository.existsFriendshipBetweenUsers(user, targetUser)){
+            friendShipRepository.delete(friendShipRepository.findFriendshipBetweenUsers(user, targetUser).get());
+
+        }
         followingRepository.delete(following);
         return countFollowing(communityId);
     }
@@ -270,6 +278,8 @@ public class CommunityUserService {
         if(reversefollowing != null){
             followingRepository.delete(reversefollowing);
         }
+
+        // 맞팔로우 상태였다면 맞팔로우 데이터 삭제
 
         // 블락 리스트의 새 칼럼 생성
         BlockList block = new BlockList(
@@ -407,6 +417,8 @@ public class CommunityUserService {
         else if (blockListRepository.findByBlockerAndBlockedUser(target, user) != null
             // 내가 target 에게 블락됨
         ) return "isBlockingMe";
+        else if (friendShipRepository.existsFriendshipBetweenUsers(user, target))
+            return "FollowingEachOther";
         else if (followingRepository.findByFollowingAndFollower(user, target) != null
             // 내가 팔로우됨, 타겟이 팔로워
         ) return "isFollowingMe";

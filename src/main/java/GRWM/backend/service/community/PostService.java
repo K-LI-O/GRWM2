@@ -31,6 +31,7 @@ public class PostService {
     private final PostHashtagRepository postHashtagRepository;
     private final CommunityUserHashtagRepository cuHashtagRepository;
     private final FollowingRepository followingRepository;
+    private final BlockListRepository blockListRepository;
 
 
 
@@ -147,12 +148,10 @@ public class PostService {
         List<Following> followingList = extractOptionalUser(communityId).getFollowingList();
 
         // 해당 계정의 포스트 목록 시간순으로 가져오기 향상된 for 문 이용;
-        List<CommunityUser> followingUserList = new ArrayList<>();
-        followingUserList.add(extractOptionalUser(communityId));
+        List<Long> followingUserList = new ArrayList<>();
+        followingUserList.add(extractOptionalUser(communityId).getId());
         for(Following t : followingList){
-            if(checkVisibility(t.getId(), communityId)) {
-                followingUserList.add(t.getFollowing());
-            }
+            followingUserList.add(t.getFollowing().getId());
         }
 
         // Pageable 객체 추가 설정
@@ -161,7 +160,7 @@ public class PostService {
                 pageable.getPageSize(),
                 Sort.by(Sort.Direction.DESC, "createdAt")
         );
-        Slice<Post> postSlice = postRepository.findAllByUserIn(followingUserList, p);
+        Slice<Post> postSlice = postRepository.findTimelinePostsWithVisibility(communityId, followingUserList, p);
         List<Post> postList = postSlice.getContent();
 
         // dto 리스트에 담기
@@ -186,8 +185,12 @@ public class PostService {
     */
 
     @Transactional(readOnly = true)
-    public PostListDto getUserPosts(Long communityId, Pageable pageable, Long readerId) throws AccessDeniedException{
-        CommunityUser user = findCommunityUserById(communityId);
+    public PostListDto getUserPosts(Long targetId, Pageable pageable, Long readerId) throws AccessDeniedException{
+        CommunityUser user = findCommunityUserById(targetId); // 접속자
+        // 계정 소유자 객체
+        // 관계 반환
+
+
 
         // pageable 객체 생성;
         Pageable p = PageRequest.of(
@@ -196,7 +199,7 @@ public class PostService {
                 Sort.by(Sort.Direction.DESC, "createdAt")
         );
 
-        Slice<Post> postSlice = postRepository.findByUser(user, p);
+        Slice<Post> postSlice = postRepository.findUserPagePostsWithVisibility(readerId, targetId, p);
         List<Post> postList = postSlice.getContent();
 
         List<PostDto> dtoList = new ArrayList<>();
@@ -268,24 +271,29 @@ public class PostService {
      */
 
     @Transactional(readOnly = true)
-    public List<PostDto> getSubscribedHashtagPostList(Long communityId){
+    public List<PostDto> getSubscribedHashtagPostList(Long communityId, Pageable pageable){
+
+        // pageable 객체 생성;
+        Pageable p = PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by(Sort.Direction.DESC, "createdAt")
+        );
+
         // 사용자와 해시태그 관계 elements 불러오기
         List<CommunityUserHashtag> chList =
                 cuHashtagRepository.findByUser(findCommunityUserById(communityId));
 
         // 해시태그 추출
-        List<Hashtag> hashtagList = new ArrayList<>();
-
+        List<Long> hashtagIds = new ArrayList<>();
         for(CommunityUserHashtag t : chList){
-            hashtagList.add(t.getHashtag());
+            hashtagIds.add(t.getHashtag().getId());
         }
 
+        // 해시태그 목록으로 포스트 불러오기, 그들 중 public과 private는 포함.
         // 해시태그 목록으로 포스트 해시태그 목록 불러와서 포스트 추출;
-        List<PostHashtag> phList = postHashtagRepository.findAllByHashtagIn(hashtagList);
-        List<Post> postList = new ArrayList<>();
-        for(PostHashtag t : phList){
-            postList.add(t.getPost());
-        }
+        Slice<Post> postSlice = postRepository.findPostsByHashtagAndVisibility(hashtagIds, communityId, p);
+        List<Post> postList = postSlice.getContent();
 
         List<PostDto> dtoList = new ArrayList<>();
         for (Post t : postList) {
@@ -324,23 +332,22 @@ public class PostService {
                 Sort.by(Sort.Direction.DESC, "createdAt")
         );
 
-        // 포스트-해시태그 찾기
-        Slice<PostHashtag> phSlice = postHashtagRepository.findByHashtag(tag, p);
-        List<PostHashtag> phList = phSlice.getContent();
+        // 포스트 찾기
+        Slice<Post> postSlice = postRepository.searchPostsByHashtagAndVisibility(tag.getId(), readerId, p);
+        List<Post> postList = postSlice.getContent();
 
         // 포스트 dto 목록 반환
         List<PostDto> dtoList = new ArrayList<>();
-        if (phList.isEmpty()) {
+        if (postList.isEmpty()) {
             return new PostListDto(dtoList, false);
         }
 
-        for(PostHashtag t : phList){
-            if(checkVisibility(t.getId(), readerId)){
-            dtoList.add(postToDto(t.getPost()));
-            }
+        for(Post t : postList){
+            dtoList.add(postToDto(t));
+
         }
 
-        return new PostListDto(dtoList, phSlice.hasNext());
+        return new PostListDto(dtoList, postSlice.hasNext());
     }
 
 
@@ -366,7 +373,7 @@ public class PostService {
         );
 
         // 포스트 목록 슬라이스로 찾아오기
-        Slice<Post> postSlice = postRepository.findByContentContaining(keyword, p);
+        Slice<Post> postSlice = postRepository.findSearchPostsWithVisibility(keyword, readerId, pageable);
         List<Post> postList = postSlice.getContent();
 
         List<PostDto> dtoList = new ArrayList<>();
@@ -377,7 +384,6 @@ public class PostService {
         }
 
         return new PostListDto(dtoList, postSlice.hasNext());
-
     }
 
 
@@ -403,6 +409,17 @@ public class PostService {
         else{
             throw new RuntimeException("존재하지 않는 사용자입니다.");
         }
+
+    }
+
+
+
+    private String getRelationshipOnPost(CommunityUser user, CommunityUser target) {
+        if(user.equals(target)) return "private"; // 모든 것 볼 수 있음
+        else if (followingRepository.findByFollowingAndFollower(user, target) != null
+                && followingRepository.findByFollowingAndFollower(target, user) != null)
+            return "friends"; // public 과 friends만 볼 수 있음
+        else return "public";
 
     }
 
