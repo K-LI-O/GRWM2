@@ -161,7 +161,7 @@ startDate: Date; // 시작일
 // A. 주기/날짜가 변했고 (삭제했으므로 새로 생성),
 // B. 비활성화 상태였다가 활성화된 경우 (새로운 일정 필요),
 // C. (선택) 활성 상태를 유지하면서 주기/날짜만 변한 경우
-        if (isActiveNow && (dateOrRepeatChanged || todoDayChanged)) {
+        if (isActiveNow && (dateOrRepeatChanged || todoDayChanged) || (!wasActive && isActiveNow)) {
             generateSchedule(savedTodo);
         }
 
