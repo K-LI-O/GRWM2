@@ -126,32 +126,42 @@ startDate: Date; // 시작일
         String oldRepeatRange = todo.getRepeatRange();
         LocalDate oldDate = todo.getDate();
         boolean oldActive = todo.isActive();
+        int oldInterval = todo.getRepeatInterval();
+        List<Integer> oldWeekly = todo.getWeekly();
+        int oldMonthly = todo.getMonthly();
+
 
         todo.setTitle(dto.getTitle());
         todo.setDescription(dto.getDescription());
         todo.setDate(dto.getStartDate());
         todo.setRepeatRange(dto.getRepeatRange());
-        TrackerTodo savedTodo = trackerTodoRepository.save(todo);
+        todo.setWeekly(dto.getWeekly());
+        todo.setMonthly(dto.getMonthly());
+        todo.setRepeatInterval(dto.getDaily());
+        todo.setActive(dto.isActive());
+        TrackerTodo savedTodo = trackerTodoRepository.saveAndFlush(todo);
 
         // 오늘 및 이후에 예정된 일반 투두의 제목과 설명 바꾸기
         updateTitleAndDescription(todo, dto.getTitle(), dto.getDescription());
 
         boolean dateOrRepeatChanged = !oldRepeatRange.equals(dto.getRepeatRange()) || !oldDate.equals(dto.getStartDate());
         boolean wasActive = oldActive;
-        boolean isActiveNow = savedTodo.isActive();
+        boolean isActiveNow = dto.isActive();
+        boolean todoDayChanged = oldInterval != dto.getDaily() || !oldWeekly.equals(dto.getWeekly()) || oldMonthly != dto.getMonthly();
 
 // 4. 삭제 로직
 // A. 주기/날짜가 변했거나 (활성화 상태였든 아니었든),
 // B. 기존에 활성화 상태였는데 지금 비활성화 된 경우
-        if (dateOrRepeatChanged || (wasActive && !isActiveNow)) {
-            deleteFutureSchedule(savedTodo.getGeneratedTodos());
+        // 위가 변하진 않았지만 일정의 주기가 변화한 경우
+        if (dateOrRepeatChanged || (wasActive && !isActiveNow) || todoDayChanged) {
+            deleteFutureSchedule(savedTodo);
         }
 
 // 5. 생성 로직
 // A. 주기/날짜가 변했고 (삭제했으므로 새로 생성),
 // B. 비활성화 상태였다가 활성화된 경우 (새로운 일정 필요),
 // C. (선택) 활성 상태를 유지하면서 주기/날짜만 변한 경우
-        if (isActiveNow && (dateOrRepeatChanged || !wasActive)) {
+        if (isActiveNow && (dateOrRepeatChanged || todoDayChanged)) {
             generateSchedule(savedTodo);
         }
 
@@ -237,24 +247,26 @@ Response: { generatedTodos: Todo[]; targetDate: Date; }
             System.err.println("반복 투두 ID " + tt.getId() + "에 시작 날짜(Date)가 설정되지 않았습니다.");
             return; // 생성 로직 중단
         }
+        List<Long> todos = new ArrayList<>();
         // 먼슬리인 경우
         if(tt.getRepeatRange().equals("monthly")){
             LocalDate scheduledDateThisMonth = getMonthlySchedule(tt);
-            List<Long> todos = tt.getGeneratedTodos();
+
             if (!scheduledDateThisMonth.isBefore(LocalDate.now())) {
                 todos.add(createAndSaveTodo(tt, scheduledDateThisMonth));
             }
 
         } else if(tt.getRepeatRange().equals("weekly")) {// 위클리인 경우
-            createWeeklyTodo(tt);
+            todos.addAll(createWeeklyTodo(tt));
 
         } else { // 날별 반복인 경우
-            createDailyTodo(tt);
+            todos.addAll(createDailyTodo(tt));
         }
+        tt.addGeneratedTodos(todos);
         trackerTodoRepository.save(tt);
     }
 
-    private void createDailyTodo(TrackerTodo tt){
+    private List<Long> createDailyTodo(TrackerTodo tt){
         // 1. 기준 날짜 및 반복 정보 설정
         LocalDate today = LocalDate.now();
         // 현재 달의 마지막 날을 순회 종료 기준으로 설정
@@ -281,7 +293,7 @@ Response: { generatedTodos: Todo[]; targetDate: Date; }
             nextScheduleDate = today.plusDays(repeatInterval - remainder);
         }
 
-        List<Long> todos = tt.getGeneratedTodos();
+        List<Long> todos = new ArrayList<>();
         // 3. 투두 생성 및 순회 (오늘 이후 월말까지)
         while (!nextScheduleDate.isAfter(currentMonthEnd)) {
 
@@ -300,14 +312,13 @@ Response: { generatedTodos: Todo[]; targetDate: Date; }
             // 다음 생성 예정일로 N일만큼 이동
             nextScheduleDate = nextScheduleDate.plusDays(repeatInterval);
         }
-        tt.setGeneratedTodos(todos);
+        return todos;
     }
 
     // 먼슬리 로직에 사용할 날짜 조정 로직
     private LocalDate getMonthlySchedule(TrackerTodo tt){
-        LocalDate today = LocalDate.now();
-        int maxDayOfMonth = today.lengthOfMonth();
-        int targetDay = tt.getDate().getDayOfMonth();
+        int maxDayOfMonth = LocalDate.now().lengthOfMonth();
+        int targetDay = tt.getMonthly();
 
         if (targetDay > maxDayOfMonth) {
             // 설정하려는 일자가 유효 범위를 벗어난 경우
@@ -315,7 +326,7 @@ Response: { generatedTodos: Todo[]; targetDate: Date; }
             return LocalDate.now().withDayOfMonth(maxDayOfMonth);
         } else {
             // 유효한 경우, 해당 일자로 설정하여 반환
-            return LocalDate.now().withDayOfMonth(targetDay);
+            return LocalDate.of(LocalDate.now().getYear(), LocalDate.now().getMonth(), tt.getMonthly());
         }
     }
 
@@ -363,7 +374,7 @@ Response: { generatedTodos: Todo[]; targetDate: Date; }
         return trackerTodoRepository.save(todo).getId();
     }
 
-    private void createWeeklyTodo(TrackerTodo tt){
+    private List<Long> createWeeklyTodo(TrackerTodo tt){
         LocalDate today = LocalDate.now();
         int startDay = today.getDayOfMonth() != 1 ? today.getDayOfMonth() : 1;
         int maxDay = today.lengthOfMonth();
@@ -371,7 +382,7 @@ Response: { generatedTodos: Todo[]; targetDate: Date; }
         LocalDate baseDate = today.withDayOfMonth(1);
 
         List<Integer> weeks = tt.getWeekly();
-        List<Long> todos = tt.getGeneratedTodos();
+        List<Long> todos = new ArrayList<>();
         for (int day = startDay; day <= maxDay; day++) {
             // 현재 순회 중인 날짜 객체 생성
             LocalDate targetDate = baseDate.withDayOfMonth(day);
@@ -392,11 +403,13 @@ Response: { generatedTodos: Todo[]; targetDate: Date; }
                 todos.add(trackerTodoRepository.save(todo).getId());
             }
         }
-        tt.setGeneratedTodos(todos);
+        return todos;
     }
 
+    @Transactional
     private void updateTitleAndDescription(TrackerTodo todo, String title, String description){
         List<Long> generatedTodos = todo.getGeneratedTodos();
+        if(generatedTodos.isEmpty()) return;
         for(Long todoId : generatedTodos){
             TrackerTodo td = trackerTodoRepository.findById(todoId).orElseThrow();
             if(td.getDate().isEqual(LocalDate.now()) || td.getDate().isAfter(LocalDate.now())){
@@ -407,8 +420,11 @@ Response: { generatedTodos: Todo[]; targetDate: Date; }
         }
     }
 
-    private void deleteFutureSchedule(List<Long> generatedTodos) {
+    @Transactional
+    private void deleteFutureSchedule(TrackerTodo todo) {
+        List<Long> generatedTodos = todo.getGeneratedTodos();
         if (generatedTodos == null) return;
+        List<Long> deletedTodos = new ArrayList<>();
 
         LocalDate today = LocalDate.now();
         for (Long todoId : generatedTodos) {
@@ -416,11 +432,18 @@ Response: { generatedTodos: Todo[]; targetDate: Date; }
                     .ifPresent(td -> {
                         // today와 같거나 이후의 투두만 삭제
                         if (td.getDate().isEqual(today) || td.getDate().isAfter(today)) {
+                            deletedTodos.add(td.getId());
                             trackerTodoRepository.delete(td);
+
                         }
                     });
             // 주의: isPresent 를 사용하여 orElseThrow() 오류를 방지
             // 이미 삭제된 ID는 그냥 건너뜀
+        }
+        for(Long todoId : deletedTodos){
+            // generatedTodos 삭제 로직
+            todo.deleteGeneratedTodos(deletedTodos);
+            trackerTodoRepository.save(todo);
         }
     }
 

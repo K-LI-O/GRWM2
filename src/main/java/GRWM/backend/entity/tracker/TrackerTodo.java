@@ -38,4 +38,12 @@ public class TrackerTodo {
     @Builder.Default
     List<Long> generatedTodos = new ArrayList<>();
 
+    public void addGeneratedTodos(List<Long> todos){
+        this.generatedTodos.addAll(todos);
+    }
+
+    public void deleteGeneratedTodos(List<Long> todos){
+        this.generatedTodos.removeAll(todos);
+    }
+
 }
