@@ -19,6 +19,7 @@ public class PushTokenService {
         PushToken existingToken = pushTokenRepository.findByMemberAndDeviceType(
                 member, "web");
 
+
         if (existingToken != null) {
             // 2. 기존 토큰이 있다면 새 토큰으로 업데이트 (UPDATE)
             if (!existingToken.getFcmToken().equals(token)) {
@@ -33,6 +34,8 @@ public class PushTokenService {
                     .build();
             pushTokenRepository.save(newPushToken);
         }
+        System.out.println(token+"\n");
+
     }
 
     public String getToken(Long userId){

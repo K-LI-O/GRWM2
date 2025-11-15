@@ -15,6 +15,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -42,6 +43,7 @@ public class NotificationService {
         Notification not = Notification.builder()
                 .receiverId(followingId)
                 .senderId(followerId)
+                .isSent(true)
                 .scheduledTime(Timestamp.from(Instant.now()))
                 .type(NotificationType.FOLLOW)
                 .title("팔로우 알림")
@@ -69,6 +71,7 @@ public class NotificationService {
                     .senderId(m.getId())
                     .type(NotificationType.SCHEDULE)
                     .content(content)
+                    .isSent(true)
                     .title(title)
                     .build();
             notificationRepository.save(not);
@@ -93,21 +96,28 @@ public class NotificationService {
                 .senderId(member.getId())
                 .type(NotificationType.FOR_ME_TOMORROW)
                 .messageId(message.getId())
+                .scheduledTime(Timestamp.valueOf(message.getScheduledTime()))
+                .isSent(false)
+                .isRead(false)
+                .title("어제의 나에게서")
                 .content(content)
                 .build();
         System.out.println("저장 완료.");
+        System.out.println("현재 시각 (Instant.now()): " + Instant.now());
         System.out.println(notificationRepository.save(not).getMessageId());
 
     }
 
-    @Scheduled(cron = "0 * * * * *")
-    protected void sendNotifications() throws Exception {
+    @Scheduled(fixedRate = 60000)
+    public void sendNotifications() throws Exception {
+        System.out.println("함수가 실행중입니다.\n");
         List<Notification> notifications = notificationRepository.findByIsSentFalseAndScheduledTimeBefore(Timestamp.from(Instant.now()));
 
         for(Notification n : notifications) {
-           pushService.send(pushTokenService.getToken(n.getReceiverId()),
+            pushService.send(pushTokenService.getToken(n.getReceiverId()),
                    n.getTitle(), n.getContent(), n.getType().toString());
             n.setSent(true);
+            System.out.println("알림 전송 : "+n.getTitle() + "\n");
             notificationRepository.save(n);
 
         }
