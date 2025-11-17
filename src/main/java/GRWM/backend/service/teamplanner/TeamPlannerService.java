@@ -68,13 +68,31 @@ String profileImage
     */
 
     public List<TeamPlannerDto> getPlannerList(Long userId){
-        List<TeamPlanner> planners = teamPlannerRepository.findByCreator(extractOptionalMember(userId));
-
+        List<TeamMember> joinedPlanners = teamMemberRepository.findByMember_Id(userId);
         List<TeamPlannerDto> dtoList = new ArrayList<>();
 
-        for(TeamPlanner t : planners){
-            dtoList.add(plannerToDto(t));
+        for(TeamMember t: joinedPlanners){
+            TeamPlanner planner = t.getTeamPlanner();
+            List<TeamMemberBriefDto> members = new ArrayList<>();
+            for(TeamMember tm: planner.getTeamMembers()){
+                Member member = tm.getMember();
+                TeamMemberBriefDto dto = TeamMemberBriefDto.builder()
+                        .userId(member.getId())
+                        .username(member.getUsername())
+                        .profileImage(member.getProfileImageLink())
+                        .status(tm.getStatus())
+                        .build();
+            }
+            TeamPlannerDto dto = TeamPlannerDto.builder()
+                    .plannerId(planner.getId())
+                    .title(planner.getTitle())
+                    .description(planner.getDescription())
+                    .members(members)
+                    .profileImage(planner.getProfileImageLink())
+                    .build();
+            dtoList.add(dto);
         }
+
         return dtoList;
     }
 

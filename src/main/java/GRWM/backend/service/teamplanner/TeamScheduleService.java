@@ -93,7 +93,7 @@ public class TeamScheduleService {
         }
         TeamMemberBriefDto creatorDto = new TeamMemberBriefDto(creator.getId(), creator.getUsername(), creator.getProfileImageLink(), getStatus(teamPlannerRepository.getReferenceById(plannerId), creator));
 
-        TeamCategoryDto categoryDto = null;
+        TeamCategoryDto categoryDto = TeamCategoryDto.builder().build();
         if(schedule.getCategory() != null) {
             categoryDto.setCategoryId(schedule.getCategory().getId());
             categoryDto.setCategoryName(schedule.getCategory().getName());

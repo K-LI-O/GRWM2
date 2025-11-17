@@ -55,10 +55,11 @@ List<TeamScheduleBriefDto> joinedSchedules (사용자가 생성하진 않았지�
         List<TeamSchedule> joinedSchedules = scheduleRepository.findByNotCreatorAndMemberIncluded(plannerId, userId, userId);
 
 
-        return TeamScheduleSearchByMemberDto.builder()
+        TeamScheduleSearchByMemberDto result = TeamScheduleSearchByMemberDto.builder()
                 .createdSchedules(scheduleToDto(plannerId, createdSchedules))
                 .joinedSchedules(scheduleToDto(plannerId, joinedSchedules))
                 .build();
+        return result;
     }
 
     private List<TeamScheduleBriefDto> scheduleToDto(Long plannerId, List<TeamSchedule> schedules) {

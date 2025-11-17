@@ -38,7 +38,7 @@ public class TimeVoteController {
     return value : TimeVoteDetailDto
     * 마감 기한 이후에는 투표 불가
     */
-    @PostMapping("")
+    @PostMapping("/api/team-planner/{plannerId}/time-vote/{voteId}")
     public TimeVoteDetailDto vote(@PathVariable Long plannerId, @PathVariable Long voteId,
                                   @RequestBody List<AvailableDateTimeDto> dtoList,
                                   @AuthenticationPrincipal CustomUserDetails userDetails){

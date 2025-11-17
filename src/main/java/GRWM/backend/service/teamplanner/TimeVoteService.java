@@ -52,6 +52,7 @@ List<Long> memberIds (투표에 참여하는 사람들의 id 목록)
     public Long createTimeVote(Long plannerId, TimeVoteCreateDto dto) throws Exception {
         TimeVote timeVote = TimeVote.builder()
                 .title(dto.getTitle())
+                .teamPlanner(teamPlannerRepository.getReferenceById(plannerId))
                 .voteRange(dto.getVoteRange())
                 .finishTime(dto.getFinishTime())
                 .memberIds(dto.getMemberIds())
@@ -166,7 +167,7 @@ List<Long> memberIds (투표에 참여하는 사람들의 id 목록)
         Pageable pageable = PageRequest.of(
                 0, // 페이지 번호 (첫 번째 페이지는 0)
                 5, // 페이지 크기 (가져올 항목 수: 5개)
-                Sort.by(Sort.Direction.DESC, "createdAt") // 정렬 기준 (createdAt 필드를 내림차순(DESC, 최신 순)으로)
+                Sort.by(Sort.Direction.DESC, "finishTime") // 정렬 기준 (createdAt 필드를 내림차순(DESC, 최신 순)으로)
         );
         List<TimeVote> votes = timeVoteRepository.findByTeamPlanner(teamPlannerRepository.getReferenceById(plannerId), pageable);
         List<TimeVoteBriefDto> result = new ArrayList<>();
