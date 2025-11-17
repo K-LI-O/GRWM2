@@ -50,6 +50,7 @@ List<TodoDto> todoList,
     private LocalDateTime finishTime;
 
     @Builder.Default
+    @ElementCollection
     List<Long> memberIds = new ArrayList<>();
 
     @Builder.Default
