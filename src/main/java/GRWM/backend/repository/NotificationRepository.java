@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,4 +15,5 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
 
     List<Notification> findByIsSentFalseAndScheduledTimeBefore(Timestamp timestamp);
     Optional<Notification> findByReceiverIdAndMessageId(Long receiverId, Long messageId);
+    List<Notification> findByReceiverIdAndCreatedAtAfterOrderByCreatedAtDesc(Long receiverId, LocalDateTime beforeSevenDaysFromNow);
 }

@@ -28,7 +28,7 @@ public class Notification {
     private NotificationType type; // comment, like, follow, forMeTomorrow, Schedule
     private String content;
     private Long messageId; // 내일의 나에게 메시지 수정 경우;
-    private boolean isRead;
+    private boolean isRead; // 내일의 나에게 예약 알림 전송 위해서;
 
     String title; // 	String	알림 제목 ("팔로우 알림")
     String body; //	String	알림 내용 (Content)

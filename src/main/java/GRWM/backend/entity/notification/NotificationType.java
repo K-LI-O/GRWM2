@@ -1,9 +1,7 @@
 package GRWM.backend.entity.notification;
 
 public enum NotificationType {
-    FOLLOW,
-    COMMENT,
-    LIKE,
+    COMMUNITY,
     FOR_ME_TOMORROW,
     SCHEDULE
 }

@@ -1,5 +1,6 @@
 package GRWM.backend.service.notification;
 
+import GRWM.backend.dto.NotificationDto;
 import GRWM.backend.entity.notification.Notification;
 import GRWM.backend.entity.notification.NotificationType;
 import GRWM.backend.entity.teamplanner.TeamPlanner;
@@ -18,7 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -45,13 +48,14 @@ public class NotificationService {
                 .senderId(followerId)
                 .isSent(true)
                 .scheduledTime(Timestamp.from(Instant.now()))
-                .type(NotificationType.FOLLOW)
+                .type(NotificationType.COMMUNITY)
                 .title("팔로우 알림")
+                .body(content)
                 .content(content)
                 .build();
         notificationRepository.save(not);
 
-        pushService.send(member.getPushToken().getFcmToken(), not.getTitle(), not.getContent(), NotificationType.FOLLOW.toString());
+        pushService.send(member.getPushToken().getFcmToken(), not.getTitle(), not.getContent(), NotificationType.COMMUNITY.toString());
 
 
     }
@@ -73,13 +77,13 @@ public class NotificationService {
                     .content(content)
                     .isSent(true)
                     .title(title)
+                    .body(content)
                     .build();
             notificationRepository.save(not);
 
             // 알림 전송
             pushService.send(m.getPushToken().getFcmToken(), not.getTitle(), not.getTitle(),
                     NotificationType.SCHEDULE.toString());
-            not.setSent(true);
         }
     }
 
@@ -117,6 +121,7 @@ public class NotificationService {
             pushService.send(pushTokenService.getToken(n.getReceiverId()),
                    n.getTitle(), n.getContent(), n.getType().toString());
             n.setSent(true);
+            n.setRead(true);
             System.out.println("알림 전송 : "+n.getTitle() + "\n");
             notificationRepository.save(n);
 
@@ -145,6 +150,39 @@ public class NotificationService {
                 messageId
         ).orElseThrow());
     }
+
+    // 알림 목록 불러오기 함수
+    /*
+    name : getNotifications
+    function : 알림 목록을 불러온다(최근 7일간의). 그리고 알림 목록 전송 이후 모두 isRead = true로 바꾸기.
+    url : api/users/notifications
+    param : userId
+    return value : List<NotificationDto>
+     */
+
+    public List<NotificationDto> getNotifications(Long userId){
+        // 리포지토리 함수; 사용자의 아이디와 receiverId가 일치하는 목록, 최근 7일의 알림 목록, 최근부터 정렬되는 날짜순
+        List<Notification> notList = notificationRepository.findByReceiverIdAndCreatedAtAfterOrderByCreatedAtDesc(userId, LocalDateTime.now().minusDays(7));
+
+        List<NotificationDto> result = new ArrayList<>();
+        for(Notification n : notList){
+            NotificationDto dto = NotificationDto.builder()
+                    .id(n.getId())
+                    .createdAt(n.getCreatedAt())
+                    .title(n.getTitle())
+                    .body(n.getBody())
+                    .type(n.getType())
+                    .isRead(n.isRead())
+                    .build();
+            result.add(dto);
+            n.setRead(true);
+        }
+        notificationRepository.saveAll(notList);
+        return result;
+    }
+
+
+
 
 
 }
