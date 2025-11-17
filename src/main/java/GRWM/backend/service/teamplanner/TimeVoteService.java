@@ -318,6 +318,7 @@ double overlapPercentage, // (해당 시간대에 투표한 사람) / (전체 �
                 .voteRange(vote.getVoteRange())
                 .members(members)
                 .matrix(colorTimeTable(vote))
+                .finishTime(vote.getFinishTime())
                 .build();
 
         return dto;
