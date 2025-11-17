@@ -22,7 +22,7 @@ List<MemberBriefDto> members;
 List<TimeVoteShowDto> matrix;
 }
      */
-
+    private Long id;
     private String title;
     private List<LocalDate> voteRange;
     private LocalDateTime finishTime;

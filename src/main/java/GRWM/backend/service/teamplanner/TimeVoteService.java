@@ -314,6 +314,7 @@ double overlapPercentage, // (해당 시간대에 투표한 사람) / (전체 �
         }
 
         TimeVoteDetailDto dto = TimeVoteDetailDto.builder()
+                .id(vote.getId())
                 .title(vote.getTitle())
                 .voteRange(vote.getVoteRange())
                 .members(members)
