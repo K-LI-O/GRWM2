@@ -19,9 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Transactional
@@ -207,40 +205,64 @@ double overlapPercentage,
      */
     private List<TimeVoteShowDto> colorTimeTable(TimeVote vote){
 
-        // 투표 response 불러오기
         List<VoteResponse> responses = vote.getVoteResponses();
+        int totalVoters = responses.size(); // 전체 투표자 수
 
-        // max 5days, 48 segments per day, vote에 기록된 일별로 48 segments씩 세팅
-        // segments 0으로 초기화
-        List<TimeVoteShowDto> result = new ArrayList<>();
-        for(LocalDate d : vote.getVoteRange()){
-            for(int i = 0; i < 48; i++){
+        // 💡 1. Map을 사용하여 DTO를 O(1) 속도로 검색할 수 있도록 구조 변경
+        // Key: LocalDate + LocalTime (시작 시간)의 조합 (예: "2025-11-17_09:00")
+        Map<String, TimeVoteShowDto> slotMap = new LinkedHashMap<>();
+
+        // Map 초기화 (result 리스트 초기화와 동일)
+        for (LocalDate d : vote.getVoteRange()) {
+            for (int i = 0; i < 48; i++) {
+                LocalTime start = LocalTime.MIN.plusMinutes(i * 30);
+                LocalTime end = start.plusMinutes(30);
+                String key = d.toString() + "_" + start.toString();
+
                 TimeVoteShowDto dto = TimeVoteShowDto.builder()
                         .date(d)
-                        .slotStart(LocalTime.MIN.plusMinutes(i * 30)) // LocalTime
-                        .slotEnd(LocalTime.MIN.plusMinutes(i * 30 + 30))
+                        .slotStart(start)
+                        .slotEnd(end)
                         .overlapCount(0)
                         .overlapPercentage(0.0)
                         .build();
-                result.add(dto);
+                slotMap.put(key, dto);
             }
         }
-        // for 문으로 반복하여 가공하기 (private 함수화)
-        for(VoteResponse t : responses){
-            // each response 를 30분짜리 segments 로 분리
-            // 해당하는 segment 카운트 추가하기
-            for(AvailableDateTime a : t.getAvailableDateTimes()){
-                a.getDate();
-            }
-            /*
-LocalDate date, // 날짜
-LocalTime slotStart, // 시간대 시작
-LocalTime slotEnd, // 시간대 끝 (30분 간격)
-int overlapCount, // 해당 시간대에 투표한 사람
-double overlapPercentage, // (해당 시간대에 투표한 사람) / (전체 투표자)
-             */
 
+        // 💡 2. 투표 응답을 Map을 사용해 효율적으로 카운트
+        for (VoteResponse response : responses) {
+            for (AvailableDateTime availableTime : response.getAvailableDateTimes()) {
+                LocalDate date = availableTime.getDate();
+
+                for (Interval interval : availableTime.getIntervals()) {
+                    LocalTime currentSlot = interval.getStartTime();
+
+                    // 30분 단위로 세그먼트화
+                    while (currentSlot.isBefore(interval.getEndTime())) {
+                        String key = date.toString() + "_" + currentSlot.toString();
+
+                        // Map에서 O(1) 속도로 DTO를 찾아서 카운트 증가
+                        TimeVoteShowDto dto = slotMap.get(key);
+                        if (dto != null) {
+                            dto.setOverlapCount(dto.getOverlapCount() + 1);
+                        }
+
+                        currentSlot = currentSlot.plusMinutes(30);
+                    }
+                }
+            }
         }
+
+        // 💡 3. 퍼센트 계산 및 List 반환
+        List<TimeVoteShowDto> result = new ArrayList<>(slotMap.values());
+        for (TimeVoteShowDto dto : result) {
+            if (totalVoters > 0) { // 0으로 나누는 것 방지
+                // double 형 변환 후 계산
+                dto.setOverlapPercentage(((double) dto.getOverlapCount() / totalVoters) * 100.0);
+            }
+        }
+
         // 반환
         return result;
     }

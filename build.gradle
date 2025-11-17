@@ -40,6 +40,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-websocket' // WebSocket
 	implementation 'io.projectreactor.netty:reactor-netty-http'
 
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
 	runtimeOnly 'com.h2database:h2'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok'
