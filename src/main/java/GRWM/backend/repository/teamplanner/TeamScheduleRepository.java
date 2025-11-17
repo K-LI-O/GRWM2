@@ -25,7 +25,7 @@ public interface TeamScheduleRepository extends JpaRepository<TeamSchedule, Long
     List<TeamSchedule> findByTeamPlanner_IdAndCreator_IdOrderByStartTimeDesc(Long plannerId, Long userId);
 
     @Query("SELECT e FROM TeamSchedule e " +
-            "WHERE e.teamPlanner.id = :teamPlannerId " +
+            "WHERE e.teamPlanner.id = :plannerId " +
             "AND e.creator.id <> :notCreatorId " +
             "AND :userId MEMBER OF e.memberIds")
 
