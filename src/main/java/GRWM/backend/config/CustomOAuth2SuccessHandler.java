@@ -34,9 +34,6 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
 
         System.out.println("\n\n\n\n\nSuccessHandler 동작 \n\n\n\n\n");
         try{
-        // 1. HTTP 응답 설정
-        //response.setContentType("application/json;charset=UTF-8");
-        //response.setStatus(HttpServletResponse.SC_OK);
 
         // 2. 인증 객체에서 CustomUserDetails 추출
         // authentication.getPrincipal()은 CustomUserDetails (혹은 CustomUser)를 반환함
@@ -63,13 +60,24 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
 
             // 4. 응답 본문(Body)에 담을 객체 생성 (예: TokenResponseDto)
             //TokenResponseDto tokenResponse = new TokenResponseDto(accessToken, "Bearer");
-//            LoginTokenResponse loginTokenResponse = new LoginTokenResponse(accessToken, "Bearer", userDetails.getUsername(), userId,
-//                    communityUserRepository.findById(userDetails.getCommunityUserId()).orElseThrow().getNickname());
+            LoginTokenResponse loginTokenResponse = new LoginTokenResponse(accessToken, "Bearer", userDetails.getUsername(), userDetails.getUserId(),
+                    communityUserRepository.findById(userDetails.getCommunityUserId()).orElseThrow().getNickname());
 
 
             // 5. JSON 응답 전송
-            String redirectUrl = "http://localhost:3000/main#token=" + accessToken; // 예시
-            response.sendRedirect(redirectUrl);
+//            String redirectUrl = "http://localhost:3000/main#token=" + accessToken; // 예시
+//            response.sendRedirect(redirectUrl);
+
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.setStatus(HttpServletResponse.SC_OK);
+
+            // Java 객체(LoginTokenResponse)를 JSON 문자열로 변환 (Jackson ObjectMapper 사용 예시)
+            // ObjectMapper는 보통 Spring Boot의 환경설정으로 빈(Bean)으로 등록되어 있어, 주입받아 사용하거나 직접 생성 가능
+            ObjectMapper objectMapper = new ObjectMapper();
+            String jsonResponse = objectMapper.writeValueAsString(loginTokenResponse);
+
+            response.getWriter().write(jsonResponse);
         }
         } catch (Exception e) {
             // 🚨 예외 상세 정보를 콘솔에 출력
