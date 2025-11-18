@@ -1,19 +1,19 @@
 package GRWM.backend.dto.teamPlanner;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class TimeVoteCreateDto {
     /*
 String title,
@@ -25,7 +25,10 @@ List<Long> memberIds (투표에 참여하는 사람들의 id 목록)
     private String title;
     private List<LocalDate> voteRange;
     private LocalDateTime finishTime;
-    private List<Long> MemberIds;
+    @Builder.Default
+    private List<Long> MemberIds = new ArrayList<>();
+    @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime startHour;
+    @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime endHour;
 }
