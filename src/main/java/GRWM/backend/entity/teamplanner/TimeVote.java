@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Getter
@@ -44,6 +45,9 @@ public class TimeVote {
     private List<VoteResponse> voteResponses;
 
     private List<Long> memberIds;
+
+    private LocalTime voteRangeStartHour;
+    private LocalTime voteRangeEndHour;
 
     public TimeVote(TeamPlanner teamPlanner, String title, List<LocalDate> voteRange,
                     LocalDateTime finishTime, List<VoteResponse> voteResponses){

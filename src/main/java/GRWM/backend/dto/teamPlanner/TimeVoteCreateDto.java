@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Getter
@@ -25,4 +26,6 @@ List<Long> memberIds (투표에 참여하는 사람들의 id 목록)
     private List<LocalDate> voteRange;
     private LocalDateTime finishTime;
     private List<Long> MemberIds;
+    private LocalTime startHour;
+    private LocalTime endHour;
 }

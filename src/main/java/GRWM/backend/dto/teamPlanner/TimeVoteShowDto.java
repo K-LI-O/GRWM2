@@ -5,6 +5,8 @@ import lombok.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -25,4 +27,10 @@ double overlapPercentage
     private LocalTime slotEnd;
     int overlapCount;
     double overlapPercentage;
+    @Builder.Default
+    private List<TeamMemberBriefDto> voters = new ArrayList<>();
+
+    public void addMember(TeamMemberBriefDto member){
+        voters.add(member);
+    }
 }

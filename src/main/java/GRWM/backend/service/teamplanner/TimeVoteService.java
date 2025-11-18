@@ -54,6 +54,8 @@ List<Long> memberIds (투표에 참여하는 사람들의 id 목록)
                 .voteRange(dto.getVoteRange())
                 .finishTime(dto.getFinishTime())
                 .memberIds(dto.getMemberIds())
+                .voteRangeStartHour(dto.getStartHour())
+                .voteRangeEndHour(dto.getEndHour())
                 .build();
 
         List<Member> members = new ArrayList<>();
@@ -63,10 +65,10 @@ List<Long> memberIds (투표에 참여하는 사람들의 id 목록)
         for(Long id : dto.getMemberIds()){
             members.add(memberRepository.findById(id).orElseThrow());
         }
-//        notificationService.createTimeVoteNotification(
-//                members,
-//                teamPlannerRepository.findById(plannerId).orElseThrow(),
-//                savedVote);
+        notificationService.createTimeVoteNotification(
+                members,
+                teamPlannerRepository.findById(plannerId).orElseThrow(),
+                savedVote);
         return savedVote.getId();
     }
 
@@ -225,6 +227,7 @@ double overlapPercentage,
                         .slotEnd(end)
                         .overlapCount(0)
                         .overlapPercentage(0.0)
+                        .voters(new ArrayList<>())
                         .build();
                 slotMap.put(key, dto);
             }
@@ -232,6 +235,14 @@ double overlapPercentage,
 
         // 💡 2. 투표 응답을 Map을 사용해 효율적으로 카운트
         for (VoteResponse response : responses) {
+            Member voter = response.getMember();
+            TeamMemberBriefDto voterDto = TeamMemberBriefDto.builder()
+                    .userId(voter.getId())
+                    .username(voter.getUsername())
+                    .profileImage(voter.getProfileImageLink())
+                    .build();
+
+
             for (AvailableDateTime availableTime : response.getAvailableDateTimes()) {
                 LocalDate date = availableTime.getDate();
 
@@ -242,10 +253,11 @@ double overlapPercentage,
                     while (currentSlot.isBefore(interval.getEndTime())) {
                         String key = date.toString() + "_" + currentSlot.toString();
 
-                        // Map에서 O(1) 속도로 DTO를 찾아서 카운트 증가
+                        // Map 에서 O(1) 속도로 DTO를 찾아서 카운트 증가
                         TimeVoteShowDto dto = slotMap.get(key);
                         if (dto != null) {
                             dto.setOverlapCount(dto.getOverlapCount() + 1);
+                            dto.addMember(voterDto);
                         }
 
                         currentSlot = currentSlot.plusMinutes(30);
@@ -342,6 +354,8 @@ double overlapPercentage,
                 .members(members)
                 .matrix(colorTimeTable(vote))
                 .finishTime(vote.getFinishTime())
+                .startHour(vote.getVoteRangeStartHour())
+                .endHour(vote.getVoteRangeEndHour())
                 .build();
 
         return dto;

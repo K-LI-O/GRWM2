@@ -4,6 +4,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Getter
@@ -28,4 +29,6 @@ List<TimeVoteShowDto> matrix;
     private LocalDateTime finishTime;
     private List<TeamMemberBriefDto> members;
     private List<TimeVoteShowDto> matrix;
+    private LocalTime startHour;
+    private LocalTime endHour;
 }
