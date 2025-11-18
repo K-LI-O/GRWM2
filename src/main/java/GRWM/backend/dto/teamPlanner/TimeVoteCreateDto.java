@@ -26,7 +26,7 @@ List<Long> memberIds (투표에 참여하는 사람들의 id 목록)
     private List<LocalDate> voteRange;
     private LocalDateTime finishTime;
     @Builder.Default
-    private List<Long> MemberIds = new ArrayList<>();
+    private List<Long> memberIds = new ArrayList<>();
     @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime startHour;
     @JsonFormat(pattern = "HH:mm:ss")
