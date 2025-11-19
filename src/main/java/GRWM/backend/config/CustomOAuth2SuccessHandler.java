@@ -67,10 +67,11 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
 
             // 5. JSON 응답 전송
 
+            String encodedUsername = URLEncoder.encode(userDetails.getUsername(), StandardCharsets.UTF_8);
             String encodedNickname = URLEncoder.encode(userDetails.getCommunityUserNickname(), StandardCharsets.UTF_8);
             String fragment = "#token=" + accessToken +
                                 "&userId=" + userDetails.getUserId() +
-                                "&username=" + userDetails.getUsername() +
+                                "&username=" + encodedUsername +
                                 "&communityNickname=" + encodedNickname;
             String redirectUrl = "http://localhost:3000/main" + fragment; // 예시ㅓ
             response.sendRedirect(redirectUrl);
