@@ -1,10 +1,10 @@
 package GRWM.backend.controller;
 
 
+import GRWM.backend.dto.auth.FcmTokenRefreshDto;
 import GRWM.backend.dto.auth.LoginRequestDto;
 import GRWM.backend.dto.auth.LoginTokenResponse;
 import GRWM.backend.dto.personalPlanner.MemberCreateRequestDto;
-import GRWM.backend.entity.notification.PushToken;
 import GRWM.backend.jwt.JwtTokenProvider;
 import GRWM.backend.service.MemberService;
 import GRWM.backend.service.PushTokenService;
@@ -65,6 +65,7 @@ public class AuthenticationController {
                     memberService.findUserIdByLoginId(dto.getLoginId()),
                     dto.getFcmToken()
             );
+
         }
 
         // 4. JWT 토큰 생성
@@ -99,6 +100,25 @@ public class AuthenticationController {
         }
         return ResponseEntity.ok(false);
     }
+
+    /*
+    name : refreshFcmToken
+    function : 토큰 재발급 로직
+    url : POST /api/auth/token-refresh
+    Request : Dto - String fcmToken; String loginId;
+    Response void;
+
+     */
+    @PostMapping("/token-refresh")
+    public void refreshFcmToken(@RequestBody FcmTokenRefreshDto dto){
+        if(dto.getFcmToken() != null){
+            pushTokenService.saveToken(
+                    memberService.findUserIdByLoginId(dto.getLoginId()),
+                    dto.getFcmToken()
+            );
+        }
+    }
+
 
 
 }

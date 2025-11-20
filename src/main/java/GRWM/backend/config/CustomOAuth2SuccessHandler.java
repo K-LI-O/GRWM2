@@ -73,7 +73,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
                                 "&userId=" + userDetails.getUserId() +
                                 "&username=" + encodedUsername +
                                 "&communityNickname=" + encodedNickname;
-            String redirectUrl = "http://localhost:3000/main" + fragment; // 예시ㅓ
+            String redirectUrl = "http://localhost:3000/auth" + fragment; // 예시ㅓ
             response.sendRedirect(redirectUrl);
 
 //            response.setContentType("application/json");
