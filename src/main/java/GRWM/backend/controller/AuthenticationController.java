@@ -6,6 +6,7 @@ import GRWM.backend.dto.auth.LoginRequestDto;
 import GRWM.backend.dto.auth.LoginTokenResponse;
 import GRWM.backend.dto.personalPlanner.MemberCreateRequestDto;
 import GRWM.backend.jwt.JwtTokenProvider;
+import GRWM.backend.repository.user.MemberRepository;
 import GRWM.backend.service.MemberService;
 import GRWM.backend.service.PushTokenService;
 import GRWM.backend.service.community.CommunityUserService;
@@ -26,6 +27,7 @@ public class AuthenticationController {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final MemberService memberService;
+    private final MemberRepository memberRepository;
     private final CommunityUserService communityUserService;
     private final PushTokenService pushTokenService;
 
@@ -113,7 +115,7 @@ public class AuthenticationController {
     public void refreshFcmToken(@RequestBody FcmTokenRefreshDto dto){
         if(dto.getFcmToken() != null){
             pushTokenService.saveToken(
-                    memberService.findUserIdByLoginId(dto.getLoginId()),
+                    dto.getUserId(),
                     dto.getFcmToken()
             );
         }

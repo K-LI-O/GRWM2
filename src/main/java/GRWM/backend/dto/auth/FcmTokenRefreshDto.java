@@ -9,5 +9,5 @@ import lombok.Setter;
 @NoArgsConstructor
 public class FcmTokenRefreshDto {
     String fcmToken;
-    String loginId;
+    Long userId;
 }
