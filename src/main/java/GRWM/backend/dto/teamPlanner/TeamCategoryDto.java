@@ -12,7 +12,6 @@ import org.springframework.data.repository.query.Param;
 public class TeamCategoryDto {
 // {Long categoryId, String categoryName, String color
     private Long categoryId;
-    @JsonProperty("name")
     private String categoryName;
     private String color;
 
