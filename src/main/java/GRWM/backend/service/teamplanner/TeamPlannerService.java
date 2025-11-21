@@ -43,12 +43,13 @@ String profileImage
     return value : ResponseEntity<Long> plannerId 반환;
     */
 
+    @Transactional
     public Long createTeamPlanner(TeamPlannerCreateDto dto, Long userId){
 
         // 사용자 객체 불러오기
 
         TeamPlanner planner = TeamPlanner.builder()
-                .creator(extractOptionalMember(userId))
+                .creator(memberRepository.getReferenceById(userId))
                 .title(dto.getTitle())
                 .description(dto.getDescription())
                 .profileImageLink(dto.getProfileImage())
@@ -67,6 +68,7 @@ String profileImage
     return value : List<TeamPlannerDto>
     */
 
+    @Transactional(readOnly = true)
     public List<TeamPlannerDto> getPlannerList(Long userId){
         List<TeamMember> joinedPlanners = teamMemberRepository.findByMember_Id(userId);
         List<TeamPlannerDto> dtoList = new ArrayList<>();
@@ -74,7 +76,7 @@ String profileImage
         for(TeamMember t: joinedPlanners){
             TeamPlanner planner = t.getTeamPlanner();
             List<TeamMemberBriefDto> members = new ArrayList<>();
-            for(TeamMember tm: planner.getTeamMembers()){
+            for(TeamMember tm: teamMemberRepository.findByTeamPlanner(planner)){
                 Member member = tm.getMember();
                 TeamMemberBriefDto dto = TeamMemberBriefDto.builder()
                         .userId(member.getId())
@@ -82,6 +84,7 @@ String profileImage
                         .profileImage(member.getProfileImageLink())
                         .status(tm.getStatus())
                         .build();
+                members.add(dto);
             }
             TeamPlannerDto dto = TeamPlannerDto.builder()
                     .plannerId(planner.getId())
@@ -128,6 +131,7 @@ String profileImage
      */
 
     public void deletePlanner(Long plannerId){
+
         teamPlannerRepository.delete(extractOptionalPlanner(plannerId));
     }
 

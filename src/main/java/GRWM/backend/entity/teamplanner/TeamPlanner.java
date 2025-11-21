@@ -38,20 +38,20 @@ List<TimeVote> timeVotes;
     @ManyToOne(fetch = FetchType.LAZY)
     private Member creator;
 
-    @OneToMany
+    @OneToMany(mappedBy = "teamPlanner", orphanRemoval=true, cascade = CascadeType.REMOVE)
     private List<TeamMember> teamMembers;
 
     private String title;
     private String description;
     private String profileImageLink;
 
-    @OneToMany(mappedBy = "teamPlanner")
+    @OneToMany(mappedBy = "teamPlanner", orphanRemoval=true)
     List<TeamSchedule> schedules;
 
-    @OneToMany(mappedBy = "teamPlanner")
+    @OneToMany(mappedBy = "teamPlanner", orphanRemoval=true)
     List<TeamCategory> categories;
 
-    @OneToMany(mappedBy = "teamPlanner")
+    @OneToMany(mappedBy = "teamPlanner", orphanRemoval=true)
     List<TimeVote> timeVotes;
 
 

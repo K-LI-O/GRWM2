@@ -173,6 +173,7 @@ String editorRange,
         schedule.setLocation(dto.getLocation());
         schedule.setMemo(dto.getMemo());
         schedule.setEditorRange(dto.getEditorRange());
+        schedule.setCategory(dto.getCategory() == null ? null : teamCategoryRepository.getReferenceById(dto.getCategory().getCategoryId()));
 
         // 저장
         TeamSchedule savedSchedule = scheduleRepository.save(schedule);
