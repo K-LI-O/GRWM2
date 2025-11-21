@@ -506,7 +506,7 @@ public class ChatRoomService {
 
             return dto;
         } else{
-            ChatRoomAnnouncementDto dto = null;
+            ChatRoomAnnouncementDto dto = ChatRoomAnnouncementDto.builder().build();
             return dto;
         }
 
