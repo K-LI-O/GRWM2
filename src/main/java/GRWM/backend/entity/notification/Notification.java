@@ -1,0 +1,39 @@
+package GRWM.backend.entity.notification;
+
+import jakarta.persistence.*;
+import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@EntityListeners(EnableJpaAuditing.class)
+public class Notification {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private Long receiverId;
+    private Long senderId;
+    private NotificationType type; // comment, like, follow, forMeTomorrow, Schedule
+    private String content;
+    private Long messageId; // 내일의 나에게 메시지 수정 경우;
+    private boolean isRead; // 내일의 나에게 예약 알림 전송 위해서;
+
+    String title; // 	String	알림 제목 ("팔로우 알림")
+    String body; //	String	알림 내용 (Content)
+    Timestamp scheduledTime; //	알림 발송 예정 시간 (가장 중요)
+    @Builder.Default
+    boolean isSent = false; //	Boolean	발송 완료 여부 (false 로 초기화)
+
+    @CreatedDate
+    private LocalDateTime createdAt;
+
+}

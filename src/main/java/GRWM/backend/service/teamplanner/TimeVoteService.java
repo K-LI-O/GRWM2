@@ -1,0 +1,376 @@
+package GRWM.backend.service.teamplanner;
+
+
+import GRWM.backend.dto.teamPlanner.*;
+import GRWM.backend.entity.teamplanner.*;
+import GRWM.backend.entity.user.Member;
+import GRWM.backend.repository.teamplanner.TeamMemberRepository;
+import GRWM.backend.repository.teamplanner.TeamPlannerRepository;
+import GRWM.backend.repository.teamplanner.TimeVoteRepository;
+import GRWM.backend.repository.teamplanner.VoteResponseRepository;
+import GRWM.backend.repository.user.MemberRepository;
+import GRWM.backend.service.notification.NotificationService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.*;
+
+@Service
+@Transactional
+@RequiredArgsConstructor
+public class TimeVoteService {
+
+    private final TimeVoteRepository timeVoteRepository;
+    private final VoteResponseRepository voteResponseRepository;
+    private final NotificationService notificationService;
+    private final MemberRepository memberRepository;
+    private final TeamMemberRepository teamMemberRepository;
+    private final TeamPlannerRepository teamPlannerRepository;
+
+
+
+    /*
+    name : createTimeVote
+    POST/api/team-planner/{plannerId}/time-vote
+    param : Long plannerId
+{
+String title,
+List<LocalDate> voteRange, (투표 범위 5일(떨어진 날짜 가능))
+LocalDateTime finishTime, (마감 기한}
+List<Long> memberIds (투표에 참여하는 사람들의 id 목록)
+}
+    return value : Long voteId
+    */
+    public Long createTimeVote(Long plannerId, TimeVoteCreateDto dto) throws Exception {
+        TimeVote timeVote = TimeVote.builder()
+                .title(dto.getTitle())
+                .teamPlanner(teamPlannerRepository.getReferenceById(plannerId))
+                .voteRange(dto.getVoteRange())
+                .finishTime(dto.getFinishTime())
+                .memberIds(dto.getMemberIds())
+                .voteRangeStartHour(dto.getStartHour())
+                .voteRangeEndHour(dto.getEndHour())
+                .build();
+
+        List<Member> members = new ArrayList<>();
+
+
+        TimeVote savedVote = timeVoteRepository.save(timeVote);
+        for(Long id : dto.getMemberIds()){
+            members.add(memberRepository.findById(id).orElseThrow());
+        }
+        notificationService.createTimeVoteNotification(
+                members,
+                teamPlannerRepository.findById(plannerId).orElseThrow(),
+                savedVote);
+        return savedVote.getId();
+    }
+
+    /*
+    name : vote
+    POST /api/team-planner/{plannerId}/time-vote/{voteId}
+    param : Long plannerId, Long voteId
+    List<AvailableDateTimeDto>
+    return value : VoteResponseDto
+    * 마감 기한 이후에는 투표 불가
+    */
+    public TimeVoteDetailDto vote(Long plannerId, Long voteId, List<AvailableDateTimeDto> dtoList, Long userId){
+        // 시간 투표 찾기
+        TimeVote timeVote = extractOptionalVote(voteId);
+
+        // 멤버가 투표자에 포함되는지 확인
+        List<Long> memberIds = timeVote.getMemberIds();
+        if(!memberIds.contains(userId)){
+            throw new RuntimeException("투표 불가능한 멤버입니다.");
+        }
+        // 투표자라면 voteResponse 객체 생성하여 저장.
+        List<AvailableDateTime> dateTimes = new ArrayList<>();
+        for(AvailableDateTimeDto t : dtoList) {
+            dateTimes.add(getAvailableDateTime(t));
+        }
+        VoteResponse response = VoteResponse.builder()
+                .timeVote(timeVote)
+                .member(extractOptionalMember(userId))
+                .availableDateTimes(dateTimes)
+                .build();
+        VoteResponse savedResponse = voteResponseRepository.save(response);
+
+        // vote response 를 반영하여 시간 투표 수정
+        List<VoteResponse> voteResponses = timeVote.getVoteResponses();
+        voteResponses.add(savedResponse);
+        timeVote.setVoteResponses(voteResponses);
+        TimeVote savedVote = timeVoteRepository.save(timeVote);
+
+        // 투표 결과 계산해서(voteResponseDto 계산 함수 private 함수로 따로 뺄 것)
+        // 멤버 반환하기
+        VoteResponseDto result = VoteResponseDto.builder()
+                .responseId(savedResponse.getResponseId())
+                .voteId(savedVote.getId())
+                .member(getMemberDto(teamPlannerRepository.getReferenceById(plannerId), savedResponse.getMember()))
+                .availableDateTime(dtoList)
+                .build();
+
+        // 결과 반환
+        return getTimeVoteDetailDto(plannerId, savedVote);
+    }
+
+    /*
+    name : updateTimeVote
+    PUT /api/team-planner/{plannerId}/time-vote/{voteId}
+    param : Long plannerId, Long voteId
+    List<AvailableDateTimeDto>
+    return value : VoteResponseDto
+    */
+    public TimeVoteDetailDto updateTimeVote(Long plannerId, Long voteId, List<AvailableDateTimeDto> dtoList, Long userId){
+        // vote 찾아오기
+        TimeVote timeVote = extractOptionalVote(voteId);
+
+        List<Long> memberIds = timeVote.getMemberIds();
+        if(!memberIds.contains(userId)){
+            throw new RuntimeException("투표 불가능한 멤버입니다.");
+        }
+        // 사용자의 투표 찾기
+        List<AvailableDateTime> dateTimes = new ArrayList<>();
+        for(AvailableDateTimeDto t: dtoList){
+            dateTimes.add(getAvailableDateTime(t));
+
+        }
+
+        VoteResponse response = null;
+        List<VoteResponse> responses = timeVote.getVoteResponses();
+        for(VoteResponse t: responses){
+            if(t.getMember().getId().equals(userId)){
+                t.setAvailableDateTimes(dateTimes); // 객체 업데이트
+                response = voteResponseRepository.save(t);
+
+            }
+        }
+        TimeVote savedVote = timeVoteRepository.save(timeVote);
+        // 결과 반환
+        return getTimeVoteDetailDto(plannerId, savedVote);
+    }
+
+    // 최신 시간 투표 목록 보기(5개)
+    /*
+    name : showTimeVoteList
+    GET /api/team-planner/{plannerId}/time-vote
+    param : Long plannerId
+    return value : List<TimeVoteBriefDto>
+    */
+    public List<TimeVoteBriefDto> getTimeVoteList(Long plannerId){
+        Pageable pageable = PageRequest.of(
+                0, // 페이지 번호 (첫 번째 페이지는 0)
+                5, // 페이지 크기 (가져올 항목 수: 5개)
+                Sort.by(Sort.Direction.DESC, "finishTime") // 정렬 기준 (createdAt 필드를 내림차순(DESC, 최신 순)으로)
+        );
+        List<TimeVote> votes = timeVoteRepository.findByTeamPlanner(teamPlannerRepository.getReferenceById(plannerId), pageable);
+        List<TimeVoteBriefDto> result = new ArrayList<>();
+        for(TimeVote tv : votes){
+            result.add(getTimeVoteBriefDto(tv));
+        }
+        return result;
+    }
+
+    // 시간 투표 디테일 보기
+    /*
+    name : showTimeVoteDetail
+    GET /api/team-planner/{plannerId}/time-vote/{voteId}
+    param : Long plannerId, Long voteId
+    return value : TimeVoteDetailDto
+     */
+    public TimeVoteDetailDto showTimeVoteDetail(Long plannerId, Long voteId){
+        TimeVote vote = extractOptionalVote(voteId);
+        return getTimeVoteDetailDto(plannerId, vote);
+    }
+
+
+    /*
+    name : colorTimeTable
+    GET /api/team-planner/{plannerId}/time-vote/{voteId}
+    param : Long plannerId, Long voteId
+    return value : TimeVoteDto
+List<
+{
+LocalDate date,
+LocalTime slotStart,
+LocalTime slotEnd,
+int overlapCount,
+double overlapPercentage,
+}
+>
+     */
+    private List<TimeVoteShowDto> colorTimeTable(TimeVote vote){
+
+        List<VoteResponse> responses = vote.getVoteResponses();
+        int totalVoters = responses.size(); // 전체 투표자 수
+
+        // 💡 1. Map을 사용하여 DTO를 O(1) 속도로 검색할 수 있도록 구조 변경
+        // Key: LocalDate + LocalTime (시작 시간)의 조합 (예: "2025-11-17_09:00")
+        Map<String, TimeVoteShowDto> slotMap = new LinkedHashMap<>();
+
+        // Map 초기화 (result 리스트 초기화와 동일)
+        for (LocalDate d : vote.getVoteRange()) {
+            for (int i = 0; i < 48; i++) {
+                LocalTime start = LocalTime.MIN.plusMinutes(i * 30);
+                LocalTime end = start.plusMinutes(30);
+                String key = d.toString() + "_" + start.toString();
+
+                TimeVoteShowDto dto = TimeVoteShowDto.builder()
+                        .date(d)
+                        .slotStart(start)
+                        .slotEnd(end)
+                        .overlapCount(0)
+                        .overlapPercentage(0.0)
+                        .voters(new ArrayList<>())
+                        .build();
+                slotMap.put(key, dto);
+            }
+        }
+
+        // 💡 2. 투표 응답을 Map을 사용해 효율적으로 카운트
+        for (VoteResponse response : responses) {
+            Member voter = response.getMember();
+            TeamMemberBriefDto voterDto = TeamMemberBriefDto.builder()
+                    .userId(voter.getId())
+                    .username(voter.getUsername())
+                    .profileImage(voter.getProfileImageLink())
+                    .build();
+
+
+            for (AvailableDateTime availableTime : response.getAvailableDateTimes()) {
+                LocalDate date = availableTime.getDate();
+
+                for (Interval interval : availableTime.getIntervals()) {
+                    LocalTime currentSlot = interval.getStartTime();
+
+                    // 30분 단위로 세그먼트화
+                    while (currentSlot.isBefore(interval.getEndTime())) {
+                        String key = date.toString() + "_" + currentSlot.toString();
+
+                        // Map 에서 O(1) 속도로 DTO를 찾아서 카운트 증가
+                        TimeVoteShowDto dto = slotMap.get(key);
+                        if (dto != null) {
+                            dto.setOverlapCount(dto.getOverlapCount() + 1);
+                            dto.addMember(voterDto);
+                        }
+
+                        currentSlot = currentSlot.plusMinutes(30);
+                    }
+                }
+            }
+        }
+
+        // 💡 3. 퍼센트 계산 및 List 반환
+        List<TimeVoteShowDto> result = new ArrayList<>(slotMap.values());
+        for (TimeVoteShowDto dto : result) {
+            if (totalVoters > 0) { // 0으로 나누는 것 방지
+                // double 형 변환 후 계산
+                dto.setOverlapPercentage(((double) dto.getOverlapCount() / totalVoters) * 100.0);
+            }
+        }
+
+        // 반환
+        return result;
+    }
+
+
+    // ======== private logics ======= //
+
+    private Member extractOptionalMember(Long userId) throws RuntimeException{
+        Optional<Member> optionalMember = memberRepository.findById(userId);
+
+        if(optionalMember.isPresent()){
+            return optionalMember.get();
+        }
+        else{
+            throw new RuntimeException("존재하지 않는 사용자입니다.");
+        }
+    }
+
+
+    // ======= private logics ======= //
+
+    private TimeVote extractOptionalVote(Long voteId){
+        // 시간 투표 찾기
+        Optional<TimeVote> optionalVote = timeVoteRepository.findById(voteId);
+        if(optionalVote.isEmpty()){
+            throw new RuntimeException("존재하지 않는 시간 투표입니다.");
+        }
+        return optionalVote.get();
+
+    }
+
+    private AvailableDateTime getAvailableDateTime(AvailableDateTimeDto t) {
+        List<Interval> intervals = new ArrayList<>();
+        for (IntervalDto i : t.getIntervals()) {
+            Interval interval = Interval.builder()
+                    .startTime(i.getStartTime())
+                    .endTime(i.getEndTime())
+                    .build();
+            intervals.add(interval);
+        }
+        AvailableDateTime availableDateTime = AvailableDateTime.builder()
+                .date(t.getDate())
+                .intervals(intervals)
+                .build();
+        return availableDateTime;
+    }
+
+    private TeamMemberBriefDto getMemberDto(TeamPlanner planner, Member t){
+
+        TeamMemberBriefDto dto = TeamMemberBriefDto.builder()
+                .userId(t.getId())
+                .username(t.getUsername())
+                .profileImage(t.getProfileImageLink())
+                .status(getStatus(planner, t))
+                .build();
+
+        return dto;
+    }
+
+    private String getStatus(TeamPlanner planner, Member member){
+        return teamMemberRepository.findByTeamPlannerAndMember(planner, member).getStatus();
+    }
+
+    private TimeVoteDetailDto getTimeVoteDetailDto(Long plannerId, TimeVote vote){
+        List<TeamMemberBriefDto> members = new ArrayList<>();
+        for(Long id : vote.getMemberIds()){
+            members.add(getMemberDto(
+                    teamPlannerRepository.getReferenceById(plannerId),
+                    extractOptionalMember(id))
+            );
+        }
+
+        TimeVoteDetailDto dto = TimeVoteDetailDto.builder()
+                .id(vote.getId())
+                .title(vote.getTitle())
+                .voteRange(vote.getVoteRange())
+                .members(members)
+                .matrix(colorTimeTable(vote))
+                .finishTime(vote.getFinishTime())
+                .startHour(vote.getVoteRangeStartHour())
+                .endHour(vote.getVoteRangeEndHour())
+                .build();
+
+        return dto;
+    }
+
+    private TimeVoteBriefDto getTimeVoteBriefDto(TimeVote vote){
+        TimeVoteBriefDto dto = TimeVoteBriefDto.builder()
+                .id(vote.getId())
+                .title(vote.getTitle())
+                .voteRange(vote.getVoteRange())
+                .finishTime(vote.getFinishTime())
+                .build();
+
+        return dto;
+    }
+
+
+}

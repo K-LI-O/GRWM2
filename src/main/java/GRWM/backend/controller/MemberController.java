@@ -1,49 +1,43 @@
 package GRWM.backend.controller;
 
-import GRWM.backend.dto.personalPlanner.MemberCreateRequestDto;
+import GRWM.backend.repository.user.MemberRepository;
 import GRWM.backend.service.MemberService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/user")
 public class MemberController {
 
+
+    private final MemberRepository memberRepository;
     private final MemberService memberService;
 
-
     /*
-    함수명 : isDuplicateValidation
-    기능 : 200 ok와 함께 isDuplicate 의 bool 값을 전달한다. 반환값이 true 라면 같은 로그인 아이디의 회원이 존재한다.
-    매개변수 : String userId(로그인 아이디입니다)
-    반환값 : ResponseEntity<Boolean>
-
+    함수명 : getUserInfo
+    기능 : 사용자 프로필의 간단한 정보를 가져온다.
+    매개변수 : userId
+    반환값 : userId, username, loginId, email;
      */
-    @GetMapping("/create/check-id/{userId}")
-    public ResponseEntity<Boolean> idDuplicateValidation(@PathVariable String userId){
-        boolean isDuplicate = memberService.findDuplicateLoginId(userId);
-        if(isDuplicate){
-            return ResponseEntity.ok(true);
-        }
-        return ResponseEntity.ok(false);
-    }
 
 
     /*
-    함수명 : createMember
-    기능 : 멤버 정보를 받아 저장하고, 생성 후 회원 아이디를 반환;
-    매개변수 : String username, String loginId, String password, String email
-    반환값 : ResponseEntity<Long>; 200 ok와 사용자 ID(DB 테이블 Id, 로그인 아이디 아님)를 반환한다
-
+    함수명 : getCommunityUserInfo
+    기능 : 커뮤니티 프로필의 간단한 정보를 가져온다.
+    매개변수 : userId
+    반환값 : userId, username, loginId, email;
      */
-    @PostMapping("/create")
-    public ResponseEntity<Long> createMember(@RequestBody MemberCreateRequestDto dto) {
-        Long savedMemberId = memberService.createMember(dto);
-        return ResponseEntity.ok(savedMemberId);
-    }
 
+        /*
+    함수명 : findUserIdByLoginId
+    기능 : 로그인 아이디로 사용자 이름 반환
+    파라미터 : String loginId
+    반환값 : Long userId
+     */
+    @GetMapping("/api/users/find/{loginId}")
+    public Long findUserIdByLoginId(@PathVariable String loginId){
+        return memberService.findUserIdByLoginId(loginId);
+    }
 
 
 }

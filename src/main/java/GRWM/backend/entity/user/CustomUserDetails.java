@@ -1,0 +1,177 @@
+package GRWM.backend.entity.user;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
+
+@Getter
+@Setter
+@NoArgsConstructor(force = true)
+public class CustomUserDetails implements UserDetails, OAuth2User {
+
+    private Long userId;
+    private Long communityUserId;
+    private String username;
+    private String communityUserNickname;
+    private String password;
+    private Collection<? extends GrantedAuthority> authorities;
+    private Map<String, Object> attributes; // OAuth2User를 위한 Google 속성
+
+    private boolean enabled;
+    private boolean accountNonExpired;
+    private boolean accountNonLocked;
+    private boolean credentialsNonExpired;
+
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public Long getCommunityUserId() {
+        return communityUserId;
+    }
+
+    public String getCommunityUserNickname() {
+        return communityUserNickname;
+    }
+
+
+    @Override
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
+
+    @Override
+    public String getName() {
+        // OAuth2User의 고유 식별자 반환 (일반적으로 'sub' 또는 이메일)
+        return String.valueOf(attributes.get("sub"));
+    }
+
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of();
+    }
+
+    /*
+    함수명 : getPassword
+    기능 : 비밀번호를 반환한다.
+    매개변수
+    반환값 : String
+     */
+
+    @Override
+    public String getPassword() {
+        return this.password;
+    }
+
+
+    /*
+    함수명 : getUsername
+    기능 : 사용자 식별자를 반환한다; 로그인 아이디
+    매개변수
+    반환값 : String
+     */
+
+    @Override
+    public String getUsername() {
+        return this.username;
+    }
+
+
+
+    /*
+    함수명 : isAccountNonExpired
+    기능 : 만료된 계정이 아닌지 확인한다. true 반환 시, 계정은 유효하다.
+    매개변수
+    반환값 : boolean
+     */
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true; // 실제 로직 구현
+    }
+
+
+    /*
+    함수명 : isAccountNonLocked
+    기능 : 잠긴 계정이 아닌지 확인한다. true 반환 시, 계정은 사용 가능하다.
+    매개변수
+    반환값 : boolean
+     */
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true; // 실제 로직 구현
+    }
+
+
+    /*
+    함수명 : isCredentialsNonExpired
+    기능 : 계정 비밀번호가 만료되지 않았는지 확인한다. true 반환 시, 비밀번호는 유효하다.
+    매개변수
+    반환값 : boolean
+     */
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true; // 실제 로직 구현
+    }
+
+
+    /*
+    함수명 : isEnabled
+    기능 : 정지된 계정이 아닌지 확인한다. true 반환 시, 계정은 활성화 되어있다.
+    매개변수
+    반환값 : boolean
+     */
+
+    @Override
+    public boolean isEnabled() {
+        return true; // 실제 로직 구현
+    }
+
+
+
+    public CustomUserDetails(Long userId, Long communityId, String username, String password, String communityUserNickname, Collection<? extends GrantedAuthority> authorities) {
+
+        this.userId = userId;
+        this.communityUserId = communityId;
+        this.communityUserNickname = communityUserNickname;
+        this.username = username;
+        this.password = password;
+        this.authorities = authorities;
+        // 계정 상태는 기본적으로 true로 설정하거나, 필요시 토큰 클레임에 추가하여 사용
+        // 혹은 실제 DB에서 가져온 사용자 정보를 기반으로 설정
+    }
+
+    public CustomUserDetails(Long userId, Long communityId, String username, String communityUserNickname, Collection<? extends GrantedAuthority> authorities) {
+
+        this.userId = userId;
+        this.communityUserId = communityId;
+        this.username = username;
+        this.communityUserNickname = communityUserNickname;
+        this.password = "";
+        this.authorities = authorities;
+        // 계정 상태는 기본적으로 true로 설정하거나, 필요시 토큰 클레임에 추가하여 사용
+        // 혹은 실제 DB에서 가져온 사용자 정보를 기반으로 설정
+    }
+
+    public CustomUserDetails(Member member, String communityUserNickname, Map<String, Object> attributes) {
+        this.userId = member.getId();
+        communityUserId = member.getId();
+        this.communityUserNickname = communityUserNickname;
+        username = member.getUsername();
+        password = "";
+        this.attributes = attributes;
+    }
+
+}

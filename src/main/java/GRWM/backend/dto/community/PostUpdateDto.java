@@ -1,0 +1,19 @@
+package GRWM.backend.dto.community;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.List;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class PostUpdateDto {
+
+    private PostContentDto content;
+    private List<String> hashtags;
+    private String visibility;
+}
