@@ -27,7 +27,6 @@ public class AuthenticationController {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final MemberService memberService;
-    private final MemberRepository memberRepository;
     private final CommunityUserService communityUserService;
     private final PushTokenService pushTokenService;
 

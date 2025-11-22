@@ -14,7 +14,7 @@ import java.util.List;
 public class CommunityUserHashtag {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne

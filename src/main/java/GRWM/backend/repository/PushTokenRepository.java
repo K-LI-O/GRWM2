@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
 public interface PushTokenRepository extends JpaRepository<PushToken, Long> {
 PushToken findByMember_Id(Long memberId);
 
-PushToken findByMemberAndDeviceType(Member member, String type);
+PushToken findByMember(Member member);
 }

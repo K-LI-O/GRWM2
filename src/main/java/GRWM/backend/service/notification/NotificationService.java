@@ -64,10 +64,13 @@ public class NotificationService {
 
         // 1. 알림 내용 생성 (예: 보낸 사람 이름 조회)
         String title = planner.getTitle() + " 플래너에 새 시간투표 등록!";
-        String content = "시간 투표에 "+ timeVote.getFinishTime() + "까지 투표해주세요.";
+        String content = "시간 투표에 "+ timeVote.getFinishTime().toLocalDate()+ " " + timeVote.getFinishTime().toLocalTime() + "까지 투표해주세요.";
+        List<String> tokens = new ArrayList<>();
 
         // 2. 알림을 db에 저장.
         for(Member m : members) {
+            tokens.add(m.getPushToken().getFcmToken());
+
             Notification not = Notification.builder()
                     .receiverId(m.getId())
                     .senderId(m.getId())
@@ -79,9 +82,11 @@ public class NotificationService {
                     .build();
             notificationRepository.save(not);
 
+
+
             // 알림 전송
-            pushService.send(m.getPushToken().getFcmToken(), not.getTitle(), not.getTitle(),
-                    NotificationType.SCHEDULE.toString());
+
+            pushService.sendMulticast(tokens,title, content, NotificationType.SCHEDULE.toString());
         }
     }
 

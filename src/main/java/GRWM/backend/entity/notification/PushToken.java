@@ -27,10 +27,11 @@ created_at (Timestamp)
 updated_at (Timestamp, 토큰 갱신 시점)
      */
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Setter(AccessLevel.NONE)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     private Member member;
 
     private String fcmToken;

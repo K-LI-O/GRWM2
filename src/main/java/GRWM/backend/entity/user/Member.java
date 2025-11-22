@@ -37,23 +37,23 @@ public class Member {
     private String email;
     private String profileImageLink;
 
-    @OneToOne(mappedBy = "member")
+    @OneToOne(mappedBy = "member", fetch = FetchType.LAZY)
     private PushToken pushToken;
 
     private String googleId;
 
 
     // 단체 플래너
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<TeamMember> teamMembers = new ArrayList<>();
 
     // 채팅방
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<ChatRoomMember> chatRoomMembers = new ArrayList<>();
 
 
     // 커뮤니티
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     private CommunityUser communityUser;
 
     // 생성자

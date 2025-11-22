@@ -7,6 +7,7 @@ import GRWM.backend.dto.community.ProfileUpdateDto;
 import GRWM.backend.entity.community.*;
 import GRWM.backend.entity.user.CommunityUser;
 
+import GRWM.backend.repository.NotificationRepository;
 import GRWM.backend.repository.community.BlockListRepository;
 import GRWM.backend.repository.community.FollowingRepository;
 import GRWM.backend.repository.community.FriendShipRepository;
@@ -33,6 +34,8 @@ public class CommunityUserService {
     private final FollowingRepository followingRepository;
     private final BlockListRepository blockListRepository;
     private final FriendShipRepository friendShipRepository;
+    private final MemberRepository memberRepository;
+    private final NotificationService notificationService;
 
         /*
     함수명 : showUserProfile
@@ -167,7 +170,8 @@ public class CommunityUserService {
         );
 
         // 팔로우 대상자에게 팔로우 알림 보내기
-        // notificationService.createFollowNotification(memberRepository.findById(targetId).orElseThrow(), communityId, targetId);
+        //
+        notificationService.createFollowNotification(memberRepository.findById(targetId).orElseThrow(), communityId, targetId);
 
         // 상대방이 나를 이미 팔로우하고 있었다면 맞팔로우 테이블 생성;
         if(followingRepository.existsByFollowingAndFollower(user, targetUser)){

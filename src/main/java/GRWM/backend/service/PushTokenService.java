@@ -6,18 +6,20 @@ import GRWM.backend.repository.PushTokenRepository;
 import GRWM.backend.repository.user.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class PushTokenService {
 
     private final PushTokenRepository pushTokenRepository;
     private final MemberRepository memberRepository;
 
+    @Transactional
     public void saveToken(Long userId, String token){
         Member member = memberRepository.findById(userId).orElseThrow();
-        PushToken existingToken = pushTokenRepository.findByMemberAndDeviceType(
-                member, "web");
+        PushToken existingToken = member.getPushToken();
 
 
         if (existingToken != null) {
@@ -25,6 +27,7 @@ public class PushTokenService {
             if (!existingToken.getFcmToken().equals(token)) {
                 existingToken.setFcmToken(token);
                 pushTokenRepository.save(existingToken);
+
             }
         } else {
             // 3. 기존 토큰이 없다면 새로 생성 (INSERT)
@@ -38,6 +41,7 @@ public class PushTokenService {
 
     }
 
+    @Transactional(readOnly = true)
     public String getToken(Long userId){
         return pushTokenRepository.findByMember_Id(userId).getFcmToken();
 
