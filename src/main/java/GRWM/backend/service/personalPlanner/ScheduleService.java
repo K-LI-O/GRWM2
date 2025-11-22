@@ -88,7 +88,7 @@ public class ScheduleService {
 
         CategoryInfoDto categoryInfoDto;
         if(schedule.getPlannerCategory() == null){
-            categoryInfoDto = null; // 카테고리를 선택하지 않을 시 0 반환;
+            categoryInfoDto = new CategoryInfoDto(); // 카테고리를 선택하지 않을 시 0 반환;
         } else{
             categoryInfoDto = new CategoryInfoDto(
                     schedule.getPlannerCategory().getId(),
